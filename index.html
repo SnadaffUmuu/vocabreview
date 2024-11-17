@@ -299,9 +299,9 @@
           excludedEntries.push(entry)
         }
       })
-      console.log('total', entries.length)
-      console.log('entries', entries.map(en => en.lines));
-      console.log('types', new Set(entries.filter(en => en.type).map(en => en.type)))
+      //console.log('total', entries.length)
+      //console.log('entries', entries.map(en => en.lines));
+      //console.log('types', new Set(entries.filter(en => en.type).map(en => en.type)))
       if (excludedEntries.length) {
         console.log('excluded entries', excludedEntries);
       }
@@ -350,12 +350,14 @@
           created: (slider) => {
             const current = slider.slides[0].querySelector('.current[data-reading]')
             if (current) {
+console.log('slider created: speak');
               speak(current)
             }
           },
           animationEnded: (slider) => {
             const current = slider.slides[slider.track.details.rel].querySelector('.current[data-reading]');
             if (current) {
+console.log('slider unimation ended: speak');
               speak(current)
             }
           }
@@ -413,9 +415,11 @@
     }
 
     if (document.readyState !== 'loading') {
+console.log('init by ready state');
       init();
     } else {
       document.addEventListener('DOMContentLoaded', () => {
+console.log('init by dom content loaded');
         init();
       })
     }
