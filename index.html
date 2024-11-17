@@ -10,7 +10,7 @@
       margin: 0;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      font-size: 30px;
+      font-size: 20px;
     }
 
     .keen-slider__slide {
@@ -53,6 +53,8 @@
     .card-inner {
       flex: 0;
       align-self: center;
+      text-align: center;
+      margin: 0 20px;
     }
 
     .card {
@@ -62,7 +64,7 @@
     }
 
     .slide-inner {
-      flex: 1 0 auto;
+      flex: 1 1 auto;
       display: flex;
       flex-flow: column nowrap;
       justify-content: center;
@@ -74,14 +76,24 @@
 
     const kanaExcl = [
       '〜',
-      '！'
+      '！',
+      '、',
+      ',',
+      ' '
+    ];
+
+    const toReplace = [
+      '✔',
+      '🎵',
+      '♦'
     ];
 
     function speak(el) {
       if (el.dataset && el.dataset.reading) {
         console.log('speak')
+
         const utterThis = new SpeechSynthesisUtterance(el.dataset.reading);
-        utterThis.lang = "ja-JA";
+        utterThis.lang = "ja";
         window.speechSynthesis.speak(utterThis);
       }
     }
@@ -90,17 +102,22 @@
       return kanaExcl.includes(ch) || (ch >= "぀" && ch <= "ゟ")
     }
 
-    function isKatakana(ch) {
+    function isKatakanaCharacter(ch) {
       return kanaExcl.includes(ch) || (ch >= "゠" && ch <= "・")
     }
 
     function isForReading(str) {
-      return !Array.from(str.trim()).some(ch => !isHiraganaCharacter(ch) && !isKatakana(ch))
+      return !Array.from(str.trim()).some(ch => !isHiraganaCharacter(ch) && !isKatakanaCharacter(ch))
+    }
+
+    function guessCardType() {
+
     }
 
     const exclude = [
       '==',
-    ];asked
+      '~~',
+    ];
 
     const shuffleArray = array => {
       for (let i = array.length - 1; i > 0; i--) {
@@ -202,7 +219,7 @@
     }
 
     function init() {
-      //parseResults(text);
+      parseResults(text);
   
       document.getElementById('myfile').addEventListener('change', function () {
         const fileReader = new FileReader();
