@@ -176,7 +176,7 @@
 
     function speak(el) {
       if (el.dataset && el.dataset.reading) {
-        console.log('speak')
+        console.log('speak', el.dataset.reading)
 
         const utterThis = new SpeechSynthesisUtterance(el.dataset.reading);
         utterThis.lang = isAndroid() ? "ja" : "ja-JA";
