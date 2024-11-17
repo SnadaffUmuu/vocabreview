@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review</title>
+  <style>
+    body {
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-size: 30px;
+    }
+
+    .keen-slider__slide {
+      background: #f1e6e8;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      height: 99vh;
+      max-height: 100vh;
+    }
+
+    .number-slide1 {
+      background: rgb(64, 175, 255);
+    }
+
+    .number-slide2 {
+      background: rgb(255, 75, 64);
+    }
+
+    .number-slide3 {
+      background: rgb(182, 255, 64);
+    }
+
+    .number-slide4 {
+      background: rgb(64, 255, 242);
+    }
+
+    .number-slide5 {
+      background: rgb(255, 64, 156);
+    }
+
+    .number-slide6 {
+      background: rgb(67, 74, 167);
+    }
+
+    .card-inner:not(.current) {
+      display: none;
+    }
+
+    .card-inner {
+      flex: 0;
+      align-self: center;
+    }
+
+    .card {
+      padding: 10px 10px 35px;
+      border: 1px solid pink;
+      position: relative;
+    }
+
+    .slide-inner {
+      flex: 1 0 auto;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+      align-items: stretch;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.css" />
+  <script>
+
+    const kanaExcl = [
+      '〜',
+      '！'
+    ];
+
+    function speak(el) {
+      if (el.dataset && el.dataset.reading) {
+        console.log('speak')
+        const utterThis = new SpeechSynthesisUtterance(el.dataset.reading);
+        utterThis.lang = "ja-JA";
+        window.speechSynthesis.speak(utterThis);
+      }
+    }
+
+    function isHiraganaCharacter(ch) {
+      return kanaExcl.includes(ch) || (ch >= "぀" && ch <= "ゟ")
+    }
+
+    function isKatakana(ch) {
+      return kanaExcl.includes(ch) || (ch >= "゠" && ch <= "・")
+    }
+
+    function isForReading(str) {
+      return !Array.from(str.trim()).some(ch => !isHiraganaCharacter(ch) && !isKatakana(ch))
+    }
+
+    const exclude = [
+      '==',
+    ];asked
+
+    const shuffleArray = array => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+
+    function rotate(el) {
+      const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
+      const current = slide.querySelector('.current');
+      if (current && current.nextElementSibling) {
+        current.nextElementSibling.classList.add('current');
+      } else {
+        slide.querySelector('.card-inner').classList.add('current');
+      }
+      current.classList.remove('current');
+    }
+
+    const text = `[22]
+
+てすと
+тест
+
+全て
+すべて
+все
+
+[23]
+
+違和感
+いわかん
+чувство`;
+
+
+    function entriesFilter(entryStr) {
+      return !entryStr.startsWith('[') && !exclude.find(s => entryStr.indexOf(s) >= 0)
+    }
+
+    function parseResults(text) {
+      let entries = text.split('\n\n').filter(o => entriesFilter(o)).map(entry =>
+        entry.replaceAll('✔', '').split('\n').filter(l => {
+          return (
+            !l.startsWith('?')
+            && !l.startsWith('？')  
+            && !l.startsWith('::') 
+            && l.trim().replaceAll('\n', '').length
+          )
+        }));
+      entries = entries.filter(a => a.length);
+      console.log('total', entries.length)
+      console.log(entries)
+      const container = document.getElementById('my-keen-slider');
+      shuffleArray(entries).forEach((entry, i) => {
+        const sides = shuffleArray(entry).map(s => {
+          return `<div class="card-inner"${isForReading(s) ? ' data-reading="' + s + '"' : ''}>${s}</div>`
+        }).join(``);
+        container.insertAdjacentHTML('beforeend', `
+            <div class="keen-slider__slide">
+              <div class="slide-inner" data-entry="${i}">
+                ${sides}
+              </div>
+            </div>
+            `);
+        const entryEl = container.querySelector(`[data-entry="${i}"] .card-inner`);
+        if (entryEl) {
+          entryEl.classList.add('current');
+        }
+      })
+
+      Array.from(document.querySelectorAll('.slide-inner')).forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          rotate(e.target);
+        })
+      })
+      var slider = new KeenSlider(
+        "#my-keen-slider",
+        {
+          loop: true,
+          created: (slider) => {
+            const current = slider.slides[0].querySelector('.current[data-reading]')
+            if (current) {
+              speak(current)
+            }
+          },
+          animationEnded: (slider) => {
+            const current = slider.slides[slider.track.details.rel].querySelector('.current[data-reading]');
+            if (current) {
+              speak(current)
+            }
+          }
+        },
+      );
+    }
+
+    function init() {
+      //parseResults(text);
+  
+      document.getElementById('myfile').addEventListener('change', function () {
+        const fileReader = new FileReader();
+        let res = '';
+        fileReader.onload = function () {
+          res = fileReader.result; window.speechSynthesis
+          parseResults(res)
+          document.getElementById('myfile').parentElement.remove()
+        }
+        fileReader.readAsText(this.files[0]);
+      })
+    }
+
+    if (document.readyState !== 'loading') {
+      init();
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        init();
+      })
+    }
+  </script>
+</head>
+
+<body>
+  <form enctype="multipart/form-data">
+    <input type="file" id="myfile">
+  </form>
+  <div id="my-keen-slider" class="keen-slider">
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.js"></script>
+</body>
+
+</html>
