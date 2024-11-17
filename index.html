@@ -10,40 +10,53 @@
       margin: 0;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      font-size: 20px;
+      font-size: 30px;
+      background: #f1e6e8;
+    }
+
+    .transcription {
+      font-size:18px;
+      font-family: sans-serif;
+    }
+
+    .night {
+      background: #660013;
+      color: #cecece;
+    }
+
+    #nightMode {
+      width: 35px;
+      height: 32px;
+      position: absolute;
+      right: 3px;
+      top: 3px;
+      border-radius: 3px;
+      border: 1px solid transparent;
+    }
+
+    .night #nightMode {
+      background: #cecece;
+      border: 1px solid #cecece;
+    }
+
+    #menu {
+      position: fixed;
+      top: 0;
+      display: flex;
+      z-index: 100;
+      position: relative;
+    }
+
+    #vocabSources {
+      margin-right: 10px;
     }
 
     .keen-slider__slide {
-      background: #f1e6e8;
       display: flex;
       align-items: stretch;
       justify-content: center;
       height: 99vh;
       max-height: 100vh;
-    }
-
-    .number-slide1 {
-      background: rgb(64, 175, 255);
-    }
-
-    .number-slide2 {
-      background: rgb(255, 75, 64);
-    }
-
-    .number-slide3 {
-      background: rgb(182, 255, 64);
-    }
-
-    .number-slide4 {
-      background: rgb(64, 255, 242);
-    }
-
-    .number-slide5 {
-      background: rgb(255, 64, 156);
-    }
-
-    .number-slide6 {
-      background: rgb(67, 74, 167);
     }
 
     .card-inner:not(.current) {
@@ -59,7 +72,6 @@
 
     .card {
       padding: 10px 10px 35px;
-      border: 1px solid pink;
       position: relative;
     }
 
@@ -71,8 +83,68 @@
       align-items: stretch;
     }
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.css" />
+  <style>
+    .grammar {
+      background:#dcfeff
+    }
+    .night .grammar {
+      background: #005266;
+    }
+    .onomat,
+    .onomatopoeia {
+      background: #f1f0e6;
+    }
+    .night .onomat,
+    .night .onomatopoeia {
+      background:#5a5100
+    }
+    .term {
+      box-shadow: inset 0 0 10px #b1a9aa;
+    }
+    .night .term {
+      box-shadow: inset 0 0 10px #a1001e;
+    }
+  </style>
+  <style>
+  .keen-slider:not([data-keen-slider-disabled]){-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;align-content:flex-start;display:flex;overflow:hidden;position:relative;touch-action:pan-y;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-khtml-user-select:none;width:100%}.keen-slider:not([data-keen-slider-disabled]) .keen-slider__slide{min-height:100%;overflow:hidden;position:relative;width:100%}.keen-slider:not([data-keen-slider-disabled])[data-keen-slider-reverse]{flex-direction:row-reverse}.keen-slider:not([data-keen-slider-disabled])[data-keen-slider-v]{flex-wrap:wrap}    
+  </style>
   <script>
+
+    const japaneseRegex = /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u;
+    const hiraganaRegex = /[\p{Script_Extensions=Hiragana}]/u;
+    const katakanaRegex = /[\p{Script_Extensions=Katakana}]/u;
+    const kanjiRegex = /[\p{Script_Extensions=Han}]/u;
+    const nonJapaneseRegex = /[\p{Script=Cyrillic}\p{Script=Latin}]/u;
+
+    const state = localStorage.getItem('review')
+      ? JSON.parse(localStorage.getItem('review')) : {};
+
+    const gitUrl = 'https://raw.githubusercontent.com/SnadaffUmuu/vocabreview/refs/heads/master/';
+    const vocabFilesIndex = [
+      'chat',
+      'hp1',
+      'kana-enokura-kouson',
+      'murakami-sheep-1',
+      'SR_autumn',
+      'SR_Kona2',
+      'SR_Obon_Society',
+      'SR_summer',
+      'boxes_packs',
+      'goshogun0',
+      'kokugo-osarai',
+      'shirobanba',
+      'SR_Jam',
+      'SR_Nutshell',
+      'SR_spring'
+    ]
+
+    function isAndroid() {
+      return navigator.userAgent.toLowerCase().indexOf("android") > -1
+    }
+
+    function updateLocalStorage() {
+      localStorage.setItem('review', JSON.stringify(state))
+    }
 
     const kanaExcl = [
       '〜',
@@ -88,22 +160,46 @@
       '♦'
     ];
 
+    function renderSelectOptions() {
+      const options = vocabFilesIndex.map(s => `<option ${state.source && state.source == s ? 'selected' : ''} value="${s}">${s}</option>`).join('');
+      document.getElementById('vocabSources').insertAdjacentHTML('beforeend', options)
+    }
+
+    function updateSelect(source) {
+      const options = Array.from(document.querySelectorAll('#vocabSources option'));
+      const matched = options.find(o => o.value == source);
+      if (matched) {
+        options.forEach(o => o.removeAttribute('selected'));
+        matched.setAttribute('selected', true);
+      }
+    }
+
     function speak(el) {
       if (el.dataset && el.dataset.reading) {
         console.log('speak')
 
         const utterThis = new SpeechSynthesisUtterance(el.dataset.reading);
-        utterThis.lang = "ja";
+        utterThis.lang = isAndroid() ? "ja" : "ja-JA";
         window.speechSynthesis.speak(utterThis);
       }
     }
 
     function isHiraganaCharacter(ch) {
-      return kanaExcl.includes(ch) || (ch >= "぀" && ch <= "ゟ")
+      //return kanaExcl.includes(ch) || (ch >= "぀" && ch <= "ゟ")
+      return kanaExcl.includes(ch) || hiraganaRegex.test(ch)
     }
 
     function isKatakanaCharacter(ch) {
-      return kanaExcl.includes(ch) || (ch >= "゠" && ch <= "・")
+      //return kanaExcl.includes(ch) || (ch >= "゠" && ch <= "・")
+      return kanaExcl.includes(ch) || katakanaRegex.test(ch)
+    }
+
+    function isKanjiCharacter(ch) {
+      return kanjiRegex.test(ch)
+      /*
+      return (ch >= "一" && ch <= "龯") ||
+        (ch >= "㐀" && ch <= "䶿");
+      */
     }
 
     function isForReading(str) {
@@ -117,6 +213,7 @@
     const exclude = [
       '==',
       '~~',
+      '・・・'
     ];
 
     const shuffleArray = array => {
@@ -137,10 +234,12 @@
       } else {
         slide.querySelector('.card-inner').classList.add('current');
       }
-      current.classList.remove('current');
+      if (current && current.classList) {
+        current.classList.remove('current');
+      }
     }
 
-    const text = `[22]
+    const testText = `[22]
 
 てすと
 тест
@@ -155,33 +254,78 @@
 いわかん
 чувство`;
 
-
     function entriesFilter(entryStr) {
-      return !entryStr.startsWith('[') && !exclude.find(s => entryStr.indexOf(s) >= 0)
+      return !entryStr.startsWith('[')
+        && !exclude.find(s => entryStr.indexOf(s) >= 0)
+    }
+
+    function linesFilter(l) {
+      return (
+        !l.startsWith('?')
+        && !l.startsWith('？')
+        && !l.startsWith('::')
+        && l.trim().replaceAll('\n', '').length
+      )
     }
 
     function parseResults(text) {
-      let entries = text.split('\n\n').filter(o => entriesFilter(o)).map(entry =>
-        entry.replaceAll('✔', '').split('\n').filter(l => {
-          return (
-            !l.startsWith('?')
-            && !l.startsWith('？')  
-            && !l.startsWith('::') 
-            && l.trim().replaceAll('\n', '').length
-          )
-        }));
-      entries = entries.filter(a => a.length);
+      let excludedEntries = [];
+      let excludedLines = [];
+      let entries = [];
+      text.split('\n\n').forEach(entry => {
+        if (entriesFilter(entry)) {
+          const resEntry = {};
+          let replaced = entry;
+          toReplace.forEach(s => {
+            replaced = replaced.replaceAll(s, '')
+          });
+          const originalLines = replaced.split('\n');
+          const filteredLines = [];
+          originalLines.forEach(l => {
+            if (l.startsWith('::')) {
+              resEntry.type = l.trim().split(' ')[0].split('::')[1];
+            }
+            if (linesFilter(l)) {
+              filteredLines.push(l)
+            } else if (l.replaceAll('\n', '').trim().length) {
+              excludedLines.push(l)
+            }
+          })
+          if (filteredLines.length) {
+            resEntry.lines = filteredLines
+            entries.push(resEntry)
+          }
+        } else {
+          excludedEntries.push(entry)
+        }
+      })
       console.log('total', entries.length)
-      console.log(entries)
+      console.log('entries', entries.map(en => en.lines));
+      console.log('types', new Set(entries.filter(en => en.type).map(en => en.type)))
+      if (excludedEntries.length) {
+        console.log('excluded entries', excludedEntries);
+      }
+      if (excludedLines.length) {
+        console.log('excluded lines', excludedLines);
+      }
+      return entries;
+    }
+
+    function render(entries) {
       const container = document.getElementById('my-keen-slider');
+      container.innerHTML = '';
       shuffleArray(entries).forEach((entry, i) => {
-        const sides = shuffleArray(entry).map(s => {
-          return `<div class="card-inner"${isForReading(s) ? ' data-reading="' + s + '"' : ''}>${s}</div>`
+        const lines = shuffleArray(entry.lines).map(s => {
+          let classes = [];
+          if (nonJapaneseRegex.test(s)) {
+            classes.push('transcription')
+          }
+          return `<div class="card-inner ${classes.join(' ')}"${isForReading(s) ? ' data-reading="' + s + '"' : ''}>${s}</div>`
         }).join(``);
         container.insertAdjacentHTML('beforeend', `
-            <div class="keen-slider__slide">
+            <div class="keen-slider__slide ${entry.type ? entry.type : ''}">
               <div class="slide-inner" data-entry="${i}">
-                ${sides}
+                ${lines}
               </div>
             </div>
             `);
@@ -198,6 +342,7 @@
           rotate(e.target);
         })
       })
+
       var slider = new KeenSlider(
         "#my-keen-slider",
         {
@@ -218,19 +363,53 @@
       );
     }
 
+    function update(source, entries) {
+      state.source = source;
+      updateSelect(state.source);
+      state.entries = parseResults(entries);
+      updateLocalStorage();
+      render(state.entries)
+    }
+
     function init() {
-      parseResults(text);
-  
-      document.getElementById('myfile').addEventListener('change', function () {
+      //render(parseResults(testText));
+
+      const menuContainer = document.getElementById('menu');
+      renderSelectOptions();
+
+      if(state.entries) {
+        render(state.entries)
+      }
+
+      document.getElementById('vocabSources').addEventListener('change', function (e) {
+        if (e.target.value == '') return;
+        const request = new XMLHttpRequest();
+        request.open('GET', gitUrl + e.target.value + '.txt', true);
+        request.onload = function () {
+          if (request.responseText) {
+            update(e.target.value, request.responseText);
+          }
+        };
+        request.send();
+      })
+
+      document.getElementById('myfile').addEventListener('change', function (changeEvent) {
         const fileReader = new FileReader();
-        let res = '';
         fileReader.onload = function () {
-          res = fileReader.result; window.speechSynthesis
-          parseResults(res)
-          document.getElementById('myfile').parentElement.remove()
+          update(changeEvent.target.files[0].name.split('.')[0], fileReader.result)
         }
         fileReader.readAsText(this.files[0]);
       })
+
+      document.getElementById('nightMode').addEventListener('click', () => {
+        document.body.classList.toggle('night');
+        state.nightMode = document.body.classList.contains('night');
+        updateLocalStorage();
+      })
+
+      if (state.nightMode) {
+        document.body.classList.add('night');
+      }
     }
 
     if (document.readyState !== 'loading') {
@@ -244,12 +423,33 @@
 </head>
 
 <body>
-  <form enctype="multipart/form-data">
-    <input type="file" id="myfile">
-  </form>
+  <div id="menu">
+    <select id="vocabSources">
+      <option value="">--select--</option>
+    </select>
+    <form enctype="multipart/form-data">
+      <input type="file" id="myfile">
+    </form>
+    <div id="nightMode">
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        x="0px" y="0px" viewBox="0 0 122.88 112.88" style="enable-background:new 0 0 122.88 112.88"
+        xml:space="preserve">
+        <style type="text/css">
+          .st0 {
+            fill-rule: evenodd;
+            clip-rule: evenodd;
+          }
+        </style>
+        <g>
+          <path class="st0"
+            d="M14.29,0h94.3c7.86,0,14.29,6.43,14.29,14.29v84.3c0,7.86-6.43,14.29-14.29,14.29h-94.3 C6.43,112.88,0,106.45,0,98.59v-84.3C0,6.43,6.43,0,14.29,0L14.29,0z M61.36,24.87c-7.69,4.45-12.87,12.77-12.87,22.3 c0,14.22,11.53,25.75,25.75,25.75c6.75,0,12.9-2.6,17.49-6.85c2.28-2.11,4.89-0.57,4.01,1.94c-4.81,13.82-17.95,23.73-33.41,23.73 c-19.54,0-35.38-15.84-35.38-35.38c0-18.72,14.61-34.1,33.1-35.23C63.47,20.93,64.35,23.14,61.36,24.87L61.36,24.87z" />
+        </g>
+      </svg>
+    </div>
+  </div>
   <div id="my-keen-slider" class="keen-slider">
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.js"></script>
+  <script src="keen-slider.min.js"></script>
 </body>
 
 </html>
