@@ -176,11 +176,13 @@
 
     function speak(el) {
       if (el.dataset && el.dataset.reading) {
-        //console.log('speak', el.dataset.reading)
+        console.log('speak', el.dataset.reading)
 
         const utterThis = new SpeechSynthesisUtterance(el.dataset.reading);
         utterThis.lang = isAndroid() ? "ja" : "ja-JA";
-        window.speechSynthesis.speak(utterThis);
+        setTimeout(() => {
+          window.speechSynthesis.speak(utterThis);
+        }, 0)
       }
     }
 
@@ -354,8 +356,8 @@
         {
           loop: true,
           created: (slider) => {
-            /*
             console.log('slider created')
+            /*
             console.log(slider.slides)
             console.log('rel', slider.track.details.rel)
             console.log('current slide element', slider.slides[0])
@@ -367,8 +369,8 @@
             }
           },
           slideChanged: (slider) => {
+            console.log('slider changed')
             /*
-            console.log('slider animation ended')
             console.log(slider.slides)
             console.log('rel', slider.track.details.rel)
             console.log('current slide element', slider.slides[slider.track.details.rel])
