@@ -119,7 +119,7 @@
     const state = localStorage.getItem('review')
       ? JSON.parse(localStorage.getItem('review')) : {};
 
-    const gitUrl = 'https://raw.githubusercontent.com/SnadaffUmuu/vocabreview/refs/heads/master/';
+    const gitUrl = 'https://raw.githubusercontent.com/SnadaffUmuu/vocabreview/refs/heads/master/vocab/';
     const vocabFilesIndex = [
       'chat',
       'hp1',
@@ -268,7 +268,7 @@
       )
     }
 
-    function parseResults(text) {
+    function parse(text) {
       let excludedEntries = [];
       let excludedLines = [];
       let entries = [];
@@ -312,6 +312,7 @@
     }
 
     function render(entries) {
+      console.log('render...')
       const container = document.getElementById('my-keen-slider');
       container.innerHTML = '';
       shuffleArray(entries).forEach((entry, i) => {
@@ -368,7 +369,7 @@ console.log('slider unimation ended: speak');
     function update(source, entries) {
       state.source = source;
       updateSelect(state.source);
-      state.entries = parseResults(entries);
+      state.entries = parse(entries);
       updateLocalStorage();
       render(state.entries)
     }
