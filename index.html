@@ -20,8 +20,8 @@
     }
 
     .night {
-      background: #660013;
-      color: #cecece;
+      background: #4d000e;
+      color: #a6cecf;
     }
 
     #nightMode {
@@ -179,7 +179,8 @@
         console.log('speak', el.dataset.reading)
 
         const utterThis = new SpeechSynthesisUtterance(el.dataset.reading);
-        utterThis.lang = isAndroid() ? "ja" : "ja-JA";
+        //utterThis.lang = isAndroid() ? "ja_JP" : "ja-JA";
+        utterThis.lang = "ja_JP";
         setTimeout(() => {
           window.speechSynthesis.speak(utterThis);
         }, 0)
