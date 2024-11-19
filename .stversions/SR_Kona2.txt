@@ -1,11 +1,6 @@
 ﻿Satori Reader, Kona's Adventure 2
 僕が生きる道
-::src::sr-kona2
 ====
-
-[44] Tidy Abode
-
-
 
 [43]  Gatsu-Gatsu
 
