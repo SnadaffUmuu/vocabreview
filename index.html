@@ -119,7 +119,7 @@
     const state = localStorage.getItem('review')
       ? JSON.parse(localStorage.getItem('review')) : {};
 
-    const gitUrl = 'https://raw.githubusercontent.com/SnadaffUmuu/vocabreview/refs/heads/master/vocab/';
+    //const gitUrl = 'https://raw.githubusercontent.com/SnadaffUmuu/vocabreview/refs/heads/master/vocab/';
     const vocabFilesIndex = [
       'chat',
       'hp1',
@@ -407,7 +407,8 @@
       document.getElementById('vocabSources').addEventListener('change', function (e) {
         if (e.target.value == '') return;
         const request = new XMLHttpRequest();
-        request.open('GET', gitUrl + e.target.value + '.txt', true);
+        //request.open('GET', gitUrl + e.target.value + '.txt', true);
+        request.open('GET', './vocab/' + e.target.value + '.txt', true);
         request.onload = function () {
           if (request.responseText) {
             update(e.target.value, request.responseText);
