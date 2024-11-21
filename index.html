@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Review</title>
+  <title>TestReview</title>
   <style>
     body {
       margin: 0;
@@ -15,7 +15,7 @@
     }
 
     .transcription {
-      font-size:18px;
+      font-size: 18px;
       font-family: sans-serif;
     }
 
@@ -39,12 +39,27 @@
       border: 1px solid #cecece;
     }
 
-    #menu {
+    #menuTrigger {
       position: fixed;
       top: 0;
-      display: flex;
       z-index: 100;
-      position: relative;
+      height:40px;
+      width:60px;
+    }    
+
+    #menu {
+      z-index: 100;
+      max-width: 70%;
+      transition: transform 0.5s;
+      position: fixed;
+      top:43px;
+      transform: translateX(-100%);
+      padding:5px;
+      background: #a1001e;
+    }
+    
+    #menu.isOpened {
+      transform: translateX(0%);
     }
 
     #vocabSources {
@@ -85,28 +100,62 @@
   </style>
   <style>
     .grammar {
-      background:#dcfeff
+      background: #dcfeff
     }
+
     .night .grammar {
       background: #005266;
     }
+
     .onomat,
     .onomatopoeia {
       background: #f1f0e6;
     }
+
     .night .onomat,
     .night .onomatopoeia {
-      background:#5a5100
+      background: #5a5100
     }
+
     .term {
       box-shadow: inset 0 0 10px #b1a9aa;
     }
+
     .night .term {
       box-shadow: inset 0 0 10px #a1001e;
     }
   </style>
   <style>
-  .keen-slider:not([data-keen-slider-disabled]){-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;align-content:flex-start;display:flex;overflow:hidden;position:relative;touch-action:pan-y;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-khtml-user-select:none;width:100%}.keen-slider:not([data-keen-slider-disabled]) .keen-slider__slide{min-height:100%;overflow:hidden;position:relative;width:100%}.keen-slider:not([data-keen-slider-disabled])[data-keen-slider-reverse]{flex-direction:row-reverse}.keen-slider:not([data-keen-slider-disabled])[data-keen-slider-v]{flex-wrap:wrap}    
+    .keen-slider:not([data-keen-slider-disabled]) {
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+      align-content: flex-start;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      touch-action: pan-y;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -khtml-user-select: none;
+      width: 100%
+    }
+
+    .keen-slider:not([data-keen-slider-disabled]) .keen-slider__slide {
+      min-height: 100%;
+      overflow: hidden;
+      position: relative;
+      width: 100%
+    }
+
+    .keen-slider:not([data-keen-slider-disabled])[data-keen-slider-reverse] {
+      flex-direction: row-reverse
+    }
+
+    .keen-slider:not([data-keen-slider-disabled])[data-keen-slider-v] {
+      flex-wrap: wrap
+    }
   </style>
   <script>
 
@@ -118,6 +167,8 @@
 
     const state = localStorage.getItem('review')
       ? JSON.parse(localStorage.getItem('review')) : {};
+
+    let slider = null;
 
     //const gitUrl = 'https://raw.githubusercontent.com/SnadaffUmuu/vocabreview/refs/heads/master/vocab/';
     const vocabFilesIndex = [
@@ -179,8 +230,7 @@
         console.log('speak', el.dataset.reading)
 
         const utterThis = new SpeechSynthesisUtterance(el.dataset.reading);
-        //utterThis.lang = isAndroid() ? "ja_JP" : "ja-JA";
-        utterThis.lang = "ja_JP";
+        utterThis.lang = isAndroid() ? "ja_JP" : "ja-JP";
         setTimeout(() => {
           window.speechSynthesis.speak(utterThis);
         }, 0)
@@ -245,21 +295,6 @@
       }
     }
 
-    const testText = `[22]
-
-てすと
-тест
-
-全て
-すべて
-все
-
-[23]
-
-違和感
-いわかん
-чувство`;
-
     function entriesFilter(entryStr) {
       return !entryStr.startsWith('[')
         && !exclude.find(s => entryStr.indexOf(s) >= 0)
@@ -319,7 +354,7 @@
       return entries;
     }
 
-    function render(entries) {
+    function renderSlider(entries) {
       //console.log('render...')
       const container = document.getElementById('my-keen-slider');
       container.innerHTML = '';
@@ -352,7 +387,7 @@
         })
       })
 
-      var slider = new KeenSlider(
+      slider = new KeenSlider(
         "#my-keen-slider",
         {
           loop: true,
@@ -391,17 +426,51 @@
       updateSelect(state.source);
       state.entries = parse(entries);
       updateLocalStorage();
-      render(state.entries)
+      renderSlider(state.entries)
+    }
+
+    function setupMenu(menuEl) {
+      const menuTrigger = document.getElementById("menuTrigger");
+      menuTrigger.addEventListener("click", () => {
+        if (menuEl.classList.contains("isOpened")) {
+          menuEl.classList.remove("isOpened")
+          menuTrigger.innerText = ">>"
+        } else {
+          menuEl.classList.add("isOpened")
+          menuTrigger.innerText = "<<"
+        }
+      })
+    }
+
+    function updateView(view) {
+      Array.from(document.querySelectorAll('[data-view]')).forEach(el => {
+        el.style.display = el.dataset.view == view ? '' : 'none';
+      })
+      if (view !== state.view) {
+        state.view = view;
+        updateLocalStorage();
+      }
+      if(view == 'cards') {
+        slider?.update();
+      }
+    }
+
+    function setView() {
+      const currentView = state.view ? state.view : 'cards';
+      updateView(currentView);
+      document.getElementById('viewSelect').addEventListener('change', (e) => {
+        updateView(e.target.value ? e.target.value : currentView)
+      })
     }
 
     function init() {
-      //render(parseResults(testText));
-
       const menuContainer = document.getElementById('menu');
+      setupMenu(menuContainer);
       renderSelectOptions();
+      setView();
 
-      if(state.entries) {
-        render(state.entries)
+      if (state.entries) {
+        renderSlider(state.entries)
       }
 
       document.getElementById('vocabSources').addEventListener('change', function (e) {
@@ -425,7 +494,8 @@
         fileReader.readAsText(this.files[0]);
       })
 
-      document.getElementById('nightMode').addEventListener('click', () => {
+      const nightModeButton = document.getElementById('nightMode');
+      nightModeButton?.addEventListener('click', () => {
         document.body.classList.toggle('night');
         state.nightMode = document.body.classList.contains('night');
         updateLocalStorage();
@@ -447,6 +517,7 @@
 </head>
 
 <body>
+  <button id="menuTrigger">>></button>
   <div id="menu">
     <select id="vocabSources">
       <option value="">--select--</option>
@@ -454,6 +525,7 @@
     <form enctype="multipart/form-data">
       <input type="file" id="myfile">
     </form>
+    <!--
     <div id="nightMode">
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
         x="0px" y="0px" viewBox="0 0 122.88 112.88" style="enable-background:new 0 0 122.88 112.88"
@@ -470,9 +542,21 @@
         </g>
       </svg>
     </div>
+    -->
+    <select id="viewSelect">
+      <option value="">--select view--</option>
+      <option value="cards">cards</option>
+      <option value="table">data table</option>
+      <option value="raw">raw</option>
+      <option value="typesBoard">card types board</option>
+      <option value="answerBoard">answer board</option>
+    </select>
   </div>
-  <div id="my-keen-slider" class="keen-slider">
-  </div>
+  <div style="display:none" data-view="cards" id="my-keen-slider" class="keen-slider"></div>
+  <div style="display:none" data-view="raw"></div>
+  <div style="display:none" data-view="table"></div>
+  <div style="display:none" data-view="typesBoard"></div>
+  <div style="display:none" data-view="answerBoard"></div>
   <script src="keen-slider.min.js"></script>
 </body>
 
