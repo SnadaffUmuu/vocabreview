@@ -1,0 +1,39 @@
+
+@import url("../modules/menu/menu.css");
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 30px;
+  background: #f1e6e8;
+}
+
+.transcription {
+  font-size: 18px;
+  font-family: sans-serif;
+}
+
+.night {
+  background: #4d000e;
+  color: #a6cecf;
+}
+
+#nightMode {
+  width: 35px;
+  height: 32px;
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+.night #nightMode {
+  background: #cecece;
+  border: 1px solid #cecece;
+}
+
+#vocabSources {
+  margin-right: 10px;
+}

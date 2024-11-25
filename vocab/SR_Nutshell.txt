@@ -1,11 +1,11 @@
 ﻿====
 Satori Reader Nutshell Grammar
-::source:srng
+::src::sr-ng
 ====
 
 [70]
 
-マメ 🎵♦
+マメ ✔
 肉刺
 мозоль
 

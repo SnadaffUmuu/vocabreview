@@ -1,0 +1,59 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 30px;
+  background: #f1e6e8;
+}
+
+.transcription {
+  font-size: 18px;
+  font-family: sans-serif;
+}
+
+.night {
+  background: #4d000e;
+  color: #a6cecf;
+}
+
+#nightMode {
+  width: 35px;
+  height: 32px;
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+.night #nightMode {
+  background: #cecece;
+  border: 1px solid #cecece;
+}
+
+#menuTrigger {
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  height:40px;
+  width:60px;
+}
+
+#menu {
+  z-index: 100;
+  max-width: 70%;
+  transition: transform 0.5s;
+  position: fixed;
+  top:43px;
+  transform: translateX(-100%);
+  padding:5px;
+  background: #a1001e;
+}
+
+#menu.isOpened {
+  transform: translateX(0%);
+}
+
+#vocabSources {
+  margin-right: 10px;
+}
