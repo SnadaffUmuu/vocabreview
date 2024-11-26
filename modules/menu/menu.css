@@ -20,3 +20,23 @@
 #menu.isOpened {
   transform: translateX(0%);
 }
+
+#nightMode {
+  width: 35px;
+  height: 32px;
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  z-index:1000;
+}
+
+#nightMode.nightMode {
+  background: #cecece;
+  border: 1px solid #cecece;
+}
+
+#vocabSources {
+  margin-right: 10px;
+}

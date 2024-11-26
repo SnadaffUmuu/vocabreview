@@ -65,13 +65,7 @@ View.prototype = {
       console.error('Error during initialization:', error);
     }
   },
-/*
-  async create () {
-    const view = new this.constructor();
-    await view.init();
-    return view;
-  },
-*/
+
   show () {
     if (this.element === null) {
       this.initElement();

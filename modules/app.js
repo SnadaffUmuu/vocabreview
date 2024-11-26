@@ -1,30 +1,63 @@
-import * as Utils from "./utils.js";
-import * as DataUtils from "./datautils.js";
 import { MenuView } from "./menu/menu.js";
+import { Slider } from "./slider/slider.js";
 
 const APPLICATION_TYPE = {
-  CARDS : 'CARDS',
-  TABLE : 'TABLE',
-  RAW : 'RAW',
-  BOARD : 'BOARD',
-  QUIZBOARD : 'QUIZBOARD'
+  CARDS: 'CARDS',
+  TABLE: 'TABLE',
+  RAW: 'RAW',
+  BOARD: 'BOARD',
+  QUIZBOARD: 'QUIZBOARD'
 }
 
-const Application = {
+export const Application = {
   views: null,
+  rawData : null,
   data: null,
-  state:null,
+  initialState: null,
+  initialData : null,
+  defaultState: {
+    nightMode: false
+  },
+
   initViews: async function () {
     this.views = {
-      MenuView: await MenuView.create()
+      MenuView: await MenuView.create(),
+      SliderView: await Slider.create()
     };
   },
-  initData : function () {
-    this.state = localStorage.getItem('review-state')
-      ? JSON.parse(localStorage.getItem('review-state')) : {};
-    this.data = localStorage.getItem('review-data')
-    ? JSON.parse(localStorage.getItem('review-data')) : {};
-  }
+
+  initState: function () {
+    this.initialState = this.loadFromLocalStorage('review-state', this.defaultState);
+    this.state = new Proxy(Application.initialState, {
+      set(target, property, value) {
+        target[property] = value;
+        Application.saveToLocalStorage('review-state', target);
+        return true;
+      }
+    });
+  },
+
+  initData: function () {
+    this.rawData = this.loadFromLocalStorage('review-data', {})
+    this.data = new Proxy(Application.rawData, {
+      set(target, property, value) {
+        target[property] = value;
+        Application.saveToLocalStorage('review-data', target);
+        Router.showDefaultView();
+        return true;
+      }
+    });
+  },
+
+  saveToLocalStorage : function (key, data) {
+    localStorage.setItem(key, JSON.stringify(data))
+  },
+
+  loadFromLocalStorage : function(key, defaultValue) {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : defaultValue;
+  },
+
 };
 
 const Router = {
@@ -58,42 +91,43 @@ const Router = {
     console.log('Router started');
   },
 
-  showMenuView: function() {
+  showMenuView: function () {
     Application.views.MenuView.show();
+  },
+
+  showSliderView: function () {
+    Application.views.SliderView.show();
   },
 
   showDefaultView: function () {
     switch (this.applicationType) {
       case APPLICATION_TYPE.CARDS:
-        //this.showCardsView();
+        this.showSliderView();
         break;
-        /*
-      case APPLICATION_TYPE.TABLE:
-        this.showTableView();
-        break;
-      case APPLICATION_TYPE.RAW:
-        this.showRawView();
-        break;
-      case APPLICATION_TYPE.BOARD:
-        this.showBoardView();
-        break;
-      case APPLICATION_TYPE.QUIZBOARD:
-        this.showQuizboardView();
-        break;
-        */
+      /*
+    case APPLICATION_TYPE.TABLE:
+      this.showTableView();
+      break;
+    case APPLICATION_TYPE.RAW:
+      this.showRawView();
+      break;
+    case APPLICATION_TYPE.BOARD:
+      this.showBoardView();
+      break;
+    case APPLICATION_TYPE.QUIZBOARD:
+      this.showQuizboardView();
+      break;
+      */
       default:
         throw new Error('Unsupported application type');
     }
-  },
-
-  showCardView: function () {
-
   },
 
 };
 
 document.addEventListener("DOMContentLoaded", async function (event) {
   Application.initData();
+  Application.initState();
   await Application.initViews();
   Router.start();
   console.log(Application.views);
