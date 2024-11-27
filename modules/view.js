@@ -112,9 +112,8 @@ View.prototype = {
   }
 };
 
-// Добавляем метод create как статический метод конструктора
 View.create = async function () {
-  const instance = new this(); // this будет ссылаться на View или MenuView
+  const instance = new this();
   await instance.init();
   return instance;
 };

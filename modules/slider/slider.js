@@ -1,18 +1,27 @@
 import { View } from "../view.js";
-import { shuffleArray, regex } from "../utils.js";
+import { shuffleArray } from "../utils.js";
 import { Application } from "../app.js";
-import { DataFactory } from "../data.js";
+import { Slide } from "../slide/slide.js";
 
 export const Slider = function () {
   this.templateSelector = '#my-keen-slider';
   this.templatePath = 'modules/slider/slider.html';
   this.slider = null;
+  this.slideViews = [];
 
   this.events = {
+
   };
 
-  this.renderSlider = () => {
+  this.renderSlider = async () => {
     this.element.innerHTML = '';
+    this.slideViews = await Promise.all(shuffleArray(Application.data.entries).map(async (entry, i) => {
+      return Slide.create(entry, i);
+    })).then(() => {
+      console.log
+    });
+    
+    /*
     shuffleArray(Application.data.entries).forEach((entry, i) => {
       const lines = shuffleArray(entry.lines).map(s => {
         let classes = [];
@@ -33,15 +42,19 @@ export const Slider = function () {
         entryEl.classList.add('current');
       }
     })
+    */
+    /*
+        Array.from(this.element.querySelectorAll('.slide-inner')).forEach(el => {
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            //rotate(e.target);
+          })
+        })
+    */
+  }
 
-    Array.from(this.element.querySelectorAll('.slide-inner')).forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        //rotate(e.target);
-      })
-    })
-
+  this.initSlider = () => {
     this.slider = new KeenSlider(
       "#my-keen-slider",
       {
@@ -49,32 +62,24 @@ export const Slider = function () {
         created: (slider) => {
           console.log('slider created')
           /*
-          console.log(slider.slides)
-          console.log('rel', slider.track.details.rel)
-          console.log('current slide element', slider.slides[0])
-          console.log('current slide text', slider.slides[0].innerText)
-          */
           const current = slider.slides[0].querySelector('.current[data-reading]')
           if (current) {
             //speak(current)
           }
+          */
         },
         slideChanged: (slider) => {
           console.log('slider changed')
           /*
-          console.log(slider.slides)
-          console.log('rel', slider.track.details.rel)
-          console.log('current slide element', slider.slides[slider.track.details.rel])
-          console.log('current slide text', slider.slides[slider.track.details.rel].innerText)
-          */
           const current = slider.slides[slider.track.details.rel].querySelector('.current[data-reading]');
           if (current) {
             //speak(current)
           }
+          */
         }
       },
     );
-  }
+  };
 
   this.show = function () {
     View.prototype.show.call(this);

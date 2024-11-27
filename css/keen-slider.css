@@ -37,11 +37,19 @@
   max-height: 100vh;
 }
 
-.card-inner:not(.current) {
+.slide-inner {
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.slide-side:not(.current) {
   display: none;
 }
 
-.card-inner {
+.slide-side {
   flex: 0;
   align-self: center;
   text-align: center;
@@ -51,12 +59,4 @@
 .card {
   padding: 10px 10px 35px;
   position: relative;
-}
-
-.slide-inner {
-  flex: 1 1 auto;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: stretch;
 }

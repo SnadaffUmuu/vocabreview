@@ -68,8 +68,8 @@ const Router = {
     var pathName = window.location.pathname.toLowerCase().replace(/\/app\.html$/, '');
     switch (pathName) {
       case '':
-      case 'cards':
-        this.applicationType = APPLICATION_TYPE.CARDS;
+      case 'slider':
+        this.applicationType = APPLICATION_TYPE.SLIDER;
         break;
       case 'table':
         this.applicationType = APPLICATION_TYPE.TABLE;
@@ -101,7 +101,7 @@ const Router = {
 
   showDefaultView: function () {
     switch (this.applicationType) {
-      case APPLICATION_TYPE.CARDS:
+      case APPLICATION_TYPE.SLIDER:
         this.showSliderView();
         break;
       /*
