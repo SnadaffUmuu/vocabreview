@@ -1,7 +1,11 @@
 ﻿Satori Reader, Kona's Adventure 2
 僕が生きる道
-::src::sr-kona2
+::source::SR_Kona2
 ====
+
+[43] Volunteer 
+
+
 
 [45] En-no-Shita
 
@@ -9,7 +13,7 @@
 気が済まない
 If you cause trouble for someone else, it bothers you. Your spirit does not settle. It weighs on you. You feel unsettled about it. Sumimasen is a way of conveying those feelings of regret.
 
-平らげる
+平らげる ▲
 たいらげる
 
 挑む
@@ -17,9 +21,13 @@ If you cause trouble for someone else, it bothers you. Your spirit does not sett
 задирать, провоцировать
 戦いを挑む
 
+縁側
+えんがわ
+открытая веранда вдоль дома выходящая на сад
+
 縁の下
 えんのした
-под полом веранды "энгавы"
+под полом веранды "энгавы" (縁側)
 縁の下の力持ち
 a strong person under the floors
 
@@ -34,17 +42,17 @@ a strong person under the floors
 挑む
 いどむ
 to challenge something (intransitive), идти на кого-то, штурмовать
-山に挑む ♪
-マラソンに挑む ♪
+山に挑む     ♪
+マラソンに挑む     ♪
 вызывать провоцировать (transitive)
-敵に戦いを挑む ♪
+敵に戦いを挑む    ♪
 
 腹立たしい ▲
 はらだたしい
 
 ::grammar
 〜げ
-суффикс после корня прилагательных, = そう - выглядит так будто... . Запись также 〜気に. Обычно с некоторым устойчивым набором слов, человеческие эмоции. 言いたげに、悲しげに、嬉しげに
+суффикс после корня прилагательных, = そう - выглядит так будто... . Запись также 〜気に. Обычно с некоторым устойчивым набором слов, человеческие эмоции. 言いたげに、悲しげに、嬉しげに. 
 
 [44] Tidy Abode
 

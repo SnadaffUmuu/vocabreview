@@ -1,6 +1,5 @@
-﻿====
-Satori Reader Nutshell Grammar
-::src::sr-ng
+﻿Satori Reader Nutshell Grammar
+::source::SR_Nutshell
 ====
 
 [70]

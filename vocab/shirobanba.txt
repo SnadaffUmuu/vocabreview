@@ -1,4 +1,5 @@
-﻿::src::shirobanba1
+﻿しろばんば
+::source::shirobanba
 ========
 第1章
 ========

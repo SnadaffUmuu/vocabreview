@@ -2,6 +2,36 @@ import { regex } from "./utils.js";
 
 export const DataFactory = {
 
+  vocabFilesIndex : [
+    'chat',
+    'hp1',
+    'kana-enokura-kouson',
+    'murakami-sheep-1',
+    'SR_autumn',
+    'SR_Kona2',
+    'SR_Obon_Society',
+    'SR_summer',
+    'boxes_packs',
+    'goshogun0',
+    'kokugo-osarai',
+    'shirobanba',
+    'SR_Jam',
+    'SR_Nutshell',
+    'SR_spring'
+  ],
+
+  isHiraganaCharacter : (ch) => {
+    return kanaExcl.includes(ch) || hiraganaRegex.test(ch)
+  },
+  
+  isKatakanaCharacter : (ch) => {
+    return kanaExcl.includes(ch) || katakanaRegex.test(ch)
+  },
+  
+  isKanjiCharacter : (ch) => {
+    return kanjiRegex.test(ch)
+  },
+
   kanaExcl : [
     '〜',
     '！',
@@ -11,8 +41,8 @@ export const DataFactory = {
   ],
   
   toReplace : [
-    '✔',
     '🎵',
+    '✔',
     '♦'
   ],
   

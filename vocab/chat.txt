@@ -1,4 +1,4 @@
-﻿::src::misc0
+﻿::source::chat
 =========
 
 ちらつく

@@ -1,4 +1,4 @@
-﻿::src::goshogun0
+﻿::source::goshogun0
 =========
 
 [p#210]

@@ -1,4 +1,6 @@
-﻿====
+﻿Boxes packs
+::source::boxes_packs
+====
 魚沼こがねもち
 ====
 

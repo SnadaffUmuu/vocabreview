@@ -1,5 +1,5 @@
 ﻿Satory reader, Four seasons, autumn
-::src::sr-4seasons-autumn
+::source::SR_autumn
 ・・・
 
 [01]・Turning Leaves and Wintry Winds

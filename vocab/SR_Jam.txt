@@ -1,4 +1,5 @@
-﻿::src::sr-jam
+﻿Satori Reader Jam maker
+::source::SR_Jam
 ========
 JAM
 

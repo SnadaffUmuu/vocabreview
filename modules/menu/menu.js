@@ -1,6 +1,5 @@
 import { View } from "../view.js";
 import { Application } from "../app.js"
-import { vocabFilesIndex } from "../utils.js"
 import { DataFactory } from "../data.js"
 
 export const MenuView = function () {
@@ -36,7 +35,7 @@ export const MenuView = function () {
   };
 
   this.renderSelectOptions = function () {
-    const options = vocabFilesIndex.map(s => `
+    const options = DataFactory.vocabFilesIndex.map(s => `
       <option ${Application.state.source && Application.state.source == s ? 'selected' : ''} value="${s}">${s}</option>`).join('');
     this.sourcesSelect.insertAdjacentHTML('beforeend', options);
   }
