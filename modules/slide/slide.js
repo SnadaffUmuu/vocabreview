@@ -1,5 +1,6 @@
 import { Entry } from "../entry/entry.js";
 import { View } from "../view.js";
+import { SlideSide } from "./slide-side.js";
 
 export const Slide = function () {
   this.templateSelector = '.js-slide';
@@ -8,7 +9,23 @@ export const Slide = function () {
 
   this.containerSelector = '.js-slider';
 
-  this.rotate = (el) => {
+  this.lines = null;
+
+  this.sidesToSidesViews = async (lines) => {
+    const results = await Promise.all(
+      lines.map(async (line) => {
+        return SlideSide.create(line)
+      })
+    );
+    return results;
+  };  
+
+  this.renderSides = async () => {
+    this.sideViews = await this.sidesToSidesViews(this.lines);
+    this.sideViews.forEach(o => o.show())
+  };
+
+  this.rotate = function(el) {
     const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
     const current = slide.querySelector('.current');
     if (current && current.nextElementSibling) {
@@ -22,10 +39,16 @@ export const Slide = function () {
     if (current && current.classList) {
       current.classList.remove('current');
     }
-  }  
+  };
+
+  this.show = async function (el) {
+    View.prototype.show.call(this);
+    await this.renderSides()
+  };
 };
 Slide.prototype = Object.create(Entry.prototype);
 Slide.prototype.constructor = Slide;
-Slide.create = function (entry, i) {
-  View.create.call(this);
+Slide.create = async function (entry) {
+  const instance = await Entry.create.call(this, entry);
+  return instance;
 }

@@ -114,6 +114,6 @@ View.prototype = {
 
 View.create = async function () {
   const instance = new this();
-  await instance.init();
+  await instance.init?.();
   return instance;
 };

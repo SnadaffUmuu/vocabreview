@@ -13,14 +13,20 @@ export const Slider = function () {
 
   };
 
+  this.entriesToSlideViews = async (entries) => {
+    const results = await Promise.all(
+      entries.map(async (entry) => {
+        return Slide.create(entry)
+      })
+    );
+    return results;
+  };
+
   this.renderSlider = async () => {
     this.element.innerHTML = '';
-    this.slideViews = await Promise.all(shuffleArray(Application.data.entries).map(async (entry, i) => {
-      return Slide.create(entry, i);
-    })).then(() => {
-      console.log
-    });
-    
+    this.slideViews = await this.entriesToSlideViews(shuffleArray(Application.data.entries));
+    console.log(this.slideViews);
+    this.slideViews.forEach(o => o.show())
     /*
     shuffleArray(Application.data.entries).forEach((entry, i) => {
       const lines = shuffleArray(entry.lines).map(s => {
@@ -81,9 +87,10 @@ export const Slider = function () {
     );
   };
 
-  this.show = function () {
+  this.show = async function () {
     View.prototype.show.call(this);
-    this.renderSlider();
+    await this.renderSlider();
+    this.initSlider();
   }
 };
 Slider.prototype = Object.create(View.prototype);
