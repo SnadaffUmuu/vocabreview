@@ -48,11 +48,7 @@ export const MenuView = function () {
       matched.setAttribute('selected', true);
     }
   }
-/*
-this.update = function (entries) {
-  //renderSlider(state.entries)
-}
-*/
+
   this.changeSource = function (e) {
     if (e.target.value == '') return;
     const request = new XMLHttpRequest();
@@ -62,7 +58,6 @@ this.update = function (entries) {
         Application.state.source = e.target.value;
         Application.rawData = request.responseText;
         Application.data.entries = DataFactory.parse(request.responseText);
-        //TODO: apply data, render view
       }
     }.bind(this);
     request.send();
@@ -80,8 +75,6 @@ this.update = function (entries) {
       document.body.classList.add('night');
     }
   }
-
+  
 };
-MenuView.prototype = Object.create(View.prototype);
-MenuView.prototype.constructor = MenuView;
-MenuView.create = View.create;
+MenuView.prototype = new View();

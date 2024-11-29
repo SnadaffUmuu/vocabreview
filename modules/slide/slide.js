@@ -2,26 +2,27 @@ import { Entry } from "../entry/entry.js";
 import { View } from "../view.js";
 import { SlideSide } from "./slide-side.js";
 
-export const Slide = function () {
+export const Slide = function (entry) {
+  //TODO: перенести в прототип слайда, чтобы не копировались
   this.templateSelector = '.js-slide';
 
   this.templatePath = 'modules/slide/slide.html';
 
   this.containerSelector = '.js-slider';
 
-  this.lines = null;
+  this.lines = entry.lines;
 
-  this.sidesToSidesViews = async (lines) => {
+  this.sidesToSidesViews = async () => {
     const results = await Promise.all(
-      lines.map(async (line) => {
-        return SlideSide.create(line)
+      this.lines.map(async (line) => {
+        return View.create(SlideSide, line)
       })
     );
     return results;
   };  
 
   this.renderSides = async () => {
-    this.sideViews = await this.sidesToSidesViews(this.lines);
+    this.sideViews = await this.sidesToSidesViews();
     this.sideViews.forEach(o => o.show())
   };
 
@@ -46,9 +47,13 @@ export const Slide = function () {
     await this.renderSides()
   };
 };
+Slide.prototype = new View();
+//Slide.prototype = new Entry();
+/*
 Slide.prototype = Object.create(Entry.prototype);
 Slide.prototype.constructor = Slide;
 Slide.create = async function (entry) {
   const instance = await Entry.create.call(this, entry);
   return instance;
 }
+*/

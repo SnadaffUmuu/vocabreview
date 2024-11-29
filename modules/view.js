@@ -1,4 +1,4 @@
-export const View = function () { };
+export const View = function () {};
 
 View.prototype = {
   templatePath: null,
@@ -6,6 +6,8 @@ View.prototype = {
   containerSelector: null,
 
   templateSelector: null,
+
+  templateHtmls: {},
 
   template: null,
 
@@ -15,23 +17,31 @@ View.prototype = {
 
   data: null,
 
-  getContainer () {
+  getContainer() {
     if (this.containerSelector != null) {
       return document.body.querySelector(this.containerSelector);
     }
     return document.body;
   },
 
-  initTemplate: async function  () {
-    if (this.templatePath == null) {
-      throw new Error('template path not defined');
+  fetchTemplateHtml: async function () {
+    const response = await fetch(this.templatePath);
+    const data = await response.text();
+    if (data) {
+      this.templateHtml = data
+    } else {
+      console.error('fetch template failed on path ', this.templatePath)
     }
-    try {
-      const response = await fetch(this.templatePath);
-      const data = await response.text();
+  },
 
-      this.getContainer().insertAdjacentHTML('afterbegin', data);
-      this.template = this.getContainer().querySelector(this.templateSelector);
+  initTemplate: async function () {
+    try {
+      this.getContainer().insertAdjacentHTML(
+        'afterbegin', 
+        this.templateHtmls[this._class.name].templateHtml
+      );
+      this.template = this.getContainer()
+        .querySelector(this.templateSelector);
       if (this.template == null) {
         throw new Error('Element nof found for selector ' + this.templateSelector);
       }
@@ -44,29 +54,20 @@ View.prototype = {
     }
   },
 
-  initElement () {
+  initElement() {
     this.element = this.template.cloneNode(true);
     for (var k in this.events) {
       var spaceIdx = k.indexOf(' ');
       if (spaceIdx != -1) {
-        this.element.querySelector(k.substring(spaceIdx + 1)).addEventListener(k.substring(0, spaceIdx), this[this.events[k]].bind(this));
+        this.element.querySelector(k.substring(spaceIdx + 1))
+        .addEventListener(k.substring(0, spaceIdx), this[this.events[k]].bind(this));
       } else {
         this.element.addEventListener(k, this[this.events[k]].bind(this));
       }
     }
   },
 
-  init: async function ()  {
-    try {
-      await this.initTemplate();
-      this.initElement();
-      this.data = {};
-    } catch (error) {
-      console.error('Error during initialization:', error);
-    }
-  },
-
-  show () {
+  show() {
     if (this.element === null) {
       this.initElement();
       this.data = {};
@@ -75,31 +76,31 @@ View.prototype = {
     this.checkContainer();
   },
 
-  hide () {
+  hide() {
     this.getContainer().removeChild(this.element);
     this.checkContainer();
   },
 
-  isShown () {
+  isShown() {
     return this.getContainer().contains(this.element);
   },
 
-  remove () {
+  remove() {
     this.getContainer().removeChild(this.element);
     this.checkContainer();
     this.element = null;
     this.data = null;
   },
 
-  find (selector) {
+  find(selector) {
     return this.element.querySelector(selector);
   },
 
-  findAll (selector) {
+  findAll(selector) {
     return this.element.querySelectorAll(selector);
   },
 
-  checkContainer () {
+  checkContainer() {
     if (this.containerSelector == null) {
       return;
     }
@@ -109,11 +110,36 @@ View.prototype = {
     } else {
       container.style.display = '';
     }
-  }
-};
+  },
 
-View.create = async function () {
-  const instance = new this();
-  await instance.init?.();
+  init: async function () {
+    if (!View.prototype.templateHtmls[this._class.name] 
+        || !View.prototype.templateHtmls[this._class.name]._templateHtmlPromise) {
+      View.prototype.templateHtmls[this._class.name] = {};
+      View.prototype.templateHtmls[this._class.name]._templateHtmlPromise = (async () => {
+        const response = await fetch(this.templatePath);
+        View.prototype.templateHtmls[this._class.name].templateHtml = await response.text();
+        return View.prototype.templateHtmls[this._class.name].templateHtml;
+      })()
+    }
+    await View.prototype.templateHtmls[this._class.name]._templateHtmlPromise;
+    
+    if (this.templatePath == null) {
+      throw new Error('template path not defined');
+    }
+    try {
+      this.initTemplate();
+      this.initElement();
+      this.data = {};
+    } catch (error) {
+      console.error('Error during initialization:', error);
+    }
+  },
+
+};
+View.create = async function (SubClass, ...args) {
+  const instance = new SubClass(...args);
+  instance._class = SubClass;
+  await instance.init(); 
   return instance;
 };

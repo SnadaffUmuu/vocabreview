@@ -1,5 +1,6 @@
 import { MenuView } from "./menu/menu.js";
 import { Slider } from "./slider/slider.js";
+import { View } from "./view.js";
 
 const APPLICATION_TYPE = {
   CARDS: 'CARDS',
@@ -21,8 +22,8 @@ export const Application = {
 
   initViews: async function () {
     this.views = {
-      MenuView: await MenuView.create(),
-      SliderView: await Slider.create()
+      MenuView: await View.create(MenuView),
+      SliderView: await View.create(Slider)
     };
   },
 

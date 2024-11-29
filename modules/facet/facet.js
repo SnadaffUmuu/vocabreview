@@ -1,7 +1,10 @@
 import { View } from "../view.js";
 
-export const Facet = function () { };
+export const Facet = function () { 
 
+};
+Facet.prototype = new View();
+/*
 Facet.prototype = Object.create(View.prototype);
 Facet.prototype.constructor = Facet;
 Facet.create = async function (text) {
@@ -9,3 +12,4 @@ Facet.create = async function (text) {
   instanse.text = text;
   return instanse
 }
+*/

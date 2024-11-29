@@ -2,6 +2,7 @@ import { View } from "../view.js";
 import { shuffleArray } from "../utils.js";
 import { Application } from "../app.js";
 import { Slide } from "../slide/slide.js";
+import { Entry } from "../entry/entry.js";
 
 export const Slider = function () {
   this.templateSelector = '#my-keen-slider';
@@ -16,7 +17,7 @@ export const Slider = function () {
   this.entriesToSlideViews = async (entries) => {
     const results = await Promise.all(
       entries.map(async (entry) => {
-        return Slide.create(entry)
+        return View.create(Slide, entry)
       })
     );
     return results;
@@ -24,9 +25,11 @@ export const Slider = function () {
 
   this.renderSlider = async () => {
     this.element.innerHTML = '';
+    
     this.slideViews = await this.entriesToSlideViews(shuffleArray(Application.data.entries));
-    console.log(this.slideViews);
     this.slideViews.forEach(o => o.show())
+    /*
+    */
     /*
     shuffleArray(Application.data.entries).forEach((entry, i) => {
       const lines = shuffleArray(entry.lines).map(s => {
@@ -90,9 +93,14 @@ export const Slider = function () {
   this.show = async function () {
     View.prototype.show.call(this);
     await this.renderSlider();
-    this.initSlider();
+    //this.initSlider();
   }
+
+  //this.init();
 };
+Slider.prototype = new View();
+/*
 Slider.prototype = Object.create(View.prototype);
 Slider.prototype.constructor = Slider;
 Slider.create = View.create;
+*/
