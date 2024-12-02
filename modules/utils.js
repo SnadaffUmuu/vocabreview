@@ -31,3 +31,5 @@ export function shuffleArray (array) {
 function isAndroid() {
   return navigator.userAgent.toLowerCase().indexOf("android") > -1
 }
+
+//test ignore git
