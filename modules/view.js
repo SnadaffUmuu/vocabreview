@@ -4,6 +4,8 @@ View.prototype = {
   templatePath: null,
 
   containerSelector: null,
+  
+  containerElement: null,
 
   templateSelector: null,
 
@@ -12,28 +14,22 @@ View.prototype = {
   template: null,
 
   element: null,
+  
+  parentElement: null,
 
   events: null,
 
   data: null,
 
   getContainer() {
+    if(this.containerElement != null) {
+      return this.containerElement
+    }
     if (this.containerSelector != null) {
       return document.body.querySelector(this.containerSelector);
     }
     return document.body;
   },
-
-  fetchTemplateHtml: async function () {
-    const response = await fetch(this.templatePath);
-    const data = await response.text();
-    if (data) {
-      this.templateHtml = data
-    } else {
-      console.error('fetch template failed on path ', this.templatePath)
-    }
-  },
-
   initTemplate: async function () {
     try {
       this.getContainer().insertAdjacentHTML(
@@ -101,7 +97,8 @@ View.prototype = {
   },
 
   checkContainer() {
-    if (this.containerSelector == null) {
+    if (this.containerSelector == null
+      && this.containerElement == null) {
       return;
     }
     var container = this.getContainer();
@@ -138,8 +135,16 @@ View.prototype = {
 
 };
 View.create = async function (SubClass, ...args) {
+  if (!Object.prototype.isPrototypeOf.call(View.prototype, SubClass.prototype)) {
+    SubClass.prototype = Object.create(View.prototype);
+    SubClass.prototype.constructor = SubClass;
+  }
+  if (!SubClass.prototype.defaults && SubClass.prototype.constructor.defaults) {
+    SubClass.prototype.defaults = SubClass.prototype.constructor.defaults;
+  }
   const instance = new SubClass(...args);
   instance._class = SubClass;
-  await instance.init(); 
+  
+  await instance.init();
   return instance;
 };

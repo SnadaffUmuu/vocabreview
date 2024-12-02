@@ -10,7 +10,6 @@ export function speak(el, datasetParam) {
   const param = datasetParam ? datasetParam : 'reading';
   if (el.dataset && el.dataset[param]) {
     console.log('speak', el.dataset[param])
-
     const utterThis = new SpeechSynthesisUtterance(el.dataset[param]);
     utterThis.lang = isAndroid() ? "ja_JP" : "ja-JP";
     setTimeout(() => {

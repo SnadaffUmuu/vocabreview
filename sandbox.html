@@ -6,45 +6,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JS</title>
   <script type="module">
-
-var View = function () {};
+const View = function () { };
 View.prototype = {
-  templatePath: null,
+  text: null,
   init: async function () {
-    if (!View.prototype._templateHtmlPromise) {
-      View.prototype._templateHtmlPromise = (async () => {
-        const response = await fetch(this.templatePath);
-        View.prototype.templateHtml = await response.text();
-        return View.prototype.templateHtml;
-      })();
-    }
-    await View.prototype._templateHtmlPromise;
+    console.log(this.defaults);
   }
 };
 
 View.create = async function (SubClass, ...args) {
-  const instance = new SubClass(...args)
-  await instance.init(); 
+  // Устанавливаем наследование от View
+  if (!Object.prototype.isPrototypeOf.call(View.prototype, SubClass.prototype)) {
+    SubClass.prototype = Object.create(View.prototype);
+    SubClass.prototype.constructor = SubClass;
+  }
+
+  // Перенос свойства defaults из конструктора в прототип (если ещё не перенесено)
+  if (!SubClass.prototype.defaults && SubClass.prototype.constructor.defaults) {
+    SubClass.prototype.defaults = SubClass.prototype.constructor.defaults;
+  }
+
+  // Создаём экземпляр
+  const instance = new SubClass(...args);
+
+  // Выполняем инициализацию
+  await instance.init();
   return instance;
 };
 
-var MenuView = function () {
-  this.templatePath = 'modules/menu/menu.html';
+const Slide = function (text) {
+  this.text = text;
 };
-MenuView.prototype = new View();
 
-async function initViews() {
-  menuViewInstance = await View.create(MenuView);
-}
+// Определяем статическое значение defaults в конструкторе
+Slide.defaults = '111';
 
-let menuViewInstance = null;
-await initViews();
-console.log('111', menuViewInstance.templateHtml); // Гарантированно определено
-setTimeout(() => {
-  console.log('222', menuViewInstance.templateHtml);
-}, 5000);
+// Пример использования
+const theSlide1 = await View.create(Slide, "sample text");
+console.log(theSlide1);
 
-
+// Проверяем прототип
+console.log(Slide.prototype.defaults); // '111'
+console.log(theSlide1.defaults); // '111'
 
   </script>
 </head>

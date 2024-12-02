@@ -3,8 +3,6 @@ import { Application } from "../app.js"
 import { DataFactory } from "../data.js"
 
 export const MenuView = function () {
-  this.templateSelector = '#menuContainer';
-  this.templatePath = 'modules/menu/menu.html';
   this.nightModeEl = null;
   this.sourcesSelect = null;
 
@@ -75,6 +73,9 @@ export const MenuView = function () {
       document.body.classList.add('night');
     }
   }
-  
 };
-MenuView.prototype = new View();
+MenuView.prototype = Object.assign(Object.create(View.prototype), {
+  templateSelector : '#menuContainer',
+  templatePath : 'modules/menu/menu.html',
+})
+MenuView.prototype.constructor = MenuView;

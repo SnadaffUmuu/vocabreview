@@ -97,7 +97,7 @@ const Router = {
   },
 
   showSliderView: function () {
-    Application.views.SliderView.show();
+   Application.views.SliderView.show();
   },
 
   showDefaultView: function () {
@@ -131,5 +131,4 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   Application.initState();
   await Application.initViews();
   Router.start();
-  console.log(Application.views);
 });
