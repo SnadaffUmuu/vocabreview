@@ -1,15 +1,10 @@
 import { View } from "../view.js";
 
-export const Facet = function () { 
-
+export const Facet = function (text, speakable, originalIndex) { 
+  this.text = text;
+  this.speakable = speakable;
+  this.originalIndex = originalIndex;
 };
-Facet.prototype = new View();
-/*
-Facet.prototype = Object.create(View.prototype);
-Facet.prototype.constructor = Facet;
-Facet.create = async function (text) {
-  const instanse = await View.create.call(this);
-  instanse.text = text;
-  return instanse
-}
-*/
+Facet.prototype = Object.assign(Object.create(View.prototype), {
+  
+})

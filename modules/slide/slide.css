@@ -15,7 +15,7 @@
 }
 
 
-.transcription {
+.translation {
   font-size: 18px;
   font-family: sans-serif;
 }
@@ -50,9 +50,14 @@
   display: none;
 }
 
+.slide-side[data-reading] {
+  border-bottom: 2px dashed rgba(56, 119, 255, 0.514);
+}
+
 .slide-side {
   flex: 0;
   align-self: center;
   text-align: center;
   margin: 0 20px;
+  padding: 0 0 15px;
 }

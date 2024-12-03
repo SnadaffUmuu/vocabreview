@@ -46,7 +46,7 @@ export const DataFactory = {
     '♦'
   ],
   
-  exclude : [
+  nonEntrySymbols : [
     '==',
     '~~',
     '・・・'
@@ -63,7 +63,7 @@ export const DataFactory = {
   },
 
   isKanjiCharacter : (ch) => {
-    return kanjiRegex.test(ch)
+    return regex.kanjiRegex.test(ch)
     /*
     return (ch >= "一" && ch <= "龯") ||
       (ch >= "㐀" && ch <= "䶿");
@@ -71,12 +71,16 @@ export const DataFactory = {
   },
 
   isForReading : (str) => {
-    return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch) && !DataFactory.isKatakanaCharacter(ch))
+    return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch) 
+      && !DataFactory.isKatakanaCharacter(ch)
+      && !DataFactory.isKanjiCharacter(ch)
+    )
+    //return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch) && !DataFactory.isKatakanaCharacter(ch))
   },
 
   entriesFilter : (entryStr) => {
     return !entryStr.startsWith('[')
-      && !DataFactory.exclude.find(s => entryStr.indexOf(s) >= 0)
+      && !DataFactory.nonEntrySymbols.find(s => entryStr.indexOf(s) >= 0)
   },
 
   linesFilter : (l) => {
@@ -88,11 +92,12 @@ export const DataFactory = {
     )
   },
 
-  parse: (test) => {
+  parse: (text) => {
+    const collection = {};
     let excludedEntries = [];
     let excludedLines = [];
     let entries = [];
-    test.split('\n\n').forEach(entry => {
+    text.split('\n\n').forEach(entry => {
       if (DataFactory.entriesFilter(entry)) {
         const resEntry = {};
         let replaced = entry;
@@ -102,34 +107,59 @@ export const DataFactory = {
         const originalLines = replaced.split('\n');
         const filteredLines = [];
         originalLines.forEach(l => {
-          if (l.startsWith('::')) {
-            resEntry.type = l.trim().split(' ')[0].split('::')[1];
-          }
-          if (DataFactory.linesFilter(l)) {
-            filteredLines.push(l)
-          } else if (l.replaceAll('\n', '').trim().length) {
-            excludedLines.push(l)
+          const lineText = l.trim()
+          if (lineText.startsWith('::')) {
+            let type = null;
+            const parts = lineText.split('::');
+            if ((parts.length) > 2) {
+              type = parts[1];
+              resEntry.info = parts[2];
+            } else {
+              if (parts[1].startsWith('onomat')) {
+                type = 'onomatopoeia';
+              } else {
+                type = parts[1];
+              }
+            }
+            if (type) {
+              resEntry.type = type;
+            }
+          } else {
+            if (DataFactory.linesFilter(lineText)) {
+              filteredLines.push(lineText)
+            } else if (lineText.replaceAll('\n', '').trim().length) {
+              excludedLines.push(lineText)
+            }
           }
         })
         if (filteredLines.length) {
-          resEntry.lines = filteredLines
+          const resLines = filteredLines.map((l, i) => {
+            const lineObject = {
+              text : l,
+              originalIndex : i,
+              speakable : DataFactory.isForReading(l),
+              isTranslation : regex.nonJapaneseRegex.test(l)
+            }
+
+            return lineObject
+          })
+          resEntry.lines = resLines
           entries.push(resEntry)
         }
       } else {
         excludedEntries.push(entry)
       }
     })
+    collection.entries = entries;
     /*
-    console.log('total', entries.length)
-    console.log('entries', entries.map(en => en.lines));
     console.log('types', new Set(entries.filter(en => en.type).map(en => en.type)))
-    if (excludedEntries.length) {
-      console.log('excluded entries', excludedEntries);
+    */
+   if (excludedEntries.length) {
+      collection.excludedEntries = excludedEntries;
     }
     if (excludedLines.length) {
-      console.log('excluded lines', excludedLines);
+      collection.excludedLines = excludedLines;
     }
-    */
-    return entries;
+    return collection;
   }
 }

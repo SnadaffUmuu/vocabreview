@@ -55,7 +55,7 @@ export const MenuView = function () {
       if (request.responseText) {
         Application.state.source = e.target.value;
         Application.rawData = request.responseText;
-        Application.data.entries = DataFactory.parse(request.responseText);
+        Application.data.collection = DataFactory.parse(request.responseText);
       }
     }.bind(this);
     request.send();

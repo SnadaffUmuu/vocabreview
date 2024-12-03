@@ -44,6 +44,7 @@ export const Application = {
       set(target, property, value) {
         target[property] = value;
         Application.saveToLocalStorage('review-data', target);
+        //todo: updateCurrentView
         Router.showDefaultView();
         return true;
       }

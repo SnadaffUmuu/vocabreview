@@ -1,4 +1,5 @@
-import { shuffleArray, speak } from "../utils.js";
+import { Application } from "../app.js";
+import { shuffleArray } from "../utils.js";
 import { View } from "../view.js";
 import { SlideSide } from "./slide-side.js";
 
@@ -20,14 +21,28 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
     return results;
   },
 
-  setSlideProps : function()   {
+  entry : {
+    lines : [
+      {
+        text : '',
+        speakable : true,
+        originalIndex : 0,
+        isTranslation : false
+      },
+    ],
+    type : ''
+  },
+
+  setSlideProps : function() {
     if (this.entry.type) {
       this.element.classList.add(this.entry.type)
     }
     this.element.querySelector('.slide-inner').addEventListener('click', function (e) {
       e.stopPropagation();
       e.preventDefault();
-      this.rotate(e.target);
+      if (e.target.classList.contains('js-slide-inner')) {
+        this.rotate(e.target);
+      }
     }.bind(this))
   },
 
@@ -40,17 +55,21 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
   rotate: function (el) {
     const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
     const current = slide.querySelector('.current');
+    let newCurrent = null;
     if (current && current.nextElementSibling) {
-      current.nextElementSibling.classList.add('current');
-      speak(current.nextElementSibling);
+      newCurrent = current.nextElementSibling
     } else {
-      const speakableEl = slide.querySelector('.slide-side');
-      speakableEl.classList.add('current');
-      speak(speakableEl);
+      newCurrent = slide.querySelector('.slide-side')
     }
+    newCurrent.classList.add('current');
     if (current && current.classList) {
       current.classList.remove('current');
     }
+    /*
+    Application.views.SliderView.element.dispatchEvent(new CustomEvent('slideRotated', { detail : {
+      currentSide : newCurrent
+    }}))
+    */
   },
 
   show: async function (el) {
