@@ -43,7 +43,6 @@ View.prototype = {
       }
       this.getContainer().removeChild(this.template);
       this.checkContainer();
-      console.log('template initiated')
     } catch (error) {
       console.error('Error initializing template:', error);
       throw error;

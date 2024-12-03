@@ -31,14 +31,14 @@ export const Slider = function () {
       {
         loop: true,
         created: function (slider) {
-          console.log('slider created')
+          console.log('slider created', slider.slides.length)
           const current = slider.slides[0].querySelector('.current[data-reading]')
           if (current) {
             speak(current)
           }
         },
         slideChanged: function (slider) {
-          console.log('slider changed')
+          console.log('slide changed', slider.slides.length)
           const current = slider.slides[slider.track.details.rel].querySelector('.current[data-reading]');
           if (current) {
             speak(current)
@@ -46,11 +46,15 @@ export const Slider = function () {
         }
       },
     );
+    console.log('slider length ', slider.slides.length)
     this.slider = slider;
   };
 
   this.show = async function () {
     View.prototype.show.call(this);
+    if (this.slider) {
+      this.slider.destroy();
+    }
     await this.renderSlider();
     this.initSlider();
   }
