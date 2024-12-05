@@ -72,6 +72,7 @@ export const MenuView = function () {
     if (Application.state.nightMode) {
       document.body.classList.add('night');
     }
+    
   }
 };
 MenuView.prototype = Object.assign(Object.create(View.prototype), {

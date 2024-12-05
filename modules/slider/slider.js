@@ -1,5 +1,5 @@
 import { View } from "../view.js";
-import { shuffleArray, speak } from "../utils.js";
+import { shuffleArray } from "../utils.js";
 import { Application } from "../app.js";
 import { Slide } from "../slide/slide.js";
 
@@ -9,8 +9,9 @@ export const Slider = function () {
   this.keensliderContainer = null;
 
   this.entriesToSlideViews = async () => {
+    const entries = this.data.entries;
     const results = await Promise.all(
-      shuffleArray(Application.data.collection.entries).map(async (entry) => {
+      shuffleArray(entries).map(async (entry) => {
         return View.create(Slide, entry)
       })
     );
@@ -31,27 +32,21 @@ export const Slider = function () {
       "#my-keen-slider",
       {
         loop: true,
-        /*
-        created: function (slider) {
-          this.updateSpeakerState('reading' in slider.slides[0].querySelector('.current').dataset)
-        }.bind(this),
-        slideChanged: function (slider) {
-          this.updateSpeakerState('reading' in slider.slides[slider.track.details.rel].querySelector('.current').dataset)
-        }.bind(this)
-        */
       },
     );
     console.log('slider length ', slider.slides.length)
     this.slider = slider;
   };
-  /*
-  this.updateSpeakerState = function(visible) {
-    this.speakEl.style.display = visible ? '' : 'none';
-  };
-  */
   this.show = async function () {
     View.prototype.show.call(this);
-    if (!Application.data.collection?.entries?.length) return;
+    console.log(Application.filteredData.entries);
+    console.log(Application.filteredData.entries !== null && Application.filteredData.entries.length > 0);
+    if (Application.filteredData.entries !== null && Application.filteredData.entries.length > 0) {
+      this.data.entries = Application.filteredData.entries
+    } else {
+      if (!Application.data.collection?.entries?.length) return;
+      this.data.entries = Application.data.collection.entries
+    }
     this.keensliderContainer = this.element.querySelector('#my-keen-slider');
     this.speakEl = this.element.querySelector('#speak');
     if (this.slider) {
@@ -59,9 +54,6 @@ export const Slider = function () {
     }
     await this.renderSlider();
     this.initSlider();
-    this.element.addEventListener('slideRotated', (e) => {
-      //this.updateSpeakerState('reading' in e.detail.currentSide.dataset)
-    })
   }
 };
 Slider.prototype = Object.assign(Object.create(View.prototype), {

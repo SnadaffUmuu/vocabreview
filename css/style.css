@@ -2,6 +2,7 @@
 @import url("../modules/menu/menu.css");
 @import url("../modules/slider/slider.css");
 @import url("../modules/slide/slide.css");
+@import url("../modules/structure/structure.css");
 
 body {
   margin: 0;

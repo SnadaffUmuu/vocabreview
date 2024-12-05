@@ -1,7 +1,8 @@
 ﻿Satory reader, Four seasons, Spring
 ::source::SR_spring
 ====
-10
+
+[10]
 
 胸を張る
 むねをはる
@@ -28,8 +29,7 @@
 поэт. a distant location; far beyond; yonder. "evokes the sense of casting your eyes far into the distance and it helps to create a sense of grand scale"
 海の彼方、平原の彼方
 
-====
-9
+[9]
 
 力強い
 ちからづよい
@@ -45,12 +45,11 @@
 すだち
 вылет из гнезда, покидание гнезда
 
-====
-8
+[8]
 
 えさを捕る
 
-❖ 無事で良かった！
+無事で良かった！
 
 在庫する、ある ✔
 ざいこ
@@ -61,10 +60,7 @@ I'm glad they still had (something in) stock (at a store, etc).
 彼はちゃんと家に帰っ
 ちゃんと ？
 
-====
-7
-====
-6
+[6,7]
 
 一瞬見失った
 見失う
@@ -90,8 +86,7 @@ I'm glad they still had (something in) stock (at a store, etc).
 くさむら
 заросли , густая высокая трава , кустарник
 
-====
-5
+[5]
 
 狙いを変える
 ねらい
@@ -133,8 +128,7 @@ I'm glad they still had (something in) stock (at a store, etc).
 たいあたり
 таранить, броситься в атаку всем телом
 
-====
-4
+[4]
 
 誰かに体当たりする
 たいあたり
@@ -151,8 +145,7 @@ I'm glad they still had (something in) stock (at a store, etc).
 って вместо は
 heavy-duty conversational equivalent of は. It marks the previous phrase as something about which the speaker is about to express a judgement or ask a question
 
-====
-3
+[3]
 
 誰かの真似をする
 まね

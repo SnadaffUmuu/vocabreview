@@ -12,9 +12,13 @@
   transition: transform 0.5s;
   position: fixed;
   top:43px;
+  bottom:0;
+  overflow:scroll;
   transform: translateX(-100%);
   padding:5px;
   background: #a1001e;
+  font-size:13px;
+  color:#ffffff;
 }
 
 #menu.isOpened {

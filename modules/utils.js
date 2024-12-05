@@ -3,7 +3,9 @@ export const regex = {
   hiraganaRegex: /[\p{Script_Extensions=Hiragana}]/u,
   katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
   kanjiRegex: /[\p{Script_Extensions=Han}]/u,
-  nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u
+  nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
+  upperSectionTitle : /~~\n(.*)\n~~/u,
+  pageLevelSection : /\[(.*)\]((.*))?/u,
 }
 
 export function speak(text) {
@@ -27,4 +29,17 @@ export function shuffleArray(array) {
 
 function isAndroid() {
   return navigator.userAgent.toLowerCase().indexOf("android") > -1
+}
+
+export function stringToHash(string) {
+  var hash = 0;
+  if (string.length == 0) return hash;
+
+  for (let i = 0; i < string.length; i++) {
+    const char = string.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+
+  return hash;
 }

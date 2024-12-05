@@ -1,0 +1,8 @@
+#structure ul {
+  padding:0 0 10px 10px;
+  list-style-type: none;
+}
+
+#structure ul ul {
+  padding-top:10px;
+}

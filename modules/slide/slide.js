@@ -34,6 +34,7 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
   },
 
   setSlideProps : function() {
+    this.element.dataset.section = this.entry.section
     if (this.entry.type) {
       this.element.classList.add(this.entry.type)
     }

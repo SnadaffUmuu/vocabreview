@@ -1,5 +1,6 @@
 import { MenuView } from "./menu/menu.js";
 import { Slider } from "./slider/slider.js";
+import { StructureView } from "./structure/structure.js";
 import { View } from "./view.js";
 
 const APPLICATION_TYPE = {
@@ -16,6 +17,9 @@ export const Application = {
   data: null,
   initialState: null,
   initialData : null,
+  filteredData : {
+    entries : null
+  },
   defaultState: {
     nightMode: false
   },
@@ -23,7 +27,7 @@ export const Application = {
   initViews: async function () {
     this.views = {
       MenuView: await View.create(MenuView),
-      SliderView: await View.create(Slider)
+      SliderView: await View.create(Slider),
     };
   },
 
@@ -44,9 +48,20 @@ export const Application = {
       set(target, property, value) {
         target[property] = value;
         Application.saveToLocalStorage('review-data', target);
-        //todo: updateCurrentView
+        Router.showDefaultView();
+        Application.views.StructureView.render();
+        Application.filteredData.entries = null;
+        return true;
+      }
+    });
+    this.filteredData = new Proxy(this.filteredData, {
+      set(target, property, value) {
+        target[property] = value;
         Router.showDefaultView();
         return true;
+      },
+      get(target, property) {
+        return target[property]
       }
     });
   },
@@ -93,8 +108,10 @@ const Router = {
     console.log('Router started');
   },
 
-  showMenuView: function () {
+  showMenuView: async function () {
     Application.views.MenuView.show();
+    Application.views.StructureView = await View.create(StructureView);
+    Application.views.StructureView.show();
   },
 
   showSliderView: function () {

@@ -1,8 +1,9 @@
-import { regex } from "./utils.js";
+import { Application } from "./app.js";
+import { regex, stringToHash } from "./utils.js";
 
 export const DataFactory = {
 
-  vocabFilesIndex : [
+  vocabFilesIndex: [
     'chat',
     'hp1',
     'kana-enokura-kouson',
@@ -17,52 +18,54 @@ export const DataFactory = {
     'shirobanba',
     'SR_Jam',
     'SR_Nutshell',
-    'SR_spring'
+    'SR_spring',
+    'SR-subway-attack',
   ],
 
-  isHiraganaCharacter : (ch) => {
+  isHiraganaCharacter: (ch) => {
     return kanaExcl.includes(ch) || hiraganaRegex.test(ch)
   },
-  
-  isKatakanaCharacter : (ch) => {
+
+  isKatakanaCharacter: (ch) => {
     return kanaExcl.includes(ch) || katakanaRegex.test(ch)
   },
-  
-  isKanjiCharacter : (ch) => {
+
+  isKanjiCharacter: (ch) => {
     return kanjiRegex.test(ch)
   },
 
-  kanaExcl : [
+  kanaExcl: [
     '〜',
     '！',
     '、',
     ',',
     ' '
   ],
-  
-  toReplace : [
+
+  toReplace: [
     '🎵',
     '✔',
-    '♦'
+    '♦',
+    '▲'
   ],
-  
-  nonEntrySymbols : [
+
+  nonEntrySymbols: [
     '==',
     '~~',
     '・・・'
   ],
 
-  isHiraganaCharacter : (ch) => {
+  isHiraganaCharacter: (ch) => {
     //return kanaExcl.includes(ch) || (ch >= "぀" && ch <= "ゟ")
     return DataFactory.kanaExcl.includes(ch) || regex.hiraganaRegex.test(ch)
   },
 
-  isKatakanaCharacter : (ch) => {
+  isKatakanaCharacter: (ch) => {
     //return kanaExcl.includes(ch) || (ch >= "゠" && ch <= "・")
     return DataFactory.kanaExcl.includes(ch) || regex.katakanaRegex.test(ch)
   },
 
-  isKanjiCharacter : (ch) => {
+  isKanjiCharacter: (ch) => {
     return regex.kanjiRegex.test(ch)
     /*
     return (ch >= "一" && ch <= "龯") ||
@@ -70,20 +73,20 @@ export const DataFactory = {
     */
   },
 
-  isForReading : (str) => {
-    return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch) 
+  isForReading: (str) => {
+    return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch)
       && !DataFactory.isKatakanaCharacter(ch)
       && !DataFactory.isKanjiCharacter(ch)
     )
     //return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch) && !DataFactory.isKatakanaCharacter(ch))
   },
 
-  entriesFilter : (entryStr) => {
+  entryFilter: (entryStr) => {
     return !entryStr.startsWith('[')
       && !DataFactory.nonEntrySymbols.find(s => entryStr.indexOf(s) >= 0)
   },
 
-  linesFilter : (l) => {
+  linesFilter: (l) => {
     return (
       !l.startsWith('?')
       && !l.startsWith('？')
@@ -97,8 +100,51 @@ export const DataFactory = {
     let excludedEntries = [];
     let excludedLines = [];
     let entries = [];
+    const structure = [];
+    let currentUpperSection = null;
+    let currentSection = null;
     text.split('\n\n').forEach(entry => {
-      if (DataFactory.entriesFilter(entry)) {
+      if (entry.indexOf('~~') > -1) {
+        const structureEntry = {
+          name: entry.match(new RegExp(regex.upperSectionTitle))[1],
+          index: structure.length,
+        }
+        structureEntry.id = stringToHash(JSON.stringify(structureEntry));
+        structure.push(structureEntry)
+        currentUpperSection = structureEntry.id;
+      }
+      if (entry.startsWith('[')) {
+        const nameMatchGroups = entry.match(new RegExp(regex.pageLevelSection));
+        const name = nameMatchGroups[1] + (nameMatchGroups.length > 1 && nameMatchGroups[2] != undefined ? nameMatchGroups[2] : '');
+        let index = null;
+        let parent = null;
+        if (currentUpperSection) {
+          parent = structure.find(o => o.id == currentUpperSection);
+          index = parent.children ? parent.children.length : 0
+        } else {
+          index = structure.length
+        }
+        const structureEntry = {
+          name: name,
+          index: index
+        }
+        if (parent) {
+          structureEntry.parentId = parent.id;
+        }
+        const hash = stringToHash(JSON.stringify(structureEntry));
+        currentSection = hash;
+        structureEntry.id = hash;
+        if (parent) {
+          if (parent.children) {
+            parent.children.push(structureEntry)
+          } else {
+            parent.children = [structureEntry];
+          }
+        } else {
+          structure.push(structureEntry)
+        }
+      }
+      if (DataFactory.entryFilter(entry)) {
         const resEntry = {};
         let replaced = entry;
         DataFactory.toReplace.forEach(s => {
@@ -122,7 +168,7 @@ export const DataFactory = {
               }
             }
             if (type) {
-              resEntry.type = type;
+              resEntry.type = type.trim();
             }
           } else {
             if (DataFactory.linesFilter(lineText)) {
@@ -135,15 +181,19 @@ export const DataFactory = {
         if (filteredLines.length) {
           const resLines = filteredLines.map((l, i) => {
             const lineObject = {
-              text : l,
-              originalIndex : i,
-              speakable : DataFactory.isForReading(l),
-              isTranslation : regex.nonJapaneseRegex.test(l)
+              text: l,
+              originalIndex: i,
+              speakable: DataFactory.isForReading(l),
+              isTranslation: regex.nonJapaneseRegex.test(l)
             }
-
             return lineObject
           })
-          resEntry.lines = resLines
+          resEntry.lines = resLines;
+          if (currentSection) {
+            resEntry.section = currentSection
+          } else if (currentUpperSection) {
+            resEntry.section = currentUpperSection
+          }
           entries.push(resEntry)
         }
       } else {
@@ -154,12 +204,23 @@ export const DataFactory = {
     /*
     console.log('types', new Set(entries.filter(en => en.type).map(en => en.type)))
     */
-   if (excludedEntries.length) {
+    if (excludedEntries.length) {
       collection.excludedEntries = excludedEntries;
     }
     if (excludedLines.length) {
       collection.excludedLines = excludedLines;
     }
+    console.log('structure', structure)
+    collection.structure = structure;
     return collection;
+  },
+
+  filter: (entries) => {
+    if (!entries || !entries.length) {
+      Application.filteredData.entries = null;
+      return;
+    }
+    const res = Application.data.collection.entries.filter(entry => entries.includes(entry.section))
+    Application.filteredData.entries = res;
   }
 }

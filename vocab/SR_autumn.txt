@@ -1,5 +1,6 @@
 ﻿Satory reader, Four seasons, autumn
 ::source::SR_autumn
+====
 
 [04] Foraging Advice
 
@@ -37,7 +38,7 @@
 ばったり出会う
 случайно встретиться
 
-[01]・Turning Leaves and Wintry Winds
+[01] Turning Leaves and Wintry Winds
 
 甘酸っぱい
 あまずっぱい
@@ -53,7 +54,7 @@
 くいだめ
 наесться до отвала, наесться надолго
 
-木枯らし ♦
+木枯らし ✔
 こがらし
 холодный осенний ветер
 
