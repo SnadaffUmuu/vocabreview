@@ -3,9 +3,13 @@ export const regex = {
   hiraganaRegex: /[\p{Script_Extensions=Hiragana}]/u,
   katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
   kanjiRegex: /[\p{Script_Extensions=Han}]/u,
-  nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
-  upperSectionTitle : /~~\n(.*)\n~~/u,
-  pageLevelSection : /\[(.*)\]((.*))?/u,
+  kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{P}\s]+$/u,
+  //nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
+  nonJapaneseRegex: /^[\p{Script=Cyrillic}\p{Script=Latin}\p{N}\p{P}\p{Zs}]+$/u,
+  japaneseRegex2: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{P}\s]+$/u,
+  upperSectionTitle: /~~\n(.*)\n~~/u,
+  pageLevelSection: /\[(.*)\]((.*))?/u,
+  mixedLine: /^(?=.*[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])(?=.*[\p{Script=Latin}\p{Script=Cyrillic}])[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{Script=Latin}\p{Script=Cyrillic}\p{N}\p{P}\s]+$/u,
 }
 
 export function speak(text) {
@@ -42,4 +46,9 @@ export function stringToHash(string) {
   }
 
   return hash;
+}
+
+export function shortestString(arr) {
+  let maxLength = Math.max(...arr.map(str => str.length))
+  return arr.find(str => str.length === maxLength);
 }

@@ -7,6 +7,11 @@ export const Slider = function () {
   this.slider = null;
   this.slideViews = [];
   this.keensliderContainer = null;
+  this.currentSlideIndexEl = null;
+
+  this.showCurrentIndex = function (index) {
+    this.currentSlideIndexEl.innerHTML = index;
+  }
 
   this.entriesToSlideViews = async () => {
     const entries = this.data.entries;
@@ -21,32 +26,40 @@ export const Slider = function () {
   this.renderSlider = async () => {
     this.keensliderContainer.innerHTML = '';
     this.slideViews = await this.entriesToSlideViews();
-    console.log(this.slideViews)
+    //console.log(this.slideViews)
     await Promise.all(
       this.slideViews.map(async o => o.show())
     );
   }
 
   this.initSlider = () => {
+    const showIndex = (index) => {
+      this.showCurrentIndex(index)
+    }
     const slider = new KeenSlider(
       "#my-keen-slider",
       {
         loop: true,
+        created: (slider) => {
+          showIndex(slider.track.details.rel)
+        },
+        slideChanged: (slider) => {
+          showIndex(slider.track.details.rel)
+        }
       },
     );
-    console.log('slider length ', slider.slides.length)
     this.slider = slider;
   };
+
   this.show = async function () {
     View.prototype.show.call(this);
-    console.log(Application.filteredData.entries);
-    console.log(Application.filteredData.entries !== null && Application.filteredData.entries.length > 0);
     if (Application.filteredData.entries !== null && Application.filteredData.entries.length > 0) {
       this.data.entries = Application.filteredData.entries
     } else {
       if (!Application.data.collection?.entries?.length) return;
       this.data.entries = Application.data.collection.entries
     }
+    this.currentSlideIndexEl = this.element.querySelector('#currentSlideIndex');
     this.keensliderContainer = this.element.querySelector('#my-keen-slider');
     this.speakEl = this.element.querySelector('#speak');
     if (this.slider) {
@@ -57,6 +70,7 @@ export const Slider = function () {
   }
 };
 Slider.prototype = Object.assign(Object.create(View.prototype), {
+  containerSelector : '#appBody',
   templateSelector : '#sliderView',
   templatePath : 'modules/slider/slider.html',
 })

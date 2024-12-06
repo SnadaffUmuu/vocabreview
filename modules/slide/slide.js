@@ -21,18 +21,6 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
     return results;
   },
 
-  entry : {
-    lines : [
-      {
-        text : '',
-        speakable : true,
-        originalIndex : 0,
-        isTranslation : false
-      },
-    ],
-    type : ''
-  },
-
   setSlideProps : function() {
     this.element.dataset.section = this.entry.section
     if (this.entry.type) {
@@ -66,11 +54,6 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
     if (current && current.classList) {
       current.classList.remove('current');
     }
-    /*
-    Application.views.SliderView.element.dispatchEvent(new CustomEvent('slideRotated', { detail : {
-      currentSide : newCurrent
-    }}))
-    */
   },
 
   show: async function (el) {

@@ -8,16 +8,9 @@ export const MenuView = function () {
 
   this.events = {
     'click #menuTrigger': 'toggleMenu',
-    'click #nightMode': 'toggleNightMode',
     'change #vocabSources': 'changeSource'
   };
 
-  this.toggleNightMode = function () {
-    document.body.classList.toggle('night');
-    console.log(Application.state);
-    Application.state.nightMode = document.body.classList.contains('night');
-    console.log(localStorage.getItem('review-state'));
-  }
 
   this.toggleMenu = function (e) {
     e && e.preventDefault();
@@ -63,16 +56,11 @@ export const MenuView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
-    this.nightModeEl = document.getElementById('nightMode');
     this.sourcesSelect = this.element.querySelector('#vocabSources');
     this.renderSelectOptions();
     if (Application.state.source) {
       this.setSelectedOption(Application.state.source)
     }
-    if (Application.state.nightMode) {
-      document.body.classList.add('night');
-    }
-    
   }
 };
 MenuView.prototype = Object.assign(Object.create(View.prototype), {

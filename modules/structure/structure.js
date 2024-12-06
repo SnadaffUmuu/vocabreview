@@ -14,17 +14,18 @@ export const StructureView = function () {
   };
 
   this.toggleTreeCheckboxes = function (e) {
+    const trueCheckboxesSelector = '.treeCheckbox'
     let check = e.target;
 
     //  check/unchek children (includes check itself)
-    const children = Array.from(check.parentNode.querySelectorAll('input'))
+    const children = Array.from(check.parentNode.querySelectorAll(trueCheckboxesSelector))
     children.forEach(child => child.checked = check.checked);
 
     //  traverse up from target check
     while (check) {
       //  find parent and sibling checkboxes (quick'n'dirty)
-      const parent = (check.closest(['ul']).parentNode).querySelector('input');
-      const siblings = Array.from(parent.closest('li').querySelector(['ul']).querySelectorAll('input'));
+      const parent = (check.closest(['ul']).parentNode).querySelector(trueCheckboxesSelector);
+      const siblings = Array.from(parent.closest('li').querySelector(['ul']).querySelectorAll(trueCheckboxesSelector));
 
       //  get checked state of siblings
       //  are every or some siblings checked (using Boolean as test function) 
@@ -44,14 +45,14 @@ export const StructureView = function () {
 
   this.resetTreeFilters = function () {
     Array.from(
-      this.treeEl.querySelectorAll('input[type=checkbox]:checked')
+      this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
     ).forEach(ch => ch.checked = false)
     DataFactory.filter(null)
   }
 
   this.filterCollection = function () {
     const checkedSections = Array.from(
-      this.treeEl.querySelectorAll('input[type=checkbox]:checked')
+      this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
     ).map(ch => parseInt(ch.value))
     DataFactory.filter(checkedSections)
   }
@@ -61,23 +62,31 @@ export const StructureView = function () {
   }
 
   this.getCheckboxHtml = function (value) {
-    return `<input type="checkbox" value="${value}">`
+    return `<input class="treeCheckbox" type="checkbox" value="${value}">`
+  }
+
+  this.getListNameHtml = function (name, value) {
+    return `
+    <input class="collapsibleListCheckbox" id="${value}" type="checkbox">
+    <label for="${value}">${name}</label>
+    `
   }
 
   this.render = function () {
     this.treeEl.querySelector('ul').innerHTML = '';
+    if (!Application.data.collection) return;
     const resItems = Application.data.collection.structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
         ${this.getCheckboxHtml(entry.id)}&nbsp;
-        ${entry.name}${children.length ? '<ul>' + children.join('') + '</ul>' : ''}
+        ${this.getListNameHtml(entry.name, entry.id)}${children.length ? '<ul>' + children.join('') + '</ul>' : ''}
       </li>`)
       return resItems;
     }, []);
     this.treeEl.querySelector('ul').insertAdjacentHTML('afterbegin',
       resItems.join('')
     )
-    Array.from(this.element.querySelectorAll('input[type=checkbox]')).forEach(el => {
+    Array.from(this.element.querySelectorAll('.treeCheckbox[type=checkbox]')).forEach(el => {
       el.addEventListener('change', (e) => {
         this.toggleTreeCheckboxes(e)
       })

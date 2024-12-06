@@ -1,0 +1,38 @@
+#infobar {
+  position: fixed;
+  top:0;
+  left:70px;
+  right:3px;
+  display: flex;
+  flex-flow: row wrap;
+  font-size:18px;
+  min-height: 32px;
+  align-items: stretch;
+}
+
+#nightMode {
+  width: 35px;
+  height: 32px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  z-index:1000;
+  flex:0 0 auto;
+}
+
+#nightMode.nightMode {
+  background: #cecece;
+  border: 1px solid #cecece;
+}
+
+#currentEntriesCount {
+  flex: 0 0 auto;
+  align-self: center;
+  padding: 0 10px;
+}
+
+#currentSource {
+  flex: 1 1 auto;
+  text-align: center;
+  color:#b80022;
+  align-self: center;
+}

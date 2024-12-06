@@ -6,3 +6,28 @@
 #structure ul ul {
   padding-top:10px;
 }
+
+.treeCheckbox {
+  margin:0;
+  display:inline-block;
+  vertical-align: middle;
+  height:15px;
+  width:15px;
+}
+
+.collapsibleListCheckbox[type="checkbox"] {
+  display: none;
+}
+
+.collapsibleListCheckbox[type="checkbox"] ~ ul{
+  height: 0;
+  transform: scaleY(0);
+}
+
+.collapsibleListCheckbox[type="checkbox"]:checked ~ ul{
+  height: 100%;
+  transform-origin: top;
+  transition: transform .2s ease-out;
+  transform: scaleY(1); 
+}
+

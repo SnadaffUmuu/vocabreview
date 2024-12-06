@@ -1,6 +1,7 @@
 import { MenuView } from "./menu/menu.js";
 import { Slider } from "./slider/slider.js";
 import { StructureView } from "./structure/structure.js";
+import { InfobarView } from "./infobar/infobar.js";
 import { View } from "./view.js";
 
 const APPLICATION_TYPE = {
@@ -38,6 +39,9 @@ export const Application = {
         target[property] = value;
         Application.saveToLocalStorage('review-state', target);
         return true;
+      },
+      get(target, property) {
+        return target[property]
       }
     });
   },
@@ -48,16 +52,21 @@ export const Application = {
       set(target, property, value) {
         target[property] = value;
         Application.saveToLocalStorage('review-data', target);
-        Router.showDefaultView();
         Application.views.StructureView.render();
         Application.filteredData.entries = null;
         return true;
+      },
+      get(target, property) {
+        return target[property]
       }
     });
     this.filteredData = new Proxy(this.filteredData, {
       set(target, property, value) {
         target[property] = value;
         Router.showDefaultView();
+        //Router.showMenuView();
+        //Application.views.StructureView.render();
+        Application.views.InfobarView.render();
         return true;
       },
       get(target, property) {
@@ -105,13 +114,14 @@ const Router = {
     }
     this.showMenuView();
     this.showDefaultView();
-    console.log('Router started');
   },
 
   showMenuView: async function () {
     Application.views.MenuView.show();
     Application.views.StructureView = await View.create(StructureView);
     Application.views.StructureView.show();
+    Application.views.InfobarView = await View.create(InfobarView);
+    Application.views.InfobarView.show();
   },
 
   showSliderView: function () {

@@ -1,7 +1,17 @@
 import { Application } from "./app.js";
-import { regex, stringToHash } from "./utils.js";
+import { regex, stringToHash, shortestString } from "./utils.js";
 
 export const DataFactory = {
+
+  ENTRY_TYPE : {
+    REMINDER: 'REMINDER',
+    DEFAULT: 'DEFAULT',
+    SIMPLE: 'SIMPLE',
+    DEFAULT_EXAMPLES: 'DEFAULT_EXAMPLES',
+    EXAMPLES_TRANSLATION: 'EXAMPLES_TRANSLATION',
+    NON_STANDARD: 'NON_STANDARD',
+    ALT_READING: 'ALT_READING'
+  },
 
   vocabFilesIndex: [
     'chat',
@@ -54,6 +64,10 @@ export const DataFactory = {
     '~~',
     '・・・'
   ],
+
+  isNonJapaneseCharacter: (ch) => {
+    regex.nonJapaneseRegex.test(ch)
+  },
 
   isHiraganaCharacter: (ch) => {
     //return kanaExcl.includes(ch) || (ch >= "぀" && ch <= "ゟ")
@@ -154,7 +168,7 @@ export const DataFactory = {
         const filteredLines = [];
         originalLines.forEach(l => {
           const lineText = l.trim()
-          if (lineText.startsWith('::')) {
+          if (lineText.startsWith('::') && !lineText.startsWith('::diff')) {
             let type = null;
             const parts = lineText.split('::');
             if ((parts.length) > 2) {
@@ -172,22 +186,43 @@ export const DataFactory = {
             }
           } else {
             if (DataFactory.linesFilter(lineText)) {
-              filteredLines.push(lineText)
+              filteredLines.push(lineText.trim())
             } else if (lineText.replaceAll('\n', '').trim().length) {
               excludedLines.push(lineText)
             }
           }
         })
+        //TODO: если kanaOnly КАТАКАНА, возможно, запись кандзи редкая и не является представительной
+        //учесть порядок следования. индекс как фактор определения типа 
         if (filteredLines.length) {
-          const resLines = filteredLines.map((l, i) => {
+          const entryType = DataFactory.guessEntryType(filteredLines);
+          const kanaOnly = DataFactory.getKanaOnly(filteredLines);
+          const withKanji = DataFactory.getWithKanji(filteredLines);
+          let pronounce = null;
+          let pronounceTarget = null;
+          let againFilteredLines = null;
+          if (entryType != DataFactory.ENTRY_TYPE.NON_STANDARD
+            && kanaOnly.length == 1
+            && withKanji.length > 0
+          ) {
+            pronounce = kanaOnly[0];
+            pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines))
+            againFilteredLines = filteredLines.filter(l => l !== kanaOnly[0])
+          }
+          const finalLines = againFilteredLines ? againFilteredLines : filteredLines;
+          const resLines = finalLines.map((l, i) => {
+            const isTranslation = DataFactory.isNonJapanese(l) || DataFactory.isMixed(l);
             const lineObject = {
               text: l,
               originalIndex: i,
-              speakable: DataFactory.isForReading(l),
-              isTranslation: regex.nonJapaneseRegex.test(l)
+              speakable: DataFactory.isJapaneseOnly(l),
+              isTranslation: isTranslation,
+            }
+            if (pronounce && pronounceTarget && lineObject.text == pronounceTarget) {
+              lineObject.pronounce = pronounce;
             }
             return lineObject
-          })
+          });
           resEntry.lines = resLines;
           if (currentSection) {
             resEntry.section = currentSection
@@ -202,7 +237,7 @@ export const DataFactory = {
     })
     collection.entries = entries;
     /*
-    console.log('types', new Set(entries.filter(en => en.type).map(en => en.type)))
+    console.log('types', new Set(entri.es.filter(en => en.type).map(en => en.type)))
     */
     if (excludedEntries.length) {
       collection.excludedEntries = excludedEntries;
@@ -213,6 +248,117 @@ export const DataFactory = {
     console.log('structure', structure)
     collection.structure = structure;
     return collection;
+  },
+
+  getJapaneseOnly : (lines) => {
+    return lines.filter(l => regex.japaneseRegex2.test(l))
+  },
+
+  getMixed : (lines) => {
+    return lines.filter(l => regex.mixedLine.test(l))
+  },
+  
+  getKanaOnly : (lines) => {
+    return lines.filter(l => regex.kanaOnly.test(l))
+  },
+
+  getWithKanji : (lines) => {
+    return lines.filter(l => regex.kanjiRegex.test(l))
+  },
+
+  getNonJapanese : (lines) => {
+    return lines.filter(l => regex.nonJapaneseRegex.test(l))
+  },
+
+  isJapaneseOnly : (l) => {
+    return regex.japaneseRegex2.test(l)
+  },
+
+  isMixed : (l) => {
+    return regex.mixedLine.test(l)
+  },
+  
+  isKanaOnly : (l) => {
+    return regex.kanaOnly.test(l)
+  },
+
+  isWithKanji : (l) => {
+    return regex.kanjiRegex.test(l)
+  },
+
+  isNonJapanese : (l) => {
+    return regex.nonJapaneseRegex.test(l)
+  },
+
+  guessEntryType(lines) {
+    const types = DataFactory.ENTRY_TYPE;
+    let res = DataFactory.ENTRY_TYPE.DEFAULT;
+
+    const length = lines.length;
+    
+    const japaneseOnly = DataFactory.getJapaneseOnly(lines);
+          
+    const mixed = DataFactory.getMixed(lines);
+
+    const nonJapanese = DataFactory.getNonJapanese(lines);
+    
+    const kanaOnly = DataFactory.getKanaOnly(lines);
+
+    const withKanji = DataFactory.getWithKanji(lines);
+
+    /*
+    console.log('originalLines', lines)
+    console.log('japaneseOnly', japaneseOnly)
+    console.log('kanaOnly', kanaOnly)
+    console.log('withKanji', withKanji);
+    console.log('mixed', mixed)
+    console.log('nonJapanese', nonJapanese)
+    */
+    if (
+      length == 1
+    ) {
+      res = types.REMINDER
+    } else if (
+      length == 2
+      && 
+      (
+        kanaOnly.length == 0
+        && withKanji.length == 1
+        && nonJapanese.length == 1
+        ||
+        kanaOnly.length == 1 
+        && nonJapanese.length == 1
+      )
+    ) {
+      res = types.SIMPLE
+    } else if (
+      length == 3
+      && japaneseOnly.length == 2
+      && kanaOnly.length == 1
+      && withKanji.length == 1
+      && nonJapanese.length == 1
+    ) {
+      res = types.DEFAULT
+    } else if (
+      length > 3
+      && kanaOnly.length == 1
+      && nonJapanese.length == 1
+      && withKanji.length > 1
+      && mixed.length == 0
+    ) {
+      res = types.DEFAULT_EXAMPLES
+    } else if (
+      length > 3
+      && kanaOnly.length == 1
+      && japaneseOnly.length > 2
+      && withKanji.length > 1
+      && nonJapanese.length > 1
+    ) {
+      res = types.EXAMPLES_TRANSLATION
+    } else {
+      res = types.NON_STANDARD
+    }
+    return res;
   },
 
   filter: (entries) => {
