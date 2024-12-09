@@ -33,3 +33,13 @@
 #vocabSources {
   margin-right: 10px;
 }
+
+#dataActions {
+  position: absolute;
+  right: 5px;
+  left:65px;
+  top: 5px;
+  display: flex;
+  flex-flow:row wrap;
+  justify-content: space-evenly;
+}

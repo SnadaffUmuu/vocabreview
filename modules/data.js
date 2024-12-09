@@ -3,10 +3,11 @@ import { regex, stringToHash, shortestString } from "./utils.js";
 
 export const DataFactory = {
 
-  ENTRY_TYPE : {
+  ENTRY_TYPE: {
     REMINDER: 'REMINDER',
     DEFAULT: 'DEFAULT',
     SIMPLE: 'SIMPLE',
+    READING: 'READING',
     DEFAULT_EXAMPLES: 'DEFAULT_EXAMPLES',
     EXAMPLES_TRANSLATION: 'EXAMPLES_TRANSLATION',
     NON_STANDARD: 'NON_STANDARD',
@@ -38,10 +39,6 @@ export const DataFactory = {
 
   isKatakanaCharacter: (ch) => {
     return kanaExcl.includes(ch) || katakanaRegex.test(ch)
-  },
-
-  isKanjiCharacter: (ch) => {
-    return kanjiRegex.test(ch)
   },
 
   kanaExcl: [
@@ -92,7 +89,6 @@ export const DataFactory = {
       && !DataFactory.isKatakanaCharacter(ch)
       && !DataFactory.isKanjiCharacter(ch)
     )
-    //return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch) && !DataFactory.isKatakanaCharacter(ch))
   },
 
   entryFilter: (entryStr) => {
@@ -196,21 +192,24 @@ export const DataFactory = {
         //учесть порядок следования. индекс как фактор определения типа 
         if (filteredLines.length) {
           const entryType = DataFactory.guessEntryType(filteredLines);
-          const kanaOnly = DataFactory.getKanaOnly(filteredLines);
+          const hiraganaOnly = DataFactory.getHiraganaOnly(filteredLines);
           const withKanji = DataFactory.getWithKanji(filteredLines);
           let pronounce = null;
           let pronounceTarget = null;
-          let againFilteredLines = null;
           if (entryType != DataFactory.ENTRY_TYPE.NON_STANDARD
-            && kanaOnly.length == 1
+            && hiraganaOnly.length == 1
             && withKanji.length > 0
           ) {
-            pronounce = kanaOnly[0];
-            pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines))
-            againFilteredLines = filteredLines.filter(l => l !== kanaOnly[0])
-          }
-          const finalLines = againFilteredLines ? againFilteredLines : filteredLines;
-          const resLines = finalLines.map((l, i) => {
+            pronounce = hiraganaOnly[0];
+            console.log('filteredLines', filteredLines);
+            console.log('linesWithKanji', DataFactory.getWithKanji(filteredLines));
+            pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines));
+            console.log('shortest', pronounceTarget
+            );
+            console.log('pronounce', pronounce);
+          };
+          const mataFilteredLines = pronounce && pronounceTarget ? filteredLines.filter(l => l != pronounce) : filteredLines;
+          const resLines = mataFilteredLines.map((l, i) => {
             const isTranslation = DataFactory.isNonJapanese(l) || DataFactory.isMixed(l);
             const lineObject = {
               text: l,
@@ -218,9 +217,23 @@ export const DataFactory = {
               speakable: DataFactory.isJapaneseOnly(l),
               isTranslation: isTranslation,
             }
-            if (pronounce && pronounceTarget && lineObject.text == pronounceTarget) {
-              lineObject.pronounce = pronounce;
+            if (pronounce && pronounceTarget) {
+
+              if (lineObject.text == pronounceTarget) {
+                lineObject.pronounce = pronounce;
+
+                //console.log('lineObject.text', lineObject.text);
+                //console.log('pronounceTarget', pronounceTarget);
+                //console.log('lineObject', lineObject);
+              } else if (
+                lineObject.text == pronounce
+              ) {
+                lineObject.isPronounce = true;
+
+              }
+
             }
+            console.log('lineObject', lineObject);
             return lineObject
           });
           resEntry.lines = resLines;
@@ -235,7 +248,7 @@ export const DataFactory = {
         excludedEntries.push(entry)
       }
     })
-    collection.entries = entries;
+    collection.allEntries = entries;
     /*
     console.log('types', new Set(entri.es.filter(en => en.type).map(en => en.type)))
     */
@@ -250,43 +263,59 @@ export const DataFactory = {
     return collection;
   },
 
-  getJapaneseOnly : (lines) => {
+  getJapaneseOnly: (lines) => {
     return lines.filter(l => regex.japaneseRegex2.test(l))
   },
 
-  getMixed : (lines) => {
+  getMixed: (lines) => {
     return lines.filter(l => regex.mixedLine.test(l))
   },
-  
-  getKanaOnly : (lines) => {
+
+  getKanaOnly: (lines) => {
     return lines.filter(l => regex.kanaOnly.test(l))
   },
 
-  getWithKanji : (lines) => {
-    return lines.filter(l => regex.kanjiRegex.test(l))
+  getHiraganaOnly: (lines) => {
+    return lines.filter(l => regex.hiraganaOnly.test(l))
   },
 
-  getNonJapanese : (lines) => {
+  getKatakanaOnly: (lines) => {
+    return lines.filter(l => regex.katakanaOnly.test(l))
+  },
+
+  getWithKanji: (lines) => {
+    return lines.filter(l => Array.from(l).some(ch => regex.kanjiRegex.test(ch)))
+  },
+
+  getNonJapanese: (lines) => {
     return lines.filter(l => regex.nonJapaneseRegex.test(l))
   },
 
-  isJapaneseOnly : (l) => {
+  isJapaneseOnly: (l) => {
     return regex.japaneseRegex2.test(l)
   },
 
-  isMixed : (l) => {
+  isMixed: (l) => {
     return regex.mixedLine.test(l)
   },
-  
-  isKanaOnly : (l) => {
+
+  isKanaOnly: (l) => {
     return regex.kanaOnly.test(l)
   },
 
-  isWithKanji : (l) => {
-    return regex.kanjiRegex.test(l)
+  isHiraganaOnly: (l) => {
+    return regex.hiraganaOnly.test(l)
   },
 
-  isNonJapanese : (l) => {
+  isKatakanaOnly: (l) => {
+    return regex.katakanaOnly.test(l)
+  },
+
+  isWithKanji: (l) => {
+    return regex.kanjiRegex2.test(l)
+  },
+
+  isNonJapanese: (l) => {
     return regex.nonJapaneseRegex.test(l)
   },
 
@@ -295,13 +324,13 @@ export const DataFactory = {
     let res = DataFactory.ENTRY_TYPE.DEFAULT;
 
     const length = lines.length;
-    
+
     const japaneseOnly = DataFactory.getJapaneseOnly(lines);
-          
+
     const mixed = DataFactory.getMixed(lines);
 
     const nonJapanese = DataFactory.getNonJapanese(lines);
-    
+
     const kanaOnly = DataFactory.getKanaOnly(lines);
 
     const withKanji = DataFactory.getWithKanji(lines);
@@ -320,23 +349,35 @@ export const DataFactory = {
       res = types.REMINDER
     } else if (
       length == 2
-      && 
+      && withKanji.length == 1
+      && kanaOnly.length == 1
+    ) {
+      res = types.READING
+    } else if (
+      length == 2
+      &&
       (
         kanaOnly.length == 0
         && withKanji.length == 1
         && nonJapanese.length == 1
         ||
-        kanaOnly.length == 1 
+        kanaOnly.length == 1
         && nonJapanese.length == 1
       )
     ) {
       res = types.SIMPLE
     } else if (
       length == 3
-      && japaneseOnly.length == 2
       && kanaOnly.length == 1
-      && withKanji.length == 1
-      && nonJapanese.length == 1
+      &&
+      (
+        japaneseOnly.length == 2
+        && withKanji.length == 1
+        && nonJapanese.length == 1
+        ||
+        japaneseOnly == 2
+        && mixed == 1
+      )
     ) {
       res = types.DEFAULT
     } else if (
@@ -363,10 +404,12 @@ export const DataFactory = {
 
   filter: (entries) => {
     if (!entries || !entries.length) {
-      Application.filteredData.entries = null;
       return;
+      //TODO: reset
     }
-    const res = Application.data.collection.entries.filter(entry => entries.includes(entry.section))
-    Application.filteredData.entries = res;
+    const res = Application.data.allEntries.filter(entry => entries.includes(entry.section))
+    Application.data.currentEntries = res;
+    //TODO:this is just wrong. Why infobar renders here?!!
+    Application.views.InfobarView.render();
   }
 }

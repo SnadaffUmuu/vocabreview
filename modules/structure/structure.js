@@ -74,8 +74,7 @@ export const StructureView = function () {
 
   this.render = function () {
     this.treeEl.querySelector('ul').innerHTML = '';
-    if (!Application.data.collection) return;
-    const resItems = Application.data.collection.structure.reduce((resItems, entry) => {
+    const resItems = Application.data.structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
         ${this.getCheckboxHtml(entry.id)}&nbsp;
@@ -95,6 +94,9 @@ export const StructureView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
+    if (!Application.data.currentEntries?.length) {
+      return
+    }    
     this.toggleEl = document.getElementById('structureTrigger');
     this.treeEl = document.getElementById('structureTree');
     this.resetTreeEl = document.getElementById('resetTree');

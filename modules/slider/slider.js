@@ -23,6 +23,8 @@ export const Slider = function () {
     return results;
   };
 
+
+
   this.renderSlider = async () => {
     this.keensliderContainer.innerHTML = '';
     this.slideViews = await this.entriesToSlideViews();
@@ -53,12 +55,10 @@ export const Slider = function () {
 
   this.show = async function () {
     View.prototype.show.call(this);
-    if (Application.filteredData.entries !== null && Application.filteredData.entries.length > 0) {
-      this.data.entries = Application.filteredData.entries
-    } else {
-      if (!Application.data.collection?.entries?.length) return;
-      this.data.entries = Application.data.collection.entries
+    if (!Application.data.currentEntries?.length) {
+      return
     }
+    this.data.entries = Application.data.currentEntries
     this.currentSlideIndexEl = this.element.querySelector('#currentSlideIndex');
     this.keensliderContainer = this.element.querySelector('#my-keen-slider');
     this.speakEl = this.element.querySelector('#speak');

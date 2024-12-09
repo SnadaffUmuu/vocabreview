@@ -61,3 +61,24 @@
   margin: 0 20px;
   padding: 0 0 25px;
 }
+
+.slide-side[data-pronounce] {
+  position: relative;
+}
+
+.slide-side[data-pronounce]::after {
+  position: absolute;
+  top: -35px;
+  left: 0;
+  font-size: 15px;
+  content: attr(data-pronounce);
+  opacity: 0.1;
+}
+
+.slide-side[data-pronounce]:hover::after {
+  opacity: 1;
+} 
+
+.slide-side[data-is-pronounce] {
+ opacity: 0.5;
+}

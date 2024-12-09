@@ -1,12 +1,14 @@
-export const regex = {
+﻿export const regex = {
   japaneseRegex: /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u,
   hiraganaRegex: /[\p{Script_Extensions=Hiragana}]/u,
   katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
-  kanjiRegex: /[\p{Script_Extensions=Han}]/u,
+  kanjiRegex: /^[\p{Script=Han}]$/u,
   kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{P}\s]+$/u,
+  hiraganaOnly: /^[\p{Script=Hiragana}\p{P}\s]+$/u,
+  katakanaOnly: /^[\p{Script=Katakana}\p{P}\s]+$/u,
   //nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
   nonJapaneseRegex: /^[\p{Script=Cyrillic}\p{Script=Latin}\p{N}\p{P}\p{Zs}]+$/u,
-  japaneseRegex2: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{P}\s]+$/u,
+  japaneseRegex2: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{P}\sー]+$/u,
   upperSectionTitle: /~~\n(.*)\n~~/u,
   pageLevelSection: /\[(.*)\]((.*))?/u,
   mixedLine: /^(?=.*[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])(?=.*[\p{Script=Latin}\p{Script=Cyrillic}])[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{Script=Latin}\p{Script=Cyrillic}\p{N}\p{P}\s]+$/u,
@@ -49,6 +51,6 @@ export function stringToHash(string) {
 }
 
 export function shortestString(arr) {
-  let maxLength = Math.max(...arr.map(str => str.length))
-  return arr.find(str => str.length === maxLength);
+  let minLength = Math.min(...arr.map(str => str.length));
+  return arr.find(str => str.length === minLength);
 }

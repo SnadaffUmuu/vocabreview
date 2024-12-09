@@ -1,4 +1,3 @@
-import { Application } from "../app.js";
 import { shuffleArray } from "../utils.js";
 import { View } from "../view.js";
 import { SlideSide } from "./slide-side.js";
@@ -37,12 +36,13 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
 
   renderSides: async function () {
     this.sideViews = await this.sidesToSidesViews();
-    this.sideViews[0].element.classList.add('current');
+    shuffleArray(this.sideViews)[0].element.classList.add('current');
     shuffleArray(this.sideViews).forEach(o => o.show())
   },
 
   rotate: function (el) {
     const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
+    if (slide.querySelectorAll('.slide-side').length == 1) return;
     const current = slide.querySelector('.current');
     let newCurrent = null;
     if (current && current.nextElementSibling) {

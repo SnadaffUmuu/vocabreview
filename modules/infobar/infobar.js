@@ -19,11 +19,7 @@ export const InfobarView = function () {
     if (Application.state?.source) {
       this.setSource(Application.state.source)
     }
-    if (Application.filteredData?.entries?.length > 0) {
-      this.setCount(Application.filteredData.entries.length)
-    } else if (Application.data.collection?.entries?.length > 0) {
-      this.setCount(Application.data.collection.entries.length)
-    }
+    this.setCount(Application.data.currentEntries.length)
   }
   
   this.setCount = function(count) {
@@ -36,6 +32,9 @@ export const InfobarView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
+    if (!Application.data.currentEntries?.length) {
+      return
+    }
     this.currentSourceEl = this.element.querySelector('#currentSource');
     this.entriesCountEl = this.element.querySelector('#currentEntriesCount');
     this.nightModeEl = document.getElementById('nightMode');

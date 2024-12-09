@@ -1,37 +1,35 @@
-var View = function () {};
-View.prototype = {
-  templatePath: null,
-  init: async function () {
-    if (!View.prototype._templateHtmlPromise) {
-      View.prototype._templateHtmlPromise = (async () => {
-        const response = await fetch(this.templatePath);
-        // Сохраняем результат в прототип
-        View.prototype.templateHtml = await response.text();
-        return View.prototype.templateHtml;
-      })();
-    } else {
-      await View.prototype._templateHtmlPromise;
-      console.log(this.templatePath)
-      console.log(this.templateHtml)
-    }
-  }
+///^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{P}\s]+$/u.test('サイクリングロード');
+
+
+var collection = {
+  originalEntries : [
+    { name : 'a'},
+    { name : 'b'},
+    { name : 'c'},
+  ],
+  currentEntries : [
+    { name : 'a'},
+  ]
 };
 
-var MenuView = function () {
-  this.templatePath = 'modules/menu/menu.html';
-  this.init()
-}
-MenuView.prototype = new View();
-
-async function initViews(){
-  menuViewInstance = new MenuView()
+var inform = function() {
+  console.log('data updated', data);
 }
 
-let menuViewInstance = null;
-await initViews();
-debugger;
-console.log(menuViewInstance) 
+var data = new Proxy(collection, {
+  set(obj, prop, value) {
+    debugger;
+    return true;
+  },
+  get(obj, prop) {
+    if (prop == 'entries'){
+      return collection.currentEntries && collection.currentEntries.length ? collection.currentEntries : collection.originalEntries
+    } else {
+      return object[prop];
+    }
+  }
+});
 
-
-
-
+var getData = function () {
+  return data.entries;
+}

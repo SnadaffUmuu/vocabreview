@@ -8,22 +8,31 @@ export const MenuView = function () {
 
   this.events = {
     'click #menuTrigger': 'toggleMenu',
-    'change #vocabSources': 'changeSource'
+    'change #vocabSources': 'changeSource',
+    'click #clearLocalStorage' : 'clearData',
+    'click #reloadCurrentSource' : 'reloadCurrentSource',
   };
 
 
   this.toggleMenu = function (e) {
     e && e.preventDefault();
     var menu = this.find('#menu');
-    var trigger = e.target;
     if (menu.classList.contains("isOpened")) {
       menu.classList.remove("isOpened")
-      trigger.innerText = ">>"
+      this.menuTrigger.innerText = ">>"
     } else {
       menu.classList.add("isOpened")
-      trigger.innerText = "<<"
+      this.menuTrigger.innerText = "<<"
     }
   };
+
+  this.clearData = function() {
+    delete Application.state.source;
+  }
+
+  this.reloadCurrentSource = function() {
+    Application.changeSource(Application.state.source)
+  }
 
   this.renderSelectOptions = function () {
     const options = DataFactory.vocabFilesIndex.map(s => `
@@ -42,21 +51,13 @@ export const MenuView = function () {
 
   this.changeSource = function (e) {
     if (e.target.value == '') return;
-    const request = new XMLHttpRequest();
-    request.open('GET', './vocab/' + e.target.value + '.txt', true);
-    request.onload = function () {
-      if (request.responseText) {
-        Application.state.source = e.target.value;
-        Application.rawData = request.responseText;
-        Application.data.collection = DataFactory.parse(request.responseText);
-      }
-    }.bind(this);
-    request.send();
+    Application.changeSource(e.target.value);
   }
 
   this.show = function () {
     View.prototype.show.call(this);
     this.sourcesSelect = this.element.querySelector('#vocabSources');
+    this.menuTrigger = this.element.querySelector('#menuTrigger')
     this.renderSelectOptions();
     if (Application.state.source) {
       this.setSelectedOption(Application.state.source)

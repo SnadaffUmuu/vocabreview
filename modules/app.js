@@ -3,6 +3,7 @@ import { Slider } from "./slider/slider.js";
 import { StructureView } from "./structure/structure.js";
 import { InfobarView } from "./infobar/infobar.js";
 import { View } from "./view.js";
+import { DataFactory } from "./data.js"
 
 const APPLICATION_TYPE = {
   CARDS: 'CARDS',
@@ -14,13 +15,15 @@ const APPLICATION_TYPE = {
 
 export const Application = {
   views: null,
-  rawData : null,
-  data: null,
-  initialState: null,
-  initialData : null,
-  filteredData : {
-    entries : null
+  rawData: null,
+  data: {
+    allEntries: null,
+    currentEntries: null,
+    excludedEntries: null,
+    excludedLines: null
   },
+  initialState: null,
+  initialData: {},
   defaultState: {
     nightMode: false
   },
@@ -38,50 +41,83 @@ export const Application = {
       set(target, property, value) {
         target[property] = value;
         Application.saveToLocalStorage('review-state', target);
+        if ('source' == property) {
+          const { excludedEntries, excludedLines, structure, allEntries } = DataFactory.parse(Application.rawData);
+          Object.assign(Application.data, { excludedEntries, excludedLines, structure, allEntries });
+        }
         return true;
       },
       get(target, property) {
         return target[property]
+      },
+      deleteProperty(target, property) {
+        if (property in target) {
+          delete target[property];
+          if ('source' == property) {
+            Application.saveToLocalStorage('review-state', Application.defaultState);
+            delete Application.data.allEntries;
+          }
+        }
+        return true;
       }
     });
   },
 
   initData: function () {
-    this.rawData = this.loadFromLocalStorage('review-data', {})
-    this.data = new Proxy(Application.rawData, {
+    this.data = new Proxy(Application.initialData, {
       set(target, property, value) {
         target[property] = value;
-        Application.saveToLocalStorage('review-data', target);
-        Application.views.StructureView.render();
-        Application.filteredData.entries = null;
+        if ('allEntries' == property) {
+          Application.saveToLocalStorage('review-data', target);
+          Application.data.currentEntries = Application.data.allEntries
+        } else if ('currentEntries' == property) {
+          Router.showDefaultView();
+          //Application.views.StructureView.render();
+        }
         return true;
       },
       get(target, property) {
         return target[property]
-      }
-    });
-    this.filteredData = new Proxy(this.filteredData, {
-      set(target, property, value) {
-        target[property] = value;
-        Router.showDefaultView();
-        //Router.showMenuView();
-        //Application.views.StructureView.render();
-        Application.views.InfobarView.render();
-        return true;
       },
-      get(target, property) {
-        return target[property]
+      deleteProperty(target, property) {
+        if (property in target) {
+          delete target[property];
+          if ('allEntries' == property) {
+            localStorage.removeItem('review-data');
+            if (Application.data.currentEntries) {
+              delete Application.data.currentEntries;
+            }
+          } else if ('currentEntries' == property) {
+            Router.resetViews();
+          }
+        }
+        return true
       }
     });
+    const { excludedEntries, excludedLines, structure, allEntries } = this.loadFromLocalStorage('review-data', {});
+    Object.assign(this.data, { excludedEntries, excludedLines, structure, allEntries });
   },
 
-  saveToLocalStorage : function (key, data) {
+  saveToLocalStorage: function (key, data) {
     localStorage.setItem(key, JSON.stringify(data))
   },
 
-  loadFromLocalStorage : function(key, defaultValue) {
+  loadFromLocalStorage: function (key, defaultValue) {
     const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : defaultValue;
+  },
+
+  changeSource: function (name) {
+    const request = new XMLHttpRequest();
+    request.open('GET', './vocab/' + name + '.txt', true);
+    request.onload = function () {
+      if (request.responseText) {
+        Application.rawData = request.responseText;
+        Application.state.source = name;
+        Application.views.StructureView.render();
+      }
+    }.bind(this);
+    request.send();
   },
 
 };
@@ -91,7 +127,7 @@ const Router = {
   applicationType: null,
 
   start: function () {
-    var pathName = window.location.pathname.toLowerCase().replace(/\/app\.html$/, '');
+    const pathName = window.location.pathname.toLowerCase().replace(/\/app\.html$/, '');
     switch (pathName) {
       case '':
       case 'slider':
@@ -112,8 +148,8 @@ const Router = {
       default:
         throw new Error('Unsupported application path');
     }
+    Application.initData();
     this.showMenuView();
-    this.showDefaultView();
   },
 
   showMenuView: async function () {
@@ -125,7 +161,7 @@ const Router = {
   },
 
   showSliderView: function () {
-   Application.views.SliderView.show();
+    Application.views.SliderView.show();
   },
 
   showDefaultView: function () {
@@ -152,10 +188,19 @@ const Router = {
     }
   },
 
+  resetViews : function() {
+    Application.views.InfobarView.remove();
+    Application.views.StructureView.remove();
+    Application.views.MenuView.remove();
+    Application.views.SliderView.remove();
+    this.start();
+    Application.views.MenuView.toggleMenu();
+  }
+
 };
 
 document.addEventListener("DOMContentLoaded", async function (event) {
-  Application.initData();
+  //Application.initData();
   Application.initState();
   await Application.initViews();
   Router.start();
