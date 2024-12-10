@@ -23,12 +23,8 @@ export const Slider = function () {
     return results;
   };
 
-
-
   this.renderSlider = async () => {
-    this.keensliderContainer.innerHTML = '';
     this.slideViews = await this.entriesToSlideViews();
-    //console.log(this.slideViews)
     await Promise.all(
       this.slideViews.map(async o => o.show())
     );
@@ -53,25 +49,37 @@ export const Slider = function () {
     this.slider = slider;
   };
 
-  this.show = async function () {
-    View.prototype.show.call(this);
+  this.reset = function () {
+    this.data = {};
+    if (this.slider) {
+      this.slider.destroy();
+    }
+    this.keensliderContainer.innerHTML = '';
+  };
+
+  this.render = async function () {
+    this.reset();
     if (!Application.data.currentEntries?.length) {
       return
     }
     this.data.entries = Application.data.currentEntries
-    this.currentSlideIndexEl = this.element.querySelector('#currentSlideIndex');
-    this.keensliderContainer = this.element.querySelector('#my-keen-slider');
-    this.speakEl = this.element.querySelector('#speak');
-    if (this.slider) {
-      this.slider.destroy();
-    }
     await this.renderSlider();
     this.initSlider();
   }
+
+  this.show = async function () {
+    View.prototype.show.call(this);
+    this.currentSlideIndexEl = this.element.querySelector('#currentSlideIndex');
+    this.keensliderContainer = this.element.querySelector('#my-keen-slider');
+    this.speakEl = this.element.querySelector('#speak');
+    this.render();
+  }
 };
+
 Slider.prototype = Object.assign(Object.create(View.prototype), {
-  containerSelector : '#appBody',
-  templateSelector : '#sliderView',
-  templatePath : 'modules/slider/slider.html',
-})
+  containerSelector: '#appBody',
+  templateSelector: '#sliderView',
+  templatePath: 'modules/slider/slider.html',
+});
+
 Slider.prototype.constructor = Slider;

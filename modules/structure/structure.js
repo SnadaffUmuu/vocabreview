@@ -25,18 +25,21 @@ export const StructureView = function () {
     while (check) {
       //  find parent and sibling checkboxes (quick'n'dirty)
       const parent = (check.closest(['ul']).parentNode).querySelector(trueCheckboxesSelector);
-      const siblings = Array.from(parent.closest('li').querySelector(['ul']).querySelectorAll(trueCheckboxesSelector));
-
-      //  get checked state of siblings
-      //  are every or some siblings checked (using Boolean as test function) 
-      const checkStatus = siblings.map(check => check.checked);
-      const every = checkStatus.every(Boolean);
-      const some = checkStatus.some(Boolean);
-
-      //  check parent if all siblings are checked
-      //  set indeterminate if not all and not none are checked
-      parent.checked = every;
-      parent.indeterminate = !every && every !== some;
+      const childList = parent.closest('li').querySelector(['ul']);
+      if (childList) {
+        const siblings = Array.from(childList.querySelectorAll(trueCheckboxesSelector));
+  
+        //  get checked state of siblings
+        //  are every or some siblings checked (using Boolean as test function) 
+        const checkStatus = siblings.map(check => check.checked);
+        const every = checkStatus.every(Boolean);
+        const some = checkStatus.some(Boolean);
+  
+        //  check parent if all siblings are checked
+        //  set indeterminate if not all and not none are checked
+        parent.checked = every;
+        parent.indeterminate = !every && every !== some;
+      }
 
       //  prepare for nex loop
       check = check != parent ? parent : 0;
@@ -54,7 +57,7 @@ export const StructureView = function () {
     const checkedSections = Array.from(
       this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
     ).map(ch => parseInt(ch.value))
-    DataFactory.filter(checkedSections)
+    Application.filter(checkedSections)
   }
 
   this.toggleTree = function () {
@@ -72,8 +75,18 @@ export const StructureView = function () {
     `
   }
 
+  this.reset = function () {
+    if (this.treeEl) {
+      this.treeEl.querySelector('ul').innerHTML = '';
+      this.data = {};
+    }
+  }
+
   this.render = function () {
-    this.treeEl.querySelector('ul').innerHTML = '';
+    this.reset();
+    if (!Application.data.currentEntries?.length) {
+      return;
+    }
     const resItems = Application.data.structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
@@ -94,18 +107,17 @@ export const StructureView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
-    if (!Application.data.currentEntries?.length) {
-      return
-    }    
     this.toggleEl = document.getElementById('structureTrigger');
     this.treeEl = document.getElementById('structureTree');
     this.resetTreeEl = document.getElementById('resetTree');
     this.render();
   }
 };
+
 StructureView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#menu',
   templatePath: 'modules/structure/structure.html',
   templateSelector: '#structure'
-})
+});
+
 StructureView.prototype.constructor = StructureView;

@@ -14,23 +14,33 @@ export const DataFactory = {
     ALT_READING: 'ALT_READING'
   },
 
+  LINE_TYPE: {
+    HIRAGANA_ONLY: 'HIRAGANA_ONLY',
+    KATAKANA_ONLY: 'KATAKANA_ONLY',
+    KANA_ONLY: 'KANA_ONLY',
+    WITH_KANJI: 'WITH_KANJI',
+    JAPANESE_ONLY: 'JAPANESE_ONLY',
+    MIXED: 'MIXED',
+    NON_JAPANESE: 'NON_JAPANESE'
+  },
+
   vocabFilesIndex: [
-    'chat',
+    'SR_Kona2',
+    'SR_autumn',
+    'goshogun0',
+    'shirobanba',
+    'kokugo-osarai',
+    'SR_Nutshell',
+    'SR-subway-attack',
     'hp1',
     'kana-enokura-kouson',
     'murakami-sheep-1',
-    'SR_autumn',
-    'SR_Kona2',
-    'SR_Obon_Society',
     'SR_summer',
-    'boxes_packs',
-    'goshogun0',
-    'kokugo-osarai',
-    'shirobanba',
     'SR_Jam',
-    'SR_Nutshell',
     'SR_spring',
-    'SR-subway-attack',
+    'SR_Obon_Society',
+    'chat',
+    'boxes_packs',
   ],
 
   isHiraganaCharacter: (ch) => {
@@ -191,6 +201,11 @@ export const DataFactory = {
         //TODO: если kanaOnly КАТАКАНА, возможно, запись кандзи редкая и не является представительной
         //учесть порядок следования. индекс как фактор определения типа 
         if (filteredLines.length) {
+          const analyzedLines = DataFactory.getAnalyzedLines(filteredLines, resEntry);
+          console.log('entry', entry);
+          console.log('filteredLines', filteredLines);
+          console.log('analyzedLines', analyzedLines.map(o=>o.types.join()));
+
           const entryType = DataFactory.guessEntryType(filteredLines);
           const hiraganaOnly = DataFactory.getHiraganaOnly(filteredLines);
           const withKanji = DataFactory.getWithKanji(filteredLines);
@@ -201,12 +216,11 @@ export const DataFactory = {
             && withKanji.length > 0
           ) {
             pronounce = hiraganaOnly[0];
-            console.log('filteredLines', filteredLines);
-            console.log('linesWithKanji', DataFactory.getWithKanji(filteredLines));
+            //console.log('filteredLines', filteredLines);
+            //console.log('linesWithKanji', DataFactory.getWithKanji(filteredLines));
             pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines));
-            console.log('shortest', pronounceTarget
-            );
-            console.log('pronounce', pronounce);
+            //console.log('shortest', pronounceTarget);
+            //console.log('pronounce', pronounce);
           };
           const mataFilteredLines = pronounce && pronounceTarget ? filteredLines.filter(l => l != pronounce) : filteredLines;
           const resLines = mataFilteredLines.map((l, i) => {
@@ -233,7 +247,7 @@ export const DataFactory = {
               }
 
             }
-            console.log('lineObject', lineObject);
+            //console.log('lineObject', lineObject);
             return lineObject
           });
           resEntry.lines = resLines;
@@ -258,7 +272,7 @@ export const DataFactory = {
     if (excludedLines.length) {
       collection.excludedLines = excludedLines;
     }
-    console.log('structure', structure)
+    //console.log('structure', structure)
     collection.structure = structure;
     return collection;
   },
@@ -312,11 +326,29 @@ export const DataFactory = {
   },
 
   isWithKanji: (l) => {
-    return regex.kanjiRegex2.test(l)
+    return regex.hasKanjiRegex.test(l)
   },
 
   isNonJapanese: (l) => {
     return regex.nonJapaneseRegex.test(l)
+  },
+
+  getAnalyzedLines(lines, entry) {
+    const lType = DataFactory.LINE_TYPE
+    return lines.map(l => {
+      let types = [];
+      if (DataFactory.isMixed(l)) types.push(lType.MIXED);
+      if (DataFactory.isNonJapanese(l)) types.push(lType.NON_JAPANESE);
+      if (DataFactory.isJapaneseOnly(l)) types.push(lType.JAPANESE_ONLY);
+      if (DataFactory.isWithKanji(l)) types.push(lType.WITH_KANJI);
+      if (DataFactory.isKanaOnly(l)) types.push(lType.KANA_ONLY);
+      if (DataFactory.isKatakanaOnly(l)) types.push(lType.KATAKANA_ONLY);
+      if (DataFactory.isHiraganaOnly(l)) types.push(lType.HIRAGANA_ONLY);
+      return {
+        text: l,
+        types: types
+      }
+    })
   },
 
   guessEntryType(lines) {
@@ -403,13 +435,6 @@ export const DataFactory = {
   },
 
   filter: (entries) => {
-    if (!entries || !entries.length) {
-      return;
-      //TODO: reset
-    }
-    const res = Application.data.allEntries.filter(entry => entries.includes(entry.section))
-    Application.data.currentEntries = res;
-    //TODO:this is just wrong. Why infobar renders here?!!
-    Application.views.InfobarView.render();
+    return Application.data.allEntries.filter(entry => entries.includes(entry.section))
   }
 }

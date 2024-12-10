@@ -3,6 +3,7 @@
   hiraganaRegex: /[\p{Script_Extensions=Hiragana}]/u,
   katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
   kanjiRegex: /^[\p{Script=Han}]$/u,
+  hasKanjiRegex: /[\p{Script=Han}]/u,
   kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{P}\s]+$/u,
   hiraganaOnly: /^[\p{Script=Hiragana}\p{P}\s]+$/u,
   katakanaOnly: /^[\p{Script=Katakana}\p{P}\s]+$/u,

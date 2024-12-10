@@ -9,10 +9,9 @@ export const MenuView = function () {
   this.events = {
     'click #menuTrigger': 'toggleMenu',
     'change #vocabSources': 'changeSource',
-    'click #clearLocalStorage' : 'clearData',
+    'click #clearLocalStorage' : 'resetApp',
     'click #reloadCurrentSource' : 'reloadCurrentSource',
   };
-
 
   this.toggleMenu = function (e) {
     e && e.preventDefault();
@@ -26,8 +25,9 @@ export const MenuView = function () {
     }
   };
 
-  this.clearData = function() {
-    delete Application.state.source;
+  this.resetApp = function() {
+    Application.reset();
+    this.toggleMenu();
   }
 
   this.reloadCurrentSource = function() {
@@ -41,31 +41,43 @@ export const MenuView = function () {
   }
 
   this.setSelectedOption = (value) => {
-    const options = Array.from(this.sourcesSelect.querySelectorAll('options'));
+    const options = Array.from(this.sourcesSelect.querySelectorAll('option'));
     const matched = options.find(o => o.value == value);
+    options.forEach(o => o.removeAttribute('selected'));
     if (matched) {
-      options.forEach(o => o.removeAttribute('selected'));
       matched.setAttribute('selected', true);
     }
   }
 
   this.changeSource = function (e) {
-    if (e.target.value == '') return;
     Application.changeSource(e.target.value);
   }
 
+  this.reset = function() {
+    this.setSelectedOption('');
+  },
+
+  this.render = function() {
+    this.reset();
+    if (Application.state.source) {
+      this.setSelectedOption(Application.state.source)
+    } else {
+      this.toggleMenu()
+    }
+  }
+  
   this.show = function () {
     View.prototype.show.call(this);
     this.sourcesSelect = this.element.querySelector('#vocabSources');
-    this.menuTrigger = this.element.querySelector('#menuTrigger')
+    this.menuTrigger = this.element.querySelector('#menuTrigger');
     this.renderSelectOptions();
-    if (Application.state.source) {
-      this.setSelectedOption(Application.state.source)
-    }
+    this.render();
   }
 };
+
 MenuView.prototype = Object.assign(Object.create(View.prototype), {
   templateSelector : '#menuContainer',
   templatePath : 'modules/menu/menu.html',
-})
+});
+
 MenuView.prototype.constructor = MenuView;

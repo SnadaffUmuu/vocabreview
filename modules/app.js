@@ -16,16 +16,16 @@ const APPLICATION_TYPE = {
 export const Application = {
   views: null,
   rawData: null,
-  data: {
-    allEntries: null,
-    currentEntries: null,
-    excludedEntries: null,
-    excludedLines: null
+  defaultState: {
+    nightMode: false
   },
   initialState: null,
   initialData: {},
-  defaultState: {
-    nightMode: false
+  data: {
+    allEntries: [],
+    currentEntries: [],
+    excludedEntries: [],
+    excludedLines: []
   },
 
   initViews: async function () {
@@ -43,7 +43,12 @@ export const Application = {
         Application.saveToLocalStorage('review-state', target);
         if ('source' == property) {
           const { excludedEntries, excludedLines, structure, allEntries } = DataFactory.parse(Application.rawData);
-          Object.assign(Application.data, { excludedEntries, excludedLines, structure, allEntries });
+          Object.assign(Application.data, { 
+            excludedEntries, 
+            excludedLines, 
+            structure, 
+            allEntries 
+          });
         }
         return true;
       },
@@ -64,38 +69,52 @@ export const Application = {
   },
 
   initData: function () {
+    Object.assign(
+      this.initialData, 
+      this.loadFromLocalStorage('review-data', {})
+    );
+
+    this.data.excludedLines = this.initialData.excludedLines;
+    this.data.excludedEntries = this.initialData.excludedEntries;
+    this.data.allEntries = this.initialData.allEntries;
+    this.data.structure = this.initialData.structure;
+
     this.data = new Proxy(Application.initialData, {
       set(target, property, value) {
         target[property] = value;
         if ('allEntries' == property) {
           Application.saveToLocalStorage('review-data', target);
-          Application.data.currentEntries = Application.data.allEntries
+          Router.renderMenuView();
+          Router.renderCurrentView();
         } else if ('currentEntries' == property) {
-          Router.showDefaultView();
-          //Application.views.StructureView.render();
+          Application.views.InfobarView.render();
+          Router.renderCurrentView();
         }
         return true;
       },
       get(target, property) {
-        return target[property]
+        if (property == 'currentEntries') {
+          return target.currentEntries?.length ? 
+          target.currentEntries : target.allEntries
+        } else {
+          return target[property]
+        }
       },
       deleteProperty(target, property) {
         if (property in target) {
-          delete target[property];
           if ('allEntries' == property) {
             localStorage.removeItem('review-data');
-            if (Application.data.currentEntries) {
+            if (Application.initialData.currentEntries) {
               delete Application.data.currentEntries;
             }
-          } else if ('currentEntries' == property) {
             Router.resetViews();
+          } else {
+            delete target[property];
           }
         }
         return true
       }
     });
-    const { excludedEntries, excludedLines, structure, allEntries } = this.loadFromLocalStorage('review-data', {});
-    Object.assign(this.data, { excludedEntries, excludedLines, structure, allEntries });
   },
 
   saveToLocalStorage: function (key, data) {
@@ -108,23 +127,39 @@ export const Application = {
   },
 
   changeSource: function (name) {
+    if ('' == name) {
+      this.reset();
+    }
     const request = new XMLHttpRequest();
     request.open('GET', './vocab/' + name + '.txt', true);
     request.onload = function () {
       if (request.responseText) {
         Application.rawData = request.responseText;
         Application.state.source = name;
-        Application.views.StructureView.render();
       }
     }.bind(this);
     request.send();
   },
+
+  reset : function() {
+    delete this.state.source
+  },
+
+  filter : function(data) {
+    if (!data || !data.length) {
+      this.data.currentEntries = [];
+      return;
+    }
+    const res = DataFactory.filter(data);
+    this.data.currentEntries = res;
+  }
 
 };
 
 const Router = {
 
   applicationType: null,
+  currentView : null,
 
   start: function () {
     const pathName = window.location.pathname.toLowerCase().replace(/\/app\.html$/, '');
@@ -132,6 +167,7 @@ const Router = {
       case '':
       case 'slider':
         this.applicationType = APPLICATION_TYPE.SLIDER;
+        this.currentView = Application.views.SliderView;
         break;
       case 'table':
         this.applicationType = APPLICATION_TYPE.TABLE;
@@ -148,8 +184,8 @@ const Router = {
       default:
         throw new Error('Unsupported application path');
     }
-    Application.initData();
     this.showMenuView();
+    this.showCurrentView();
   },
 
   showMenuView: async function () {
@@ -160,16 +196,42 @@ const Router = {
     Application.views.InfobarView.show();
   },
 
-  showSliderView: function () {
-    Application.views.SliderView.show();
+  renderMenuView: async function () {
+    //Application.views.MenuView.render();
+    Application.views.StructureView.render();
+    Application.views.InfobarView.render();
+  },
+  
+  resetMenuView : function () {
+    Application.views.MenuView.reset();
+    Application.views.StructureView.reset();
+    Application.views.InfobarView.reset();
   },
 
+  showCurrentView : function () {
+    this.currentView.show()
+  },
+
+  renderCurrentView : function () {
+    this.currentView.render()
+  },
+
+  resetCurrentView : function() {
+    this.currentView.reset()
+  },
+
+  resetViews : function() {
+    this.resetMenuView();
+    this.currentView.reset();
+    Application.views.MenuView.toggleMenu();
+  }
+
+  /*
   showDefaultView: function () {
     switch (this.applicationType) {
       case APPLICATION_TYPE.SLIDER:
         this.showSliderView();
         break;
-      /*
     case APPLICATION_TYPE.TABLE:
       this.showTableView();
       break;
@@ -182,26 +244,21 @@ const Router = {
     case APPLICATION_TYPE.QUIZBOARD:
       this.showQuizboardView();
       break;
-      */
       default:
         throw new Error('Unsupported application type');
-    }
-  },
+      }
+    },
 
-  resetViews : function() {
-    Application.views.InfobarView.remove();
-    Application.views.StructureView.remove();
-    Application.views.MenuView.remove();
-    Application.views.SliderView.remove();
-    this.start();
-    Application.views.MenuView.toggleMenu();
-  }
+    showSliderView: function () {
+      Application.views.SliderView.show();
+    }
+  */
 
 };
 
 document.addEventListener("DOMContentLoaded", async function (event) {
-  //Application.initData();
   Application.initState();
+  Application.initData();
   await Application.initViews();
   Router.start();
 });
