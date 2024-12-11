@@ -1,0 +1,26 @@
+#table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#table td, #table th {
+  border:1px solid gray;
+  font-size:13px;
+}
+
+#table td > div {
+  width:100%;
+  min-height:20px;
+  box-sizing: border-box;
+  padding: 5px;
+  cursor: move;
+  border-radius: 3px;
+}
+
+#table td.over {
+  background: rgba(154, 255, 154, 0.459);
+}
+
+#table td > div.hidden {
+  opacity: 0 !important;
+}

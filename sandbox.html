@@ -4,54 +4,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>JS</title>
-  <script type="module">
-const View = function () { };
-View.prototype = {
-  text: null,
-  init: async function () {
-    console.log(this.defaults);
-  }
-};
+  <title>Review Sanbox</title>
+  <script>
+    const regex = {
+      hasKanji: /[\p{Script=Han}]/u,
+      kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+      hiraganaOnly: /^[\p{Script=Hiragana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+      katakanaOnly: /^[\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+      nonJapanese: /^[\p{Script=Cyrillic}\p{Script=Latin}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+      japaneseOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+      mixed: /^(?=.*[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])(?=.*[\p{Script=Latin}\p{Script=Cyrillic}])[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{Script=Latin}\p{Script=Cyrillic}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+    }
 
-View.create = async function (SubClass, ...args) {
-  // Устанавливаем наследование от View
-  if (!Object.prototype.isPrototypeOf.call(View.prototype, SubClass.prototype)) {
-    SubClass.prototype = Object.create(View.prototype);
-    SubClass.prototype.constructor = SubClass;
-  }
+    const lines = [
+      '＝急がせる',
+      'こんにちは、世界？',
+      'コーヒーが好き？',
+      'Hello? 世界！',
+      'Hello ＝ こんにちは',
+      '＝のでは　＝のではないか',
+      '＝I guess',
+    ]
 
-  // Перенос свойства defaults из конструктора в прототип (если ещё не перенесено)
-  if (!SubClass.prototype.defaults && SubClass.prototype.constructor.defaults) {
-    SubClass.prototype.defaults = SubClass.prototype.constructor.defaults;
-  }
-
-  // Создаём экземпляр
-  const instance = new SubClass(...args);
-
-  // Выполняем инициализацию
-  await instance.init();
-  return instance;
-};
-
-const Slide = function (text) {
-  this.text = text;
-};
-
-// Определяем статическое значение defaults в конструкторе
-Slide.defaults = '111';
-
-// Пример использования
-const theSlide1 = await View.create(Slide, "sample text");
-console.log(theSlide1);
-
-// Проверяем прототип
-console.log(Slide.prototype.defaults); // '111'
-console.log(theSlide1.defaults); // '111'
-
+    for (expression in regex) {
+      console.log(regex[expression])
+      console.log(expression)
+      console.log(lines.map(l => `${l}\n${(new RegExp(regex[expression])).test(l)}`).join('\n'))
+    }    
   </script>
 </head>
 
-<body></body>
+<body>
+
+</body>
 
 </html>

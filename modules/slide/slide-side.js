@@ -10,8 +10,8 @@ SlideSide.prototype = Object.assign(Object.create(View.prototype), {
   templateSelector : '.js-slide-side',
   templatePath : 'modules/slide/slide-side.html',
   setClasses : function() {
-    if (this.line.isTranslation) {
-      this.element.classList.add('translation')
+    if (this.line.isCompact) {
+      this.element.classList.add('compact')
     }
   },
 

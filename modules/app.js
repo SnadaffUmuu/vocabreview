@@ -4,11 +4,11 @@ import { StructureView } from "./structure/structure.js";
 import { InfobarView } from "./infobar/infobar.js";
 import { View } from "./view.js";
 import { DataFactory } from "./data.js"
+import { TableView } from "./table/table.js";
 
 const APPLICATION_TYPE = {
-  CARDS: 'CARDS',
+  CARDS: 'SLIDER',
   TABLE: 'TABLE',
-  RAW: 'RAW',
   BOARD: 'BOARD',
   QUIZBOARD: 'QUIZBOARD'
 }
@@ -17,7 +17,8 @@ export const Application = {
   views: null,
   rawData: null,
   defaultState: {
-    nightMode: false
+    nightMode: false,
+    appType : 'slider'
   },
   initialState: null,
   initialData: {},
@@ -32,6 +33,7 @@ export const Application = {
     this.views = {
       MenuView: await View.create(MenuView),
       SliderView: await View.create(Slider),
+      TableView: await View.create(TableView),
     };
   },
 
@@ -42,13 +44,16 @@ export const Application = {
         target[property] = value;
         Application.saveToLocalStorage('review-state', target);
         if ('source' == property) {
-          const { excludedEntries, excludedLines, structure, allEntries } = DataFactory.parse(Application.rawData);
+          const { excludedEntries, excludedLines, structure, allEntries, currentEntries } = DataFactory.parse(Application.rawData);
           Object.assign(Application.data, { 
             excludedEntries, 
             excludedLines, 
             structure, 
-            allEntries 
+            allEntries,
+            currentEntries
           });
+        } else if ('appType' == property) {
+          Router.switchView();
         }
         return true;
       },
@@ -77,16 +82,19 @@ export const Application = {
     this.data.excludedLines = this.initialData.excludedLines;
     this.data.excludedEntries = this.initialData.excludedEntries;
     this.data.allEntries = this.initialData.allEntries;
+    this.data.currentEntries = this.initialData.currentEntries;
     this.data.structure = this.initialData.structure;
 
     this.data = new Proxy(Application.initialData, {
       set(target, property, value) {
         target[property] = value;
         if ('allEntries' == property) {
+          delete Application.data.currentEntries;
           Application.saveToLocalStorage('review-data', target);
           Router.renderMenuView();
           Router.renderCurrentView();
         } else if ('currentEntries' == property) {
+          Application.saveToLocalStorage('review-data', target);
           Application.views.InfobarView.render();
           Router.renderCurrentView();
         }
@@ -103,6 +111,7 @@ export const Application = {
       deleteProperty(target, property) {
         if (property in target) {
           if ('allEntries' == property) {
+            delete target[property];
             localStorage.removeItem('review-data');
             if (Application.initialData.currentEntries) {
               delete Application.data.currentEntries;
@@ -115,6 +124,10 @@ export const Application = {
         return true
       }
     });
+  },
+
+  getFilteredEntries : function () {
+    return (Application.initialData.currentEntries?.length ? Application.initialData.currentEntries : [])
   },
 
   saveToLocalStorage: function (key, data) {
@@ -152,7 +165,13 @@ export const Application = {
     }
     const res = DataFactory.filter(data);
     this.data.currentEntries = res;
-  }
+  },
+
+  switchView : function(name) {
+    if (name) {
+      Application.state.appType = name;
+    }
+  },
 
 };
 
@@ -161,9 +180,8 @@ const Router = {
   applicationType: null,
   currentView : null,
 
-  start: function () {
-    const pathName = window.location.pathname.toLowerCase().replace(/\/app\.html$/, '');
-    switch (pathName) {
+  defineCurrentView : function (type) {
+    switch (type) {
       case '':
       case 'slider':
         this.applicationType = APPLICATION_TYPE.SLIDER;
@@ -171,20 +189,25 @@ const Router = {
         break;
       case 'table':
         this.applicationType = APPLICATION_TYPE.TABLE;
-        break;
-      case 'raw':
-        this.applicationType = APPLICATION_TYPE.RAW;
+        this.currentView = Application.views.TableView;
         break;
       case 'board':
         this.applicationType = APPLICATION_TYPE.BOARD;
         break;
       case 'quizboard':
         this.applicationType = APPLICATION_TYPE.QUIZBOARD;
-        break;
-      default:
-        throw new Error('Unsupported application path');
     }
+  },
+
+  start: function () {
+    this.defineCurrentView(Application.state.appType ? Application.state.appType : '');
     this.showMenuView();
+    this.showCurrentView();
+  },
+  
+  switchView : function() {
+    this.currentView.remove();
+    this.defineCurrentView(Application.state.appType ? Application.state.appType : '');
     this.showCurrentView();
   },
 
@@ -261,4 +284,21 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   Application.initData();
   await Application.initViews();
   Router.start();
+  window.App = Application;
+  window.DF = DataFactory;
+
+
+  /*
+  console.log('types');
+  console.log(Array.from(new Set(App.data.allEntries.filter(e => e.type).map(e=> e.type))).join('\n'));
+
+  //console.log(App.data.allEntries.filter(e=>e.lines.length == 2).map(e=>e.lines.map(l=>l.text).join('\n')).join('\n\n'))
+  console.log(App.data.allEntries.filter(e => {
+    return (
+      e.lines.length == 2 
+      && DF.isKanaOnly(e.lines[0].text)
+      && DF.isNonJapanese(e.lines[1].text)
+    )
+  }).map(e=>(e.type ? e.type + '\n' : '') + e.lines.map(l=>l.text).join('\n')).join('\n\n'))
+  */
 });

@@ -1,0 +1,44 @@
+date〜現在
+на данный момент (такая-то дата)
+
+
+ビルマ
+Бирма
+
+=====
+署名
+しょめい
+
+entryType
+reading
+	lines 2
+	- both japaneseonly
+	- one kanaonly
+
+====
+2 lines
+1st kana only
+2nd isJapanese
+
+eType 1 side, meaning
+
+roles:
+1st question
+2st can be question = false
+====
+2 lines
+
+1st kana only
+2nd mixed
+
+eType entry.type.grammar ? 1-side : 2-side
+explanation, meaning
+
+1st isQuestion
+2nd can be question : true
+====
+2 lines
+
+1st kana only
+2nd nonJapanese
+

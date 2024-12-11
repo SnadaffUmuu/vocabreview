@@ -43,14 +43,6 @@ export const DataFactory = {
     'boxes_packs',
   ],
 
-  isHiraganaCharacter: (ch) => {
-    return kanaExcl.includes(ch) || hiraganaRegex.test(ch)
-  },
-
-  isKatakanaCharacter: (ch) => {
-    return kanaExcl.includes(ch) || katakanaRegex.test(ch)
-  },
-
   kanaExcl: [
     '〜',
     '！',
@@ -73,33 +65,32 @@ export const DataFactory = {
   ],
 
   isNonJapaneseCharacter: (ch) => {
-    regex.nonJapaneseRegex.test(ch)
+    regex.nonJapanese.test(ch)
   },
 
+  /*
   isHiraganaCharacter: (ch) => {
     //return kanaExcl.includes(ch) || (ch >= "぀" && ch <= "ゟ")
     return DataFactory.kanaExcl.includes(ch) || regex.hiraganaRegex.test(ch)
   },
-
+  
   isKatakanaCharacter: (ch) => {
     //return kanaExcl.includes(ch) || (ch >= "゠" && ch <= "・")
     return DataFactory.kanaExcl.includes(ch) || regex.katakanaRegex.test(ch)
   },
-
+  
   isKanjiCharacter: (ch) => {
     return regex.kanjiRegex.test(ch)
-    /*
-    return (ch >= "一" && ch <= "龯") ||
-      (ch >= "㐀" && ch <= "䶿");
-    */
   },
 
+  /*
   isForReading: (str) => {
     return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch)
       && !DataFactory.isKatakanaCharacter(ch)
       && !DataFactory.isKanjiCharacter(ch)
     )
   },
+  */
 
   entryFilter: (entryStr) => {
     return !entryStr.startsWith('[')
@@ -201,11 +192,6 @@ export const DataFactory = {
         //TODO: если kanaOnly КАТАКАНА, возможно, запись кандзи редкая и не является представительной
         //учесть порядок следования. индекс как фактор определения типа 
         if (filteredLines.length) {
-          const analyzedLines = DataFactory.getAnalyzedLines(filteredLines, resEntry);
-          console.log('entry', entry);
-          console.log('filteredLines', filteredLines);
-          console.log('analyzedLines', analyzedLines.map(o=>o.types.join()));
-
           const entryType = DataFactory.guessEntryType(filteredLines);
           const hiraganaOnly = DataFactory.getHiraganaOnly(filteredLines);
           const withKanji = DataFactory.getWithKanji(filteredLines);
@@ -216,41 +202,44 @@ export const DataFactory = {
             && withKanji.length > 0
           ) {
             pronounce = hiraganaOnly[0];
-            //console.log('filteredLines', filteredLines);
-            //console.log('linesWithKanji', DataFactory.getWithKanji(filteredLines));
             pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines));
-            //console.log('shortest', pronounceTarget);
-            //console.log('pronounce', pronounce);
           };
-          const mataFilteredLines = pronounce && pronounceTarget ? filteredLines.filter(l => l != pronounce) : filteredLines;
+          //const mataFilteredLines = pronounce && pronounceTarget ? filteredLines.filter(l => l != pronounce) : filteredLines;
+          const mataFilteredLines = filteredLines;
           const resLines = mataFilteredLines.map((l, i) => {
-            const isTranslation = DataFactory.isNonJapanese(l) || DataFactory.isMixed(l);
+            const isCompact = DataFactory.isNonJapanese(l) || DataFactory.isMixed(l);
+            const lineTypes = DataFactory.getLineTypes(l, filteredLines);
             const lineObject = {
               text: l,
               originalIndex: i,
               speakable: DataFactory.isJapaneseOnly(l),
-              isTranslation: isTranslation,
+              isCompact: isCompact,
+              linetypes : lineTypes,
             }
             if (pronounce && pronounceTarget) {
 
               if (lineObject.text == pronounceTarget) {
                 lineObject.pronounce = pronounce;
-
-                //console.log('lineObject.text', lineObject.text);
-                //console.log('pronounceTarget', pronounceTarget);
-                //console.log('lineObject', lineObject);
               } else if (
                 lineObject.text == pronounce
               ) {
                 lineObject.isPronounce = true;
-
               }
 
             }
-            //console.log('lineObject', lineObject);
             return lineObject
           });
           resEntry.lines = resLines;
+          if (entryType) {
+            resEntry.entryType = entryType
+          }
+          /*
+          const analyzedLines = DataFactory.getAnalyzedLines(filteredLines, resEntry);
+          console.log('resEntry:');
+          console.log(JSON.stringify(resEntry));
+          console.log('analyzedLines');
+          cosole.log(analyzedLines.map(o=> `[ ${o.text} ] : [ ${o.types.join('   ')} ]`).join('\n'));
+          */
           if (currentSection) {
             resEntry.section = currentSection
           } else if (currentUpperSection) {
@@ -278,11 +267,11 @@ export const DataFactory = {
   },
 
   getJapaneseOnly: (lines) => {
-    return lines.filter(l => regex.japaneseRegex2.test(l))
+    return lines.filter(l => regex.japaneseOnly.test(l))
   },
 
   getMixed: (lines) => {
-    return lines.filter(l => regex.mixedLine.test(l))
+    return lines.filter(l => regex.mixed.test(l))
   },
 
   getKanaOnly: (lines) => {
@@ -298,19 +287,20 @@ export const DataFactory = {
   },
 
   getWithKanji: (lines) => {
-    return lines.filter(l => Array.from(l).some(ch => regex.kanjiRegex.test(ch)))
+    return lines.filter(l => regex.hasKanji.test(l));
+    //return lines.filter(l => Array.from(l).some(ch => regex.kanjiRegex.test(ch)))
   },
 
   getNonJapanese: (lines) => {
-    return lines.filter(l => regex.nonJapaneseRegex.test(l))
+    return lines.filter(l => regex.nonJapanese.test(l))
   },
 
   isJapaneseOnly: (l) => {
-    return regex.japaneseRegex2.test(l)
+    return regex.japaneseOnly.test(l)
   },
 
   isMixed: (l) => {
-    return regex.mixedLine.test(l)
+    return regex.mixed.test(l)
   },
 
   isKanaOnly: (l) => {
@@ -326,11 +316,11 @@ export const DataFactory = {
   },
 
   isWithKanji: (l) => {
-    return regex.hasKanjiRegex.test(l)
+    return regex.hasKanji.test(l)
   },
 
   isNonJapanese: (l) => {
-    return regex.nonJapaneseRegex.test(l)
+    return regex.nonJapanese.test(l)
   },
 
   getAnalyzedLines(lines, entry) {
@@ -349,6 +339,19 @@ export const DataFactory = {
         types: types
       }
     })
+  },
+
+  getLineTypes(l, lines, entry) {
+    const lType = DataFactory.LINE_TYPE;
+    let types = [];
+    if (DataFactory.isMixed(l)) types.push(lType.MIXED);
+    if (DataFactory.isNonJapanese(l)) types.push(lType.NON_JAPANESE);
+    if (DataFactory.isJapaneseOnly(l)) types.push(lType.JAPANESE_ONLY);
+    if (DataFactory.isWithKanji(l)) types.push(lType.WITH_KANJI);
+    if (DataFactory.isKanaOnly(l)) types.push(lType.KANA_ONLY);
+    if (DataFactory.isKatakanaOnly(l)) types.push(lType.KATAKANA_ONLY);
+    if (DataFactory.isHiraganaOnly(l)) types.push(lType.HIRAGANA_ONLY); 
+    return types;
   },
 
   guessEntryType(lines) {

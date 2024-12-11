@@ -4,6 +4,7 @@
 @import url("../modules/slide/slide.css");
 @import url("../modules/structure/structure.css");
 @import url("../modules/infobar/infobar.css");
+@import url("../modules/table/table.css");
 
 body {
   margin: 0;

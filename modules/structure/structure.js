@@ -12,38 +12,44 @@ export const StructureView = function () {
     'click #resetTree': 'resetTreeFilters',
     'click #filterCollection': 'filterCollection',
   };
+  this.trueCheckboxesSelector = '.treeCheckbox';
 
   this.toggleTreeCheckboxes = function (e) {
-    const trueCheckboxesSelector = '.treeCheckbox'
     let check = e.target;
-
-    //  check/unchek children (includes check itself)
-    const children = Array.from(check.parentNode.querySelectorAll(trueCheckboxesSelector))
+    const children = Array.from(check.parentNode.querySelectorAll(this.trueCheckboxesSelector))
     children.forEach(child => child.checked = check.checked);
-
-    //  traverse up from target check
     while (check) {
-      //  find parent and sibling checkboxes (quick'n'dirty)
-      const parent = (check.closest(['ul']).parentNode).querySelector(trueCheckboxesSelector);
+      const parent = (check.closest(['ul']).parentNode).querySelector(this.trueCheckboxesSelector);
       const childList = parent.closest('li').querySelector(['ul']);
       if (childList) {
-        const siblings = Array.from(childList.querySelectorAll(trueCheckboxesSelector));
-  
-        //  get checked state of siblings
-        //  are every or some siblings checked (using Boolean as test function) 
+        const siblings = Array.from(childList.querySelectorAll(this.trueCheckboxesSelector));
         const checkStatus = siblings.map(check => check.checked);
         const every = checkStatus.every(Boolean);
         const some = checkStatus.some(Boolean);
-  
-        //  check parent if all siblings are checked
-        //  set indeterminate if not all and not none are checked
         parent.checked = every;
         parent.indeterminate = !every && every !== some;
       }
-
-      //  prepare for nex loop
       check = check != parent ? parent : 0;
     }
+  };
+
+  this.checkFilteredCheckboxes = function (els) {
+    els.forEach(checkbox => {
+      if (checkbox.matches('ul ul input') && checkbox.checked) {
+        const parent = checkbox.closest('ul').closest('li').querySelector('input' + this.trueCheckboxesSelector);
+        const siblings = checkbox.closest('ul').querySelectorAll('input' + this.trueCheckboxesSelector);
+        const checkStatus = Array.from(siblings).map(check => check.checked);
+        const every = checkStatus.every(Boolean);
+        const some = checkStatus.some(Boolean);
+        parent.checked = every;
+        parent.indeterminate = !every && every !== some;
+      }
+    });
+    Array.from(this.element.querySelectorAll('#structureTree > ul > li > .treeCheckbox')).forEach(el => {
+      if (el.indeterminate || el.checked) {
+        el.closest('li').querySelector('.collapsibleListCheckbox').setAttribute('checked', true)
+      }
+    })
   }
 
   this.resetTreeFilters = function () {
@@ -65,7 +71,8 @@ export const StructureView = function () {
   }
 
   this.getCheckboxHtml = function (value) {
-    return `<input class="treeCheckbox" type="checkbox" value="${value}">`
+    const isChecked = this.data.filteredEntries.find(e => e.section == value);
+    return `<input class="treeCheckbox" ${isChecked ? 'checked' : ''} type="checkbox" value="${value}">`
   }
 
   this.getListNameHtml = function (name, value) {
@@ -87,6 +94,7 @@ export const StructureView = function () {
     if (!Application.data.currentEntries?.length) {
       return;
     }
+    this.data.filteredEntries = Application.getFilteredEntries();
     const resItems = Application.data.structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
@@ -98,7 +106,9 @@ export const StructureView = function () {
     this.treeEl.querySelector('ul').insertAdjacentHTML('afterbegin',
       resItems.join('')
     )
-    Array.from(this.element.querySelectorAll('.treeCheckbox[type=checkbox]')).forEach(el => {
+    const treeCheckboxes = Array.from(this.element.querySelectorAll('.treeCheckbox[type=checkbox]'));
+    this.checkFilteredCheckboxes(treeCheckboxes);
+    treeCheckboxes.forEach(el => {
       el.addEventListener('change', (e) => {
         this.toggleTreeCheckboxes(e)
       })

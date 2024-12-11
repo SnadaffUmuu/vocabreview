@@ -1,16 +1,19 @@
 import { View } from "../view.js";
 import { Application } from "../app.js"
 import { DataFactory } from "../data.js"
+import { setSelectOption } from "../utils.js"
 
 export const MenuView = function () {
   this.nightModeEl = null;
   this.sourcesSelect = null;
+  this.viewSelect = null;
 
   this.events = {
     'click #menuTrigger': 'toggleMenu',
     'change #vocabSources': 'changeSource',
     'click #clearLocalStorage' : 'resetApp',
     'click #reloadCurrentSource' : 'reloadCurrentSource',
+    'change #viewSelect' : 'switchView',
   };
 
   this.toggleMenu = function (e) {
@@ -24,6 +27,10 @@ export const MenuView = function () {
       this.menuTrigger.innerText = "<<"
     }
   };
+
+  this.switchView = function (e) {
+    Application.switchView(e.target.value);
+  },
 
   this.resetApp = function() {
     Application.reset();
@@ -40,27 +47,25 @@ export const MenuView = function () {
     this.sourcesSelect.insertAdjacentHTML('beforeend', options);
   }
 
-  this.setSelectedOption = (value) => {
-    const options = Array.from(this.sourcesSelect.querySelectorAll('option'));
-    const matched = options.find(o => o.value == value);
-    options.forEach(o => o.removeAttribute('selected'));
-    if (matched) {
-      matched.setAttribute('selected', true);
-    }
-  }
-
   this.changeSource = function (e) {
     Application.changeSource(e.target.value);
   }
 
   this.reset = function() {
-    this.setSelectedOption('');
+    setSelectOption(this.sourcesSelect, '');
+    setSelectOption(this.viewSelect, '');
   },
 
   this.render = function() {
     this.reset();
     if (Application.state.source) {
-      this.setSelectedOption(Application.state.source)
+      setSelectOption(this.sourcesSelect, Application.state.source);
+    }
+    if(Application.state.appType) {
+      const current = this.viewSelect.querySelector(`option[value=${Application.state.appType}]`);
+      if (current) {
+        current.setAttribute('selected', true);
+      }
     } else {
       this.toggleMenu()
     }
@@ -70,6 +75,7 @@ export const MenuView = function () {
     View.prototype.show.call(this);
     this.sourcesSelect = this.element.querySelector('#vocabSources');
     this.menuTrigger = this.element.querySelector('#menuTrigger');
+    this.viewSelect = this.element.querySelector('#viewSelect');
     this.renderSelectOptions();
     this.render();
   }

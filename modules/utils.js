@@ -1,18 +1,18 @@
 ﻿export const regex = {
-  japaneseRegex: /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u,
-  hiraganaRegex: /[\p{Script_Extensions=Hiragana}]/u,
-  katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
-  kanjiRegex: /^[\p{Script=Han}]$/u,
-  hasKanjiRegex: /[\p{Script=Han}]/u,
-  kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{P}\s]+$/u,
-  hiraganaOnly: /^[\p{Script=Hiragana}\p{P}\s]+$/u,
-  katakanaOnly: /^[\p{Script=Katakana}\p{P}\s]+$/u,
+  //japaneseRegex: /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u,
+  //hiraganaRegex: /[\p{Script_Extensions=Hiragana}]/u,
+  //katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
+  //kanjiRegex: /^[\p{Script=Han}]$/u,
   //nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
-  nonJapaneseRegex: /^[\p{Script=Cyrillic}\p{Script=Latin}\p{N}\p{P}\p{Zs}]+$/u,
-  japaneseRegex2: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{P}\sー]+$/u,
+  hasKanji: /[\p{Script=Han}]/u,
+  kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+  hiraganaOnly: /^[\p{Script=Hiragana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+  katakanaOnly: /^[\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+  nonJapanese: /^[\p{Script=Cyrillic}\p{Script=Latin}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+  japaneseOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+  mixed: /^(?=.*[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])(?=.*[\p{Script=Latin}\p{Script=Cyrillic}])[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{Script=Latin}\p{Script=Cyrillic}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   upperSectionTitle: /~~\n(.*)\n~~/u,
   pageLevelSection: /\[(.*)\]((.*))?/u,
-  mixedLine: /^(?=.*[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])(?=.*[\p{Script=Latin}\p{Script=Cyrillic}])[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{Script=Latin}\p{Script=Cyrillic}\p{N}\p{P}\s]+$/u,
 }
 
 export function speak(text) {
@@ -54,4 +54,13 @@ export function stringToHash(string) {
 export function shortestString(arr) {
   let minLength = Math.min(...arr.map(str => str.length));
   return arr.find(str => str.length === minLength);
+}
+
+export function setSelectOption(select, value) {
+  const options = Array.from(select.querySelectorAll('option'));
+  const matched = options.find(o => o.value == value);
+  options.forEach(o => o.removeAttribute('selected'));
+  if (matched) {
+    matched.setAttribute('selected', true);
+  }
 }
