@@ -6,17 +6,20 @@
   display: flex;
   flex-flow: row wrap;
   font-size:18px;
-  min-height: 32px;
+  min-height: 38px;
   align-items: stretch;
+  background: var(--bg);
+  z-index: 100;
 }
 
 #nightMode {
   width: 35px;
-  height: 32px;
+  height: 38px;
   border-radius: 3px;
   border: 1px solid transparent;
   z-index:1000;
   flex:0 0 auto;
+  box-sizing: border-box;
 }
 
 #nightMode.nightMode {

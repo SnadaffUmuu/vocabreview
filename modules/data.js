@@ -55,7 +55,8 @@ export const DataFactory = {
     '🎵',
     '✔',
     '♦',
-    '▲'
+    '▲',
+    '*'
   ],
 
   nonEntrySymbols: [

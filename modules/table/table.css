@@ -1,26 +1,112 @@
 #table {
   border-collapse: collapse;
-  width: 100%;
+  font-size:15px;
+  position: relative;
+  margin-bottom:30px;
+}
+
+#table th {
+  position: sticky;
+  top:0;
+  background: var(--bg);
 }
 
 #table td, #table th {
   border:1px solid gray;
-  font-size:13px;
 }
 
-#table td > div {
-  width:100%;
-  min-height:20px;
+#table th > div,
+#table td > div.cellContentDraggable {
   box-sizing: border-box;
   padding: 5px;
+  min-height:30px;
+  min-width:100px;
+  max-width:250px;
+}
+
+#table td .rowDrag {
+  padding:7px;
   cursor: move;
+  max-width:30px;
+}
+
+#table td > .cellContentDraggable {
+  cursor: grab;
   border-radius: 3px;
 }
 
-#table td.over {
-  background: rgba(154, 255, 154, 0.459);
+#table td.hidden > .cellContentDraggable {
+  cursor: help;
 }
 
-#table td > div.hidden {
+#table td.speakme.revealed > .cellContentDraggable {
+  cursor:-webkit-zoom-in;
+}
+
+#table td.revealed:not(.speakme) > .cellContentDraggable {
+  cursor:crosshair;
+}
+
+#table td > .cellContentDraggable[data-reading] {
+  color: var(--text-color-speakable);
+  font-size: 17px;
+}
+
+#table td > .cellContentDraggable:active {
+  cursor: grabbing
+}
+
+#table td.over,
+#table td.over > div {
+  background: rgba(154, 255, 154, 0.5);
+}
+
+#table td.hidden > .cellContentDraggable {
   opacity: 0 !important;
+}
+
+#tableActions {
+  box-sizing: border-box;
+  padding: 0 7px 10px;
+  width: 100%;
+  display:flex;
+  flex-flow: row wrap;
+  font-size:13px;
+}
+
+#hideModeContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  padding:0 10px;
+  align-items: stretch;
+}
+
+#hideModeContainer > label {
+  align-self: center;
+}
+
+#tableActions [type=checkbox] {
+  margin: 0 0 0 5px;
+}
+
+#addColumn {
+  padding:5px 7px;
+  border-radius: 5px;
+  border:1px solid gray;
+  cursor: pointer;
+}
+
+#addColumn:hover {
+  border-color: red
+}
+
+#addColumn:active {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+#table th .drag {
+  margin-right:5px;
+  display: inline-block;
+  cursor:move;
+  padding:10px;
 }

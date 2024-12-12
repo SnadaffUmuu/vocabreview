@@ -6,18 +6,29 @@
 @import url("../modules/infobar/infobar.css");
 @import url("../modules/table/table.css");
 
+:root {
+  --bg: #f1e6e8;
+  --text-color-speakable: rgb(37, 37, 194);
+}
+
+body.night {
+  --bg: #4d000e;
+  --text-color: #a6cecf;
+  --text-color-speakable: #d4d4d4;
+}
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 30px;
-  background: #f1e6e8;
+  background: var(--bg);
   font-family: sans-serif;
 }
 
 .night {
-  background: #4d000e;
-  color: #a6cecf;
+  background: var(--bg);
+  color: var(--text-color);
 }
 
 #appBody {

@@ -82,6 +82,7 @@ export const MenuView = function () {
 };
 
 MenuView.prototype = Object.assign(Object.create(View.prototype), {
+  containerSelector : '#appBody',
   templateSelector : '#menuContainer',
   templatePath : 'modules/menu/menu.html',
 });
