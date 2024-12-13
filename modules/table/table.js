@@ -56,7 +56,7 @@ export const TableView = function () {
         for (let i = 0; i < this.columnsCount; i++) {
           const readingAttr = entry.lines[i]?.speakable ? 'data-reading="' + entry.lines[i].text + '"' : '';
           cells.push(`
-              <td>
+              <td class="draggableContainer">
                 ${i < entry.lines.length ?
               '<div draggable="true" ' + readingAttr + ' class="cellContentDraggable">' + (entry.lines[i].text) + '</div>'
               : ''}
@@ -104,6 +104,33 @@ export const TableView = function () {
     });
   };
 
+  this.createPlaceholder = function () {
+    if (!this.placeholder) {
+      this.placeholder = document.createElement("div");
+      this.placeholder.classList.add("placeholder");
+      this.placeholder.textContent = "Drop here";
+    }
+  };
+
+  this.getDragAfterElement = function (container, y) {
+    const draggableElements = [
+      ...container.querySelectorAll(".cellContentDraggable:not(.dragging)")
+    ];
+
+    return draggableElements.reduce(
+      (closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      },
+      { offset: Number.NEGATIVE_INFINITY }
+    ).element;
+  };
+
   this.setCellEventsAndStuff = function (cell, i) {
 
     cell.addEventListener('click', (e) => {
@@ -118,7 +145,7 @@ export const TableView = function () {
         }
       } else if (cell.classList.contains('revealed') && cell.classList.contains('speakme')) {
         cell.classList.toggle('speakme');
-          speak(target.dataset.reading)
+        speak(target.dataset.reading)
       } else if (cell.classList.contains('revealed') && !cell.classList.contains('speakme')) {
         cell.classList.toggle('hidden');
         cell.classList.toggle('revealed');
@@ -130,13 +157,58 @@ export const TableView = function () {
     const item = cell.querySelector('div');
     if (item) {
       item.id = `draggable-${i}`;
+
       item.addEventListener('dragstart', (e) => {
         if (item.closest('td').classList.contains('hidden')) return;
-        this.draggedCellContent = e.target;
+        this.draggedCellContent = item;
         this.draggedCellContent.style.opacity = '0.4';
         this.draggedCellContent.style.border = '1px solid blue';
         e.dataTransfer.effectAllowed = 'move';
-        //e.dataTransfer.setData('text', this.draggedCellContent.id);
+      });
+
+      item.addEventListener('touchstart', (e) => {
+        item.classList.add("dragging");
+        this.draggedCellContent = item;
+        this.createPlaceholder();
+        // stop scroll behavior during touch
+        e.preventDefault();
+      });
+
+      item.addEventListener("touchmove", (e) => {
+        const touch = e.touches[0];
+        item.style.position = "absolute";
+        item.style.left = `${touch.clientX}px`;
+        item.style.top = `${touch.clientY}px`;
+        item.style.width = "150px";
+        this.potentialContainer = document
+          .elementFromPoint(touch.clientX, touch.clientY)
+          .closest("td");
+        if (this.potentialContainer && this.placeholder) {
+          const afterElement = this.getDragAfterElement(
+            this.potentialContainer,
+            touch.clientY
+          );
+          if (afterElement) {
+            this.potentialContainer.insertBefore(this.placeholder, afterElement);
+          } else {
+            this.potentialContainer.appendChild(this.placeholder);
+          }
+        }
+        e.preventDefault();
+      });
+
+      item.addEventListener("touchend", () => {
+        item.classList.remove("dragging");
+        if (this.draggedCellContent && this.placeholder && this.placeholder.parentNode) {
+          this.placeholder.parentNode.insertBefore(this.draggedCellContent, this.placeholder);
+          this.placeholder.remove();
+          this.draggedCellContent.style.position = "static";
+          this.draggedCellContent.style.left = "";
+          this.draggedCellContent.style.top = "";
+          this.draggedCellContent.style.width = "";
+        }
+        this.draggedCellContent = null;
+        this.placeholder = null;
       });
     };
 
@@ -169,6 +241,7 @@ export const TableView = function () {
         this.draggedCellContent = null;
       }
     });
+
   };
 
   this.renderTable = function () {

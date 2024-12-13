@@ -64,3 +64,7 @@ export function setSelectOption(select, value) {
     matched.setAttribute('selected', true);
   }
 }
+
+function isTouchDevice() {
+  return window.matchMedia('(pointer: coarse)').matches;
+}

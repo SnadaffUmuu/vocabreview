@@ -1,7 +1,10 @@
+#tableView {
+  position: relative;
+}
+
 #table {
   border-collapse: collapse;
   font-size:15px;
-  position: relative;
   margin-bottom:30px;
 }
 
@@ -109,4 +112,20 @@
   display: inline-block;
   cursor:move;
   padding:10px;
+}
+
+.dragging {
+  opacity: 0.8;
+  background-color: skyblue;
+  cursor: grabbing;
+}
+
+.cellContentDraggable, .draggableContainer {
+  touch-action: none;
+}
+
+.placeholder {
+  border: 2px dashed #666;
+  background-color: #f0f0f0;
+  opacity: 0.5;
 }
