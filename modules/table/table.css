@@ -1,11 +1,16 @@
 #tableView {
-  position: relative;
+  /* position: relative; */
 }
 
 #table {
   border-collapse: collapse;
   font-size:15px;
   margin-bottom:30px;
+  height:1px;
+}
+
+#table tbody {
+  /* position: relative; */
 }
 
 #table th {
@@ -19,7 +24,7 @@
 }
 
 #table th > div,
-#table td > div.cellContentDraggable {
+#table td > .cellContentDraggable {
   box-sizing: border-box;
   padding: 5px;
   min-height:30px;
@@ -35,28 +40,35 @@
 
 #table td > .cellContentDraggable {
   cursor: grab;
-  border-radius: 3px;
+  height:100%;
+  display: flex;
+  align-items: center;
+  position:relative;
+  padding-right:20px;
+  padding-top:20px;
+  padding-bottom:10px;
 }
 
 #table td.hidden > .cellContentDraggable {
-  cursor: help;
+  cursor: -webkit-zoom-in;
 }
 
-#table td.speakme.revealed > .cellContentDraggable {
-  cursor:-webkit-zoom-in;
-}
-
-#table td.revealed:not(.speakme) > .cellContentDraggable {
+#table td.revealed > .cellContentDraggable {
   cursor:crosshair;
 }
 
-#table td > .cellContentDraggable[data-reading] {
+#table td > .cellContentDraggable.speakable {
   color: var(--text-color-speakable);
   font-size: 17px;
 }
 
+#table td > .cellContentDraggable.speakable + #table td > .cellContentDraggable.speakable {
+  border-top:1px solid var(--text-color-speakable);
+}
+
 #table td > .cellContentDraggable:active {
-  cursor: grabbing
+  cursor: grabbing;
+  border-radius: 3px;
 }
 
 #table td.over,
@@ -116,16 +128,39 @@
 
 .dragging {
   opacity: 0.8;
-  background-color: skyblue;
+  background-color: rgba(135, 207, 235, 0.63);
   cursor: grabbing;
+  height: 50px !important;
+  width:100px;
+  position: absolute !important;
+}
+
+.draggableContainer {
+  /* position: relative; */
+}
+.draggableContainer.hidden:has([data-reading]) {  
+  background: rgba(128, 128, 128, 0.178);
+}
+
+.speakme {
+  position: absolute;
+  cursor: pointer;
+  width:20px;
+  height:20px;
+  border-bottom-left-radius: 10px;
+  background: var(--icon-speakable-bg);
+  top:0;
+  right:0;
+  z-index:100;
 }
 
 .cellContentDraggable, .draggableContainer {
-  touch-action: none;
+  /*touch-action: none;*/
 }
 
 .placeholder {
   border: 2px dashed #666;
   background-color: #f0f0f0;
   opacity: 0.5;
+  padding:10px;
 }

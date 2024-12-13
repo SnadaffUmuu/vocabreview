@@ -5,14 +5,13 @@
 #menuTrigger {
   position: fixed;
   top: 0;
-  z-index: 100;
+  z-index: 400;
   height:40px;
   width:60px;
-  z-index:200;
 }
 
 #menu {
-  z-index: 100;
+  z-index: 300;
   max-width: 70%;
   transition: transform 0.5s;
   position: fixed;

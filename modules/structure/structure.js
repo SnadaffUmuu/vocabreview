@@ -56,7 +56,7 @@ export const StructureView = function () {
     Array.from(
       this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
     ).forEach(ch => ch.checked = false)
-    DataFactory.filter(null)
+    Application.filter(null)
   }
 
   this.filterCollection = function () {

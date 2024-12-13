@@ -1,6 +1,7 @@
 import { View } from "../view.js";
 import { speak } from "../utils.js";
 import { Application } from "../app.js";
+//import { tableDragger } from '../../assets/table-dragger.js';
 
 export const TableView = function () {
   this.tableEl = null;
@@ -54,11 +55,18 @@ export const TableView = function () {
       + this.data.entries.reduce((resHTML, entry) => {
         let cells = [];
         for (let i = 0; i < this.columnsCount; i++) {
-          const readingAttr = entry.lines[i]?.speakable ? 'data-reading="' + entry.lines[i].text + '"' : '';
           cells.push(`
               <td class="draggableContainer">
                 ${i < entry.lines.length ?
-              '<div draggable="true" ' + readingAttr + ' class="cellContentDraggable">' + (entry.lines[i].text) + '</div>'
+                '<div draggable="true" ' 
+                  + ' class="cellContentDraggable' 
+                    + (entry.lines[i]?.speakable ? ' speakable' : '')
+                    + '">' 
+                    + (entry.lines[i]?.speakable ? '<span data-reading="' 
+                      + entry.lines[i].text
+                      + '" class="speakme"></span>' : '')
+                  + (entry.lines[i].text) 
+                + '</div>'
               : ''}
               </td>
             `)
@@ -131,84 +139,102 @@ export const TableView = function () {
     ).element;
   };
 
+  this.toggleHidden = function (cell) {
+    if (cell.classList.contains('hidden') 
+      || cell.classList.contains('revealed')) {
+      cell.classList.toggle('hidden');
+      cell.classList.toggle('revealed');
+    } 
+  };
+
   this.setCellEventsAndStuff = function (cell, i) {
 
     cell.addEventListener('click', (e) => {
       const target = e.target.tagName == 'DIV' ? e.target : e.target.querySelector('.cellContentDraggable');
       if (!(target && target.classList.contains('cellContentDraggable'))) return;
       const cell = e.target.tagName == 'DIV' ? e.target.closest('td') : e.target;
-      if (cell.classList.contains('hidden')) {
-        cell.classList.toggle('hidden');
-        cell.classList.toggle('revealed');
-        if (target.dataset.reading) {
-          cell.classList.toggle('speakme');
-        }
-      } else if (cell.classList.contains('revealed') && cell.classList.contains('speakme')) {
-        cell.classList.toggle('speakme');
-        speak(target.dataset.reading)
-      } else if (cell.classList.contains('revealed') && !cell.classList.contains('speakme')) {
-        cell.classList.toggle('hidden');
-        cell.classList.toggle('revealed');
-      } else if (target && target.dataset.reading) {
-        speak(target.dataset.reading)
-      }
+      this.toggleHidden(cell);
     });
+
+    const speakme = cell.querySelector('.speakme');
+    if (speakme) {
+      speakme.addEventListener('click', (e) => {
+        e.stopPropagation();
+        speak(e.target.dataset.reading)
+      })
+    }
 
     const item = cell.querySelector('div');
     if (item) {
       item.id = `draggable-${i}`;
-
       item.addEventListener('dragstart', (e) => {
         if (item.closest('td').classList.contains('hidden')) return;
         this.draggedCellContent = item;
-        this.draggedCellContent.style.opacity = '0.4';
-        this.draggedCellContent.style.border = '1px solid blue';
         e.dataTransfer.effectAllowed = 'move';
       });
 
       item.addEventListener('touchstart', (e) => {
+        this.touchTimeout = setTimeout(() => {
+          this.draggable = true;
+        }, 500 );
+        /*
         item.classList.add("dragging");
         this.draggedCellContent = item;
-        this.createPlaceholder();
+        this.createPlaceholder();*/
         // stop scroll behavior during touch
-        e.preventDefault();
+        //e.preventDefault();
       });
 
       item.addEventListener("touchmove", (e) => {
-        const touch = e.touches[0];
-        item.style.position = "absolute";
-        item.style.left = `${touch.clientX}px`;
-        item.style.top = `${touch.clientY}px`;
-        item.style.width = "150px";
-        this.potentialContainer = document
-          .elementFromPoint(touch.clientX, touch.clientY)
-          .closest("td");
-        if (this.potentialContainer && this.placeholder) {
-          const afterElement = this.getDragAfterElement(
-            this.potentialContainer,
-            touch.clientY
-          );
-          if (afterElement) {
-            this.potentialContainer.insertBefore(this.placeholder, afterElement);
-          } else {
-            this.potentialContainer.appendChild(this.placeholder);
+        if (!this.draggable) {
+          e.stopPropagation();
+          clearTimeout(this.touchTimeout)
+        } else {
+          item.classList.add("dragging");
+          this.draggedCellContent = item;
+          if (!this.placeholder) {
+            this.createPlaceholder();
           }
+          const touch = e.touches[0];
+          item.style.left = `${touch.clientX + 10}px`;
+          item.style.top = `${touch.clientY + 10}px`;
+          console.log(touch.clientX)
+          console.log(touch.clientY)
+          console.log(this.potentialContainer = document
+            .elementFromPoint(touch.clientX, touch.clientY).innerText)
+          this.potentialContainer = document
+            .elementFromPoint(touch.clientX, touch.clientY).closest('td');
+          if (this.potentialContainer && this.placeholder) {
+            const afterElement = this.getDragAfterElement(
+              this.potentialContainer,
+              touch.clientY
+            );
+            if (afterElement) {
+              this.potentialContainer.insertBefore(this.placeholder, afterElement);
+            } else {
+              this.potentialContainer.appendChild(this.placeholder);
+            }
+          }
+          e.preventDefault();
         }
-        e.preventDefault();
       });
 
       item.addEventListener("touchend", () => {
+        clearTimeout(this.touchTimeout);
+        this.draggable = false;
         item.classList.remove("dragging");
         if (this.draggedCellContent && this.placeholder && this.placeholder.parentNode) {
           this.placeholder.parentNode.insertBefore(this.draggedCellContent, this.placeholder);
           this.placeholder.remove();
-          this.draggedCellContent.style.position = "static";
           this.draggedCellContent.style.left = "";
           this.draggedCellContent.style.top = "";
-          this.draggedCellContent.style.width = "";
         }
         this.draggedCellContent = null;
         this.placeholder = null;
+      });
+
+      item.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
       });
     };
 
@@ -221,10 +247,11 @@ export const TableView = function () {
     });
 
     cell.addEventListener('dragend', (e) => {
+      /*
       const el = e.target;
       el.style.opacity = '1';
       el.style.borderColor = 'transparent';
-
+      */
       this.tableEl.querySelectorAll('td').forEach(function (cell) {
         cell.classList.remove('over');
       });

@@ -2,14 +2,14 @@
   position: fixed;
   top:0;
   left:70px;
-  right:3px;
+  width: calc(100vw - 75px);
   display: flex;
   flex-flow: row wrap;
   font-size:18px;
   min-height: 38px;
   align-items: stretch;
   background: var(--bg);
-  z-index: 100;
+  z-index: 200;
 }
 
 #nightMode {
@@ -36,6 +36,6 @@
 #currentSource {
   flex: 1 1 auto;
   text-align: center;
-  color:#b80022;
+  color:var(--appheader-title-color);
   align-self: center;
 }

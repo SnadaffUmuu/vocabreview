@@ -18,7 +18,7 @@
 export function speak(text) {
   console.log('speak', text)
   const utterThis = new SpeechSynthesisUtterance(text);
-  utterThis.lang = isAndroid() ? "ja_JP" : "ja-JP";
+  utterThis.lang = DeviceUtils.isAndroid() ? "ja_JP" : "ja-JP";
   setTimeout(() => {
     window.speechSynthesis.speak(utterThis);
   }, 0)
@@ -32,10 +32,6 @@ export function shuffleArray(array) {
     array[j] = temp;
   }
   return array;
-}
-
-function isAndroid() {
-  return navigator.userAgent.toLowerCase().indexOf("android") > -1
 }
 
 export function stringToHash(string) {
@@ -65,6 +61,29 @@ export function setSelectOption(select, value) {
   }
 }
 
-function isTouchDevice() {
-  return window.matchMedia('(pointer: coarse)').matches;
+export const DeviceUtils = {
+  isAndroid : () => {
+    return navigator.userAgent.toLowerCase().indexOf("android") > -1
+  }, 
+
+  isTouchDevice : () => {
+    return window.matchMedia('(pointer: coarse)').matches;
+  },
+};
+
+export const UserActionHandlers = {
+  
+  LONG_TOUCH_DELAY : 500,
+
+  handleSingleClick : () => {
+    console.log('Single click or tap');
+  },
+  
+  handleDoubleClick : () => {
+    console.log('Double click');
+  },
+  
+  handleLongTouch : () => {
+    console.log('Long touch');
+  },
 }

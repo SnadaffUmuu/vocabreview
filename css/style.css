@@ -8,13 +8,17 @@
 
 :root {
   --bg: #f1e6e8;
-  --text-color-speakable: rgb(37, 37, 194);
+  --text-color-speakable: #2525c2;
+  --icon-speakable-bg: #ffffde;
+  --appheader-title-color: #1e20c0;
 }
 
 body.night {
   --bg: #4d000e;
   --text-color: #a6cecf;
-  --text-color-speakable: #d4d4d4;
+  --text-color-speakable: #f7d4ff;
+  --icon-speakable-bg: #712e52;
+  --appheader-title-color: #daa7e5;
 }
 
 body {
