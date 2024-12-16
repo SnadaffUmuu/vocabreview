@@ -30,9 +30,11 @@ SlideSide.prototype = Object.assign(Object.create(View.prototype), {
     if (this.line.pronounce) {
       this.element.dataset.pronounce = this.line.pronounce;
     }
-   if (this.line.isPronounce) {
+    /*
+    if (this.line.isPronounce) {
       this.element.dataset.isPronounce = true;
     }
+    */
     this.setClasses();
   }
 });

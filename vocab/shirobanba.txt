@@ -307,8 +307,9 @@ The Bureau of Imperial Estates
 はんぱつ
 отвращение, отторжение, рикошет
 
-〜せざるを得ない
-せざるをえない
+ざる
+cannot help but, cannot avoid doing
+::pattern
 
 降りに
 くだりに
@@ -373,9 +374,6 @@ The Bureau of Imperial Estates
 包丁
 ほうちょう
 нож
-
-ざる
-cannot help but, cannot avoid doing
 
 [8]
 
@@ -517,7 +515,8 @@ somehow, for some reason or other
 交わす
 かわす
 обмениваться
-彼らの間に交わされた語　a conversation that passes between them
+彼らの間に交わされた語　
+a conversation that passes between them
 
 中心地
 ちゅうしんち

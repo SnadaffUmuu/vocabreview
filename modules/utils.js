@@ -86,4 +86,22 @@ export const UserActionHandlers = {
   handleLongTouch : () => {
     console.log('Long touch');
   },
+} 
+
+export function isOverflow(el, maxWidth, maxHeight) {
+  const tester = el.cloneNode(true);
+  tester.style.cssText = 'position:absolute;opacity:0'
+  el.parentElement.appendChild(tester);
+  let res;
+  if (maxWidth) {
+    tester.style.height = el.offsetHeight + 'px';
+    tester.style.width = 'auto';
+    res = tester.offsetWidth > maxWidth
+  } else if (maxHeight) {
+    tester.style.height = 'auto';
+    tester.style.width = el.offsetWidth + 'px';
+    res = tester.offsetHeight > maxHeight
+  }
+  tester.remove();
+  return res;
 }
