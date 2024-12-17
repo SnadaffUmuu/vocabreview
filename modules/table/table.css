@@ -153,6 +153,7 @@
   top:0;
   right:0;
   z-index:100;
+  opacity:0.5;
 }
 
 .cellContentDraggable, .draggableContainer {
@@ -177,19 +178,15 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;  
   overflow: hidden;
-  padding-top:3px;
 }
 
 #table .cellContentDraggable .expand,
 #table .cellContentDraggable .expand.expanded {
   position: absolute;
   right:2px;
-  bottom:2px;
+  bottom:0;
   font-size: 20px;
   text-align: center;
   vertical-align: middle;
-}
-
-#table .cellContentDraggable.ellipsis .expand {
-  display:block;
+  opacity:0.2;
 }

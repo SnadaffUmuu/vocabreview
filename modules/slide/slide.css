@@ -17,7 +17,7 @@
 
 .slidePronounce {
   position: absolute;
-  bottom: 5px;
+  bottom: 40px;
   right:10px;
   font-size: 15px;
   padding:10px;
@@ -27,7 +27,7 @@
   content: '';
   position: absolute;
   top:0;left:0;right:0;bottom:0;
-  background: white;
+  background: var(--icon-speakable-bg);
   cursor:pointer;
   border-radius: 10px;
 }
@@ -95,6 +95,7 @@
   position: relative;
 }
 
+/*
 .slide-side[data-pronounce]::after {
   position: absolute;
   top: -35px;
@@ -111,3 +112,4 @@
 .slide-side[data-is-pronounce] {
   opacity: 0.5;
 }
+*/

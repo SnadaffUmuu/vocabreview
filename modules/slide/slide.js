@@ -53,9 +53,10 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
         </div>`);
       this.element.querySelector('.slidePronounce').addEventListener('click', (e) => {
         const t = e.target;
-        speak(t.innerText);
+        
         if (!t.classList.contains('listened') && !t.classList.contains('revealed')) {
           t.classList.add('listened');
+speak(t.innerText);
         } else if (t.classList.contains('listened') && !t.classList.contains('revealed')) {
           t.classList.add('revealed');
           t.classList.remove('listened');

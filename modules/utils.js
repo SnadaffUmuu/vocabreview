@@ -75,6 +75,10 @@ export const UserActionHandlers = {
   
   LONG_TOUCH_DELAY : 500,
 
+  preventDefault : (e) => {
+    e.preventDefault();
+  },
+
   handleSingleClick : () => {
     console.log('Single click or tap');
   },
