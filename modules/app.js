@@ -286,9 +286,9 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   Router.start();
   window.App = Application;
   window.DF = DataFactory;
+/*
 
 
-  /*
   console.log('types');
   console.log(Array.from(new Set(App.data.allEntries.filter(e => e.type).map(e=> e.type))).join('\n'));
 

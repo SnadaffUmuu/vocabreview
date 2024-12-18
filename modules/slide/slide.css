@@ -11,8 +11,19 @@
   position: absolute;
   top: 5px;
   left:10px;
-  right:10px;
-  font-size: 11px;
+  right:40px;
+  font-size: 12px;
+  height:200px;
+  background: #dadada;
+  color: var(--text-color);
+  border:0;
+  padding:10px;
+  box-sizing: border-box;
+}
+
+.night .slide-info {
+  color: black;
+  background: #555;
 }
 
 .slidePronounce {

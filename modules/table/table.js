@@ -7,14 +7,16 @@ import {
 import { Application } from "../app.js";
 
 export const TableView = function () {
+  this.tableContainer = null;
   this.tableEl = null;
   this.actionsContainer = null;
   this.columnsCount = null;
   this.cells = null;
+  this.draggedRow = null;
+  
   this.events = {
     'click #addColumn': 'addColumn'
   };
-  this.draggedRow = null;
 
   this.namespaces = {
     'UserActionHandlers': UserActionHandlers
@@ -25,7 +27,7 @@ export const TableView = function () {
       'th .toggle': 'toggleColumn',
       '.cellContentDraggable': 'toggleCell',
       '.speakme': 'speakCell',
-      '.cellContentDraggable .expand': 'toggleExpand'
+      '.expand': 'toggleExpand'
     },
     contextmenu: {
       'tbody': 'UserActionHandlers.preventDefault',
@@ -97,9 +99,9 @@ export const TableView = function () {
   }
 
   this.addColumn = function () {
-    this.columnsCount++;
+    const columnsCount = this.tableEl.querySelectorAll('th').length;
     this.tableEl.querySelector('thead tr').insertAdjacentHTML('beforeend', `
-        <th draggable="true" data-index="${this.columnsCount}">
+        <th draggable="true" data-index="${columnsCount}">
           <div class="drag">↔️</div>
           <div class="toggle">toggle</div>
         </th>
@@ -107,7 +109,7 @@ export const TableView = function () {
 
     this.tableEl.querySelectorAll('tbody tr').forEach(row => {
       row.insertAdjacentHTML('beforeend', '<td></td>');
-      this.setCellEventsAndStuff(row.querySelector('td:last-child'), this.columnsCount - 1)
+      this.setCellEventsAndStuff(row.querySelector('td:last-child'), columnsCount)
     })
   };
 
@@ -130,11 +132,25 @@ export const TableView = function () {
   };
 
   this.buildTableHtml = function () {
-    const resHTML = '<thead><tr><th draggable="false" data-index="0"></th>'
+    const resHTML = '<table id="table"><thead><tr><th draggable="false" data-index="0"></th>'
       + (Array.from({ length: this.columnsCount }).map((_, i) =>
         '<th draggable="true" data-index="' + (i + 1) + '"><div class="drag">↔️</div><div class="toggle">toggle</div></th>').join(''))
+      + '<th draggable="true" data-index="' + (this.columnsCount + 1) + '"><div class="drag">↔️</div></th>'
       + '</tr></thead><tbody>'
       + this.data.entries.reduce((resHTML, entry) => {
+        let entryInfo = `${entry.tag ? 'entryTag: ' + entry.tag : ''}<br>
+          entryType: ${entry.entryType}<br>
+          linesCount: ${entry.lines.length}<br>
+        `;
+        entryInfo += entry.lines.map(line => {
+          return `
+          <br>${line.originalIndex}<br>
+          ${line.text}<br>
+          speakable: ${line.speakable};${line.isPronounce ? ' isPronounce;' : ''}
+          ${line.pronounce ? ' pronounce: ' + line.pronounce + ';' : ''}<br>
+          ${line.linetypes.join(', ')}
+          `
+        }).join('');
         let cells = [];
         for (let i = 0; i < this.columnsCount; i++) {
           cells.push(`
@@ -156,10 +172,16 @@ export const TableView = function () {
         };
         return resHTML += '<tr><td><div draggable="true" class="rowDrag">↕️</div></td>'
           + cells.join('')
+          + '<td class="entry-info">'
+          + '<div class="ellipsis">' 
+          + entryInfo 
+          + '<span class="expand" data-expanded="⋈">✥</span>'
+          + '</div>'
+          + '</td>'
           + '</tr>';
 
       }, '')
-      + '</tbody>';
+      + '</tbody></table>';
     return resHTML;
   };
 
@@ -186,7 +208,10 @@ export const TableView = function () {
   };
 
   this.toggleExpand = function (e) {
-    const item = e.target.closest('.cellContentDraggable');
+    let item = e.target.closest('.cellContentDraggable');
+    if (!item) {
+      item = e.target.closest('div')
+    }
     item.classList.toggle('ellipsis');
     const swap = e.target.dataset.expanded;
     const old = e.target.innerHTML;
@@ -402,7 +427,8 @@ export const TableView = function () {
 
   this.renderTable = function () {
 
-    this.tableEl.innerHTML = this.buildTableHtml();
+    this.tableContainer.innerHTML = this.buildTableHtml();
+    this.tableEl = this.tableContainer.querySelector('table');
 
     this.cells = this.tableEl.querySelectorAll('td:not(:first-child)');
     this.draggedCellContent = null;
@@ -415,7 +441,7 @@ export const TableView = function () {
 
   this.reset = function () {
     this.data = {};
-    this.tableEl.innerHTML = '';
+    this.tableContainer.innerHTML = '';
   };
 
   this.render = function () {
@@ -431,7 +457,7 @@ export const TableView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
-    this.tableEl = this.element.querySelector('#table');
+    this.tableContainer = this.element.querySelector('#tableContainer');
     this.actionsContainer = this.element.querySelector('#tableActions');
     this.columnHideModeEl = this.element.querySelector('#hideMode')
     this.render();

@@ -20,20 +20,30 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
     return results;
   },
 
-  setSlideProps : function() {
+  setSlideProps: function () {
     this.element.dataset.section = this.entry.section
-    if (this.entry.type) {
-      this.element.classList.add(this.entry.type)
+    if (this.entry.tag) {
+      this.element.classList.add(this.entry.tag)
     }
-    
-    this.element.querySelector('.slide-info').innerHTML = JSON.stringify(this.entry);
-    
+
+    let entryInfo = `${this.entry.tag ? 'entryTag: ' + this.entry.tag + '\n' : ''}${
+      this.entry.entryType}
+lines: ${this.entry.lines.length}`;
+    entryInfo += this.entry.lines.map(line => {
+      return `\n${line.originalIndex}
+${line.text}
+speakable:${line.speakable};${line.isPronounce ? ' isPronounce' : ''}${
+  line.pronounce ? ' pronounce:' + line.pronounce : ''}
+${line.linetypes.join(', ')}`
+    }).join('');
+    this.element.querySelector('.slide-info').value = entryInfo;
+
     const pronounceLine = this.entry.lines.find(l => l.isPronounce);
     if (pronounceLine) {
       this.pronounceLine = pronounceLine;
       this.entry.lines = this.entry.lines.filter(l => l != pronounceLine);
     }
-    
+
     this.element.querySelector('.slide-inner').addEventListener('click', function (e) {
       e.stopPropagation();
       e.preventDefault();
@@ -53,10 +63,10 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
         </div>`);
       this.element.querySelector('.slidePronounce').addEventListener('click', (e) => {
         const t = e.target;
-        
+
         if (!t.classList.contains('listened') && !t.classList.contains('revealed')) {
           t.classList.add('listened');
-speak(t.innerText);
+          speak(t.innerText);
         } else if (t.classList.contains('listened') && !t.classList.contains('revealed')) {
           t.classList.add('revealed');
           t.classList.remove('listened');

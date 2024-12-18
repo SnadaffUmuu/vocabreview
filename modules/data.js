@@ -3,15 +3,26 @@ import { regex, stringToHash, shortestString } from "./utils.js";
 
 export const DataFactory = {
 
+  ENTRY_TAG: {
+    counter : 'counter',
+    geo : 'geo',
+    grammar : 'grammar',
+    name : 'name',
+    onomatopoeia : 'onomatopoeia',
+    pattern : 'pattern',
+    term : 'term',
+    yojijukugo : 'yojijukugo',
+  },
+
   ENTRY_TYPE: {
-    REMINDER: 'REMINDER',
+    ALT_READING: 'ALT_READING',
     DEFAULT: 'DEFAULT',
-    SIMPLE: 'SIMPLE',
-    READING: 'READING',
     DEFAULT_EXAMPLES: 'DEFAULT_EXAMPLES',
     EXAMPLES_TRANSLATION: 'EXAMPLES_TRANSLATION',
     NON_STANDARD: 'NON_STANDARD',
-    ALT_READING: 'ALT_READING'
+    READING: 'READING',
+    REMINDER: 'REMINDER',
+    SIMPLE: 'SIMPLE',
   },
 
   LINE_TYPE: {
@@ -167,20 +178,20 @@ export const DataFactory = {
         originalLines.forEach(l => {
           const lineText = l.trim()
           if (lineText.startsWith('::') && !lineText.startsWith('::diff')) {
-            let type = null;
+            let tag = null;
             const parts = lineText.split('::');
             if ((parts.length) > 2) {
-              type = parts[1];
+              tag = parts[1];
               resEntry.info = parts[2];
             } else {
               if (parts[1].startsWith('onomat')) {
-                type = 'onomatopoeia';
+                tag = 'onomatopoeia';
               } else {
-                type = parts[1];
+                tag = parts[1];
               }
             }
-            if (type) {
-              resEntry.type = type.trim();
+            if (tag) {
+              resEntry.tag = tag.trim();
             }
           } else {
             if (DataFactory.linesFilter(lineText)) {
@@ -193,7 +204,7 @@ export const DataFactory = {
         //TODO: если kanaOnly КАТАКАНА, возможно, запись кандзи редкая и не является представительной
         //учесть порядок следования. индекс как фактор определения типа 
         if (filteredLines.length) {
-          const entryType = DataFactory.guessEntryType(filteredLines);
+          const entryType = DataFactory.guessEntryType(filteredLines, resEntry);
           const hiraganaOnly = DataFactory.getHiraganaOnly(filteredLines);
           const withKanji = DataFactory.getWithKanji(filteredLines);
           let pronounce = null;
@@ -201,6 +212,8 @@ export const DataFactory = {
           if (entryType != DataFactory.ENTRY_TYPE.NON_STANDARD
             && hiraganaOnly.length == 1
             && withKanji.length > 0
+            && !DataFactory.isHiraganaOnly(filteredLines[0])
+            && !filteredLines[0].startsWith('〜')
           ) {
             pronounce = hiraganaOnly[0];
             pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines));
@@ -253,9 +266,7 @@ export const DataFactory = {
       }
     })
     collection.allEntries = entries;
-    /*
-    console.log('types', new Set(entri.es.filter(en => en.type).map(en => en.type)))
-    */
+    console.log('tags', new Set(entries.filter(en => en.tag).map(en => en.tag)))
     if (excludedEntries.length) {
       collection.excludedEntries = excludedEntries;
     }
@@ -268,32 +279,31 @@ export const DataFactory = {
   },
 
   getJapaneseOnly: (lines) => {
-    return lines.filter(l => regex.japaneseOnly.test(l))
+    return lines.filter(l => DataFactory.isJapaneseOnly(l))
   },
 
   getMixed: (lines) => {
-    return lines.filter(l => regex.mixed.test(l))
+    return lines.filter(l => DataFactory.isMixed(l))
   },
 
   getKanaOnly: (lines) => {
-    return lines.filter(l => regex.kanaOnly.test(l))
+    return lines.filter(l => DataFactory.isKanaOnly(l))
   },
 
   getHiraganaOnly: (lines) => {
-    return lines.filter(l => regex.hiraganaOnly.test(l))
+    return lines.filter(l => DataFactory.isHiraganaOnly(l))
   },
 
   getKatakanaOnly: (lines) => {
-    return lines.filter(l => regex.katakanaOnly.test(l))
+    return lines.filter(l => DataFactory.isKatakanaOnly(l))
   },
 
   getWithKanji: (lines) => {
-    return lines.filter(l => regex.hasKanji.test(l));
-    //return lines.filter(l => Array.from(l).some(ch => regex.kanjiRegex.test(ch)))
+    return lines.filter(l => DataFactory.isWithKanji(l))
   },
 
   getNonJapanese: (lines) => {
-    return lines.filter(l => regex.nonJapanese.test(l))
+    return lines.filter(l => DataFactory.isNonJapanese(l))
   },
 
   isJapaneseOnly: (l) => {
@@ -342,7 +352,7 @@ export const DataFactory = {
     })
   },
 
-  getLineTypes(l, lines, entry) {
+  getLineTypes(l) {
     const lType = DataFactory.LINE_TYPE;
     let types = [];
     if (DataFactory.isMixed(l)) types.push(lType.MIXED);
@@ -355,30 +365,28 @@ export const DataFactory = {
     return types;
   },
 
-  guessEntryType(lines) {
+  guessEntryType (lines, entry) {
     const types = DataFactory.ENTRY_TYPE;
-    let res = DataFactory.ENTRY_TYPE.DEFAULT;
-
+    const tag = DataFactory.ENTRY_TAG;
+    const lTypes = DataFactory.LINE_TYPE;
     const length = lines.length;
+    
+    let res = types.NON_STANDARD;
+
+    const typedLines = lines.map((l,i) => {
+      return {
+        index: l.i,
+        text: l,
+        types : DataFactory.getLineTypes(l)
+      }
+    });
 
     const japaneseOnly = DataFactory.getJapaneseOnly(lines);
-
     const mixed = DataFactory.getMixed(lines);
-
     const nonJapanese = DataFactory.getNonJapanese(lines);
-
     const kanaOnly = DataFactory.getKanaOnly(lines);
-
     const withKanji = DataFactory.getWithKanji(lines);
 
-    /*
-    console.log('originalLines', lines)
-    console.log('japaneseOnly', japaneseOnly)
-    console.log('kanaOnly', kanaOnly)
-    console.log('withKanji', withKanji);
-    console.log('mixed', mixed)
-    console.log('nonJapanese', nonJapanese)
-    */
     if (
       length == 1
     ) {
@@ -386,6 +394,8 @@ export const DataFactory = {
     } else if (
       length == 2
       && withKanji.length == 1
+      && mixed.length == 0
+      && nonJapanese.length == 0
       && kanaOnly.length == 1
     ) {
       res = types.READING
@@ -398,7 +408,11 @@ export const DataFactory = {
         && nonJapanese.length == 1
         ||
         kanaOnly.length == 1
-        && nonJapanese.length == 1
+        && 
+        (
+          nonJapanese.length == 1
+          || mixed.length == 1
+        )
       )
     ) {
       res = types.SIMPLE
@@ -442,3 +456,11 @@ export const DataFactory = {
     return Application.data.allEntries.filter(entry => entries.includes(entry.section))
   }
 }
+
+/*
+line 0 non japanese:
+console.log(App.data.allEntries.filter(en => DF.isNonJapanese(en.lines[0].text)).map(en => en.lines.map(l => l.text).join(' - ')).join('\n'))
+
+line 0 starts with tilda
+console.log(App.data.allEntries.filter(en => DF.isJapaneseOnly(en.lines[0].text) && en.lines[0].text.startsWith('〜')).map(en => en.lines.map(l => l.text).join(' - ')).join('\n'))
+*/

@@ -439,9 +439,6 @@ As long as things are good for myself, then it's fine
 
 [36] Rusu
 
-？食べようかどうしようか
-Is it equivalent to 食べようかどうか
-
 ざーっと
 the sound of heavy rain, swiftly flowing water, or wind blowing through trees
 ::onomatopoeia 
@@ -457,9 +454,6 @@ flowing waterfall
 двигаться вдоль чего-то
 泥棒は屋根から木を伝って地面に降りた。
 涙が彼の頬を伝って流れた
-
-？僕の足元にまで
-にまで
 
 破水する
 はすい
@@ -591,9 +585,6 @@ casuative passive
 отправляться в путь 
 天国へと旅立つ、あの世に旅立つ - эвфемизм "уйти на тот свет". 
 Но т.к. глагол идет в конце, про обычн. путешествия тоже можно
-
-？？
-夕べ 昨夜 さくや
 
 抱き寄せる
 だきよせる
@@ -1020,7 +1011,7 @@ back of one's hand
 みぶるい
 дрожь, трепет, вздрагивание 
 
-:grammar
+::grammar
 〜ただけで
 想像しただけで
 прошедшее время. только сделав что-то, только представив...
@@ -1255,7 +1246,6 @@ mirror-shaped mochi, usu. a pair stacked in order of size with a daidai on top, 
 сезонные овощи
 苺は今が旬だ。
 
-
 [13]
 
 初耳 ✔
@@ -1400,7 +1390,7 @@ going as far as...
 идти навстречу 
 
 置く 乗せる
-::diff первое - где угодно, в сумке и пр, второе - поверхность (стола и пр.)
+::diff::первое - где угодно, в сумке и пр, второе - поверхность (стола и пр.)
 
 載せる
 のせる
