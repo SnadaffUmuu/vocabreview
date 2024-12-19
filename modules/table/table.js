@@ -5,6 +5,7 @@ import {
   UserActionHandlers,
 } from "../utils.js";
 import { Application } from "../app.js";
+import { DataFactory } from "../data.js";
 
 export const TableView = function () {
   this.tableContainer = null;
@@ -27,7 +28,8 @@ export const TableView = function () {
       'th .toggle': 'toggleColumn',
       '.cellContentDraggable': 'toggleCell',
       '.speakme': 'speakCell',
-      '.expand': 'toggleExpand'
+      '.expand': 'toggleExpand',
+      '.entry-info .ellipsis' : 'showInfoPopup',
     },
     contextmenu: {
       'tbody': 'UserActionHandlers.preventDefault',
@@ -138,19 +140,7 @@ export const TableView = function () {
       + '<th draggable="true" data-index="' + (this.columnsCount + 1) + '"><div class="drag">↔️</div></th>'
       + '</tr></thead><tbody>'
       + this.data.entries.reduce((resHTML, entry) => {
-        let entryInfo = `${entry.tag ? 'entryTag: ' + entry.tag : ''}<br>
-          entryType: ${entry.entryType}<br>
-          linesCount: ${entry.lines.length}<br>
-        `;
-        entryInfo += entry.lines.map(line => {
-          return `
-          <br>${line.originalIndex}<br>
-          ${line.text}<br>
-          speakable: ${line.speakable};${line.isPronounce ? ' isPronounce;' : ''}
-          ${line.pronounce ? ' pronounce: ' + line.pronounce + ';' : ''}<br>
-          ${line.linetypes.join(', ')}
-          `
-        }).join('');
+        let entryInfo = DataFactory.getEntryInfoString(entry, true);
         let cells = [];
         for (let i = 0; i < this.columnsCount; i++) {
           cells.push(`
@@ -159,7 +149,9 @@ export const TableView = function () {
               '<div draggable="true" '
               + ' class="cellContentDraggable ellipsis'
               + (entry.lines[i]?.speakable ? ' speakable' : '')
-              + '">'
+              + '"'
+              + (entry.reviewLevel && i == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
+              + '>'
               + (entry.lines[i]?.speakable ? '<span data-reading="'
                 + entry.lines[i].text
                 + '" class="speakme"></span>' : '')
@@ -389,6 +381,43 @@ export const TableView = function () {
 
   this.setRowDragEnd = function () {
     this.draggedRow = null;
+  };
+
+  this.showInfoPopup = function(e) {
+    e.stopPropagation();
+    const content = e.target.innerHTML;
+    let infoPopup = document.body.querySelector('.info-popup');
+    if (!infoPopup) {
+      this.tableContainer.insertAdjacentHTML('afterbegin', `
+        <div class="info-popup" style="display:none">
+          <div class="infopopup-content">${content}</div>
+          <div class="close"></div>
+        </div>
+        `);
+      infoPopup = document.body.querySelector('.info-popup');
+    } else {
+      infoPopup.querySelector('.infopopup-content').innerHTML = content;
+    }
+    infoPopup.style.display = '';
+    infoPopup.style.top = (e.y - Math.floor(infoPopup.offsetHeight/2)) + 'px';
+    infoPopup.style.left = (e.x - infoPopup.offsetWidth) + 'px';
+    if (!this.tableContainer.dataset.listeningForPopupclose) {
+      this.closeListenerFunction = this.closeInfoPopup.bind(this);
+      this.tableContainer.addEventListener('click', this.closeListenerFunction, false);
+      this.tableContainer.dataset.listeningForPopupclose = true;
+    }
+  };
+
+  this.closeInfoPopup = function (e) {
+    if (!e.target.classList.contains('info-popup')
+      && !e.target.closest('.info-popup')
+      || e.target.matches('.info-popup .close')) {
+        const infoPopup = document.body.querySelector('.info-popup');
+        if (infoPopup) {
+          infoPopup.style.display = 'none';
+          infoPopup.querySelector('.infopopup-content').innerHTML = '';
+        }
+      }
   };
 
   this.createPlaceholder = function () {

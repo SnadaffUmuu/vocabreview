@@ -1,3 +1,4 @@
+import { DataFactory } from "../data.js";
 import { shuffleArray, speak } from "../utils.js";
 import { View } from "../view.js";
 import { SlideSide } from "./slide-side.js";
@@ -26,17 +27,7 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
       this.element.classList.add(this.entry.tag)
     }
 
-    let entryInfo = `${this.entry.tag ? 'entryTag: ' + this.entry.tag + '\n' : ''}${
-      this.entry.entryType}
-lines: ${this.entry.lines.length}`;
-    entryInfo += this.entry.lines.map(line => {
-      return `\n${line.originalIndex}
-${line.text}
-speakable:${line.speakable};${line.isPronounce ? ' isPronounce' : ''}${
-  line.pronounce ? ' pronounce:' + line.pronounce : ''}
-${line.linetypes.join(', ')}`
-    }).join('');
-    this.element.querySelector('.slide-info').value = entryInfo;
+    this.element.querySelector('.slide-info').value = DataFactory.getEntryInfoString(this.entry);
 
     const pronounceLine = this.entry.lines.find(l => l.isPronounce);
     if (pronounceLine) {

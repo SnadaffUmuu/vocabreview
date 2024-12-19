@@ -1,5 +1,10 @@
 import { Application } from "./app.js";
-import { regex, stringToHash, shortestString } from "./utils.js";
+import { 
+  regex, 
+  stringToHash, 
+  shortestString,
+  countCharOccurrencesInString
+} from "./utils.js";
 
 export const DataFactory = {
 
@@ -23,6 +28,7 @@ export const DataFactory = {
     READING: 'READING',
     REMINDER: 'REMINDER',
     SIMPLE: 'SIMPLE',
+    SIMPLE_EXAMPLES: 'SIMPLE_EXAMPLES',
   },
 
   LINE_TYPE: {
@@ -66,8 +72,11 @@ export const DataFactory = {
     '🎵',
     '✔',
     '♦',
+  ],
+
+  reviewLevelMarks: [
     '▲',
-    '*'
+    '*',
   ],
 
   nonEntrySymbols: [
@@ -103,6 +112,22 @@ export const DataFactory = {
     )
   },
   */
+
+  getEntryInfoString: (entry, forHtml) => {
+    const lineBreak = forHtml ? '<br>' : '\n';
+    let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
+    + (entry.reviewLevel !== undefined ? 'reviewLevel: ' + entry.reviewLevel + lineBreak : '')
+    + entry.entryType + lineBreak
+    + 'lines: ' + entry.lines.length;
+    entryInfo += entry.lines.map(line => {
+      return lineBreak + line.originalIndex + lineBreak
+        + line.text + lineBreak
+        + 'speakable:' + line.speakable + ';' + (line.isPronounce ? ' isPronounce' : '')
+        + (line.pronounce ? ' pronounce:' + line.pronounce : '') + lineBreak
+        + line.linetypes.join(', ')
+      }).join('');
+    return entryInfo;
+  },
 
   entryFilter: (entryStr) => {
     return !entryStr.startsWith('[')
@@ -176,7 +201,7 @@ export const DataFactory = {
         const originalLines = replaced.split('\n');
         const filteredLines = [];
         originalLines.forEach(l => {
-          const lineText = l.trim()
+          let lineText = l.trim();
           if (lineText.startsWith('::') && !lineText.startsWith('::diff')) {
             let tag = null;
             const parts = lineText.split('::');
@@ -195,7 +220,22 @@ export const DataFactory = {
             }
           } else {
             if (DataFactory.linesFilter(lineText)) {
-              filteredLines.push(lineText.trim())
+              if (DataFactory.reviewLevelMarks.some(m => lineText.endsWith(m))) {
+                const triangle = DataFactory.reviewLevelMarks[0];
+                const asterisk = DataFactory.reviewLevelMarks[1];
+                if (lineText.endsWith(triangle)) {
+                  const triangleCount = countCharOccurrencesInString(lineText, triangle);
+                  resEntry.reviewLevel = triangleCount + '00';
+                } else if (lineText.endsWith(asterisk)) {
+                  const asteriskCount = countCharOccurrencesInString(lineText, asterisk);
+                  resEntry.reviewLevel = asteriskCount;
+                }
+                lineText = DataFactory.reviewLevelMarks.reduce(
+                  (lineText, m) => lineText.replaceAll(m, '').trim(),
+                  lineText
+                );
+              }
+              filteredLines.push(lineText)
             } else if (lineText.replaceAll('\n', '').trim().length) {
               excludedLines.push(lineText)
             }
@@ -213,7 +253,7 @@ export const DataFactory = {
             && hiraganaOnly.length == 1
             && withKanji.length > 0
             && !DataFactory.isHiraganaOnly(filteredLines[0])
-            && !filteredLines[0].startsWith('〜')
+            && !(filteredLines[0].startsWith('〜'))
           ) {
             pronounce = hiraganaOnly[0];
             pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines));
@@ -375,7 +415,7 @@ export const DataFactory = {
 
     const typedLines = lines.map((l,i) => {
       return {
-        index: l.i,
+        index: i,
         text: l,
         types : DataFactory.getLineTypes(l)
       }
@@ -425,8 +465,8 @@ export const DataFactory = {
         && withKanji.length == 1
         && nonJapanese.length == 1
         ||
-        japaneseOnly == 2
-        && mixed == 1
+        japaneseOnly.length == 2
+        && mixed.length == 1
       )
     ) {
       res = types.DEFAULT

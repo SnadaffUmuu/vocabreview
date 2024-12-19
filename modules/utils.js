@@ -109,3 +109,8 @@ export function isOverflow(el, maxWidth, maxHeight) {
   tester.remove();
   return res;
 }
+
+export function countCharOccurrencesInString (str, ch) {
+  return [...str].reduce((count, currentChar) =>
+    currentChar === ch ? count + 1 : count, 0);
+}
