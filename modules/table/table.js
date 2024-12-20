@@ -151,11 +151,12 @@ export const TableView = function () {
               + (entry.lines[i]?.speakable ? ' speakable' : '')
               + '"'
               + (entry.reviewLevel && i == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
+              + (entry.lines[i].isPronounce ? ' data-is-pronounce' : '')
               + '>'
               + (entry.lines[i]?.speakable ? '<span data-reading="'
                 + entry.lines[i].text
                 + '" class="speakme"></span>' : '')
-              + (entry.lines[i].text)
+              + '<span class="line-text">' + entry.lines[i].text + '</span>'
               + '<span class="expand" data-expanded="⋈">✥</span>'
               + '</div>'
               : ''}

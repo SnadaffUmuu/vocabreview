@@ -252,11 +252,21 @@ export const DataFactory = {
           if (entryType != DataFactory.ENTRY_TYPE.NON_STANDARD
             && hiraganaOnly.length == 1
             && withKanji.length > 0
-            && !DataFactory.isHiraganaOnly(filteredLines[0])
-            && !(filteredLines[0].startsWith('〜'))
           ) {
-            pronounce = hiraganaOnly[0];
-            pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines));
+            if (
+              !DataFactory.isHiraganaOnly(filteredLines[0])
+              && !filteredLines[0].startsWith('〜')
+            ) {
+              pronounce = hiraganaOnly[0];
+              pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines));
+            } else if (
+              filteredLines[0].startsWith('〜')
+              && DataFactory.isWithKanji(filteredLines[0])
+              && DataFactory.isHiraganaOnly(filteredLines[1])
+            ) {
+              pronounce = hiraganaOnly[0];
+              pronounceTarget = filteredLines[0];
+            }
           };
           //const mataFilteredLines = pronounce && pronounceTarget ? filteredLines.filter(l => l != pronounce) : filteredLines;
           const mataFilteredLines = filteredLines;
@@ -456,6 +466,12 @@ export const DataFactory = {
       )
     ) {
       res = types.SIMPLE
+    } else if (
+      length == 2
+      && japaneseOnly.length == 2
+      && kanaOnly.length == 0
+    ) {
+      res = types.ALT_READING
     } else if (
       length == 3
       && kanaOnly.length == 1
