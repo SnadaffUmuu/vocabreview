@@ -14,7 +14,7 @@ export const TableView = function () {
   this.columnsCount = null;
   this.cells = null;
   this.draggedRow = null;
-  
+
   this.events = {
     'click #addColumn': 'addColumn'
   };
@@ -23,62 +23,62 @@ export const TableView = function () {
     'UserActionHandlers': UserActionHandlers
   },
 
-  this.renderedEvents = {
-    click: {
-      'th .toggle': 'toggleColumn',
-      '.cellContentDraggable': 'toggleCell',
-      '.speakme': 'speakCell',
-      '.expand': 'toggleExpand',
-      '.entry-info .ellipsis' : 'showInfoPopup',
-    },
-    contextmenu: {
-      'tbody': 'UserActionHandlers.preventDefault',
-      '.rowDrag': 'UserActionHandlers.preventDefault',
-      '.cellContentDraggable': 'UserActionHandlers.preventDefault',
-    },
-    dragstart: {
-      'th:not([draggable="false"])': 'setColumnHeaderDragStart',
-      '.cellContentDraggable': 'setItemDragStart',
-      '.rowDrag' : 'setRowDragStart',
-    },
-    dragenter: {
-      'td:not(:first-child)': 'toggleDragoverElementHighlight',
-    },
-    dragleave: {
-      'td:not(:first-child)': 'toggleDragoverElementHighlight',
-    },
-    dragover: {
-      'th:not([draggable="false"])': 'UserActionHandlers.preventDefault',
-      'th:not([draggable="false"]) .drag': 'UserActionHandlers.preventDefault',
-      'th:not([draggable="false"]) .toggle': 'UserActionHandlers.preventDefault',
-      'td:not(:first-child)': 'UserActionHandlers.preventDefault',
-      '.rowDrag': 'dragRow',
-    },
-    dragend: {
-      'td:not(:first-child)': 'removeDragoverCellHighlights',
-      '.cellContentDraggable': 'removeDragoverCellHighlights',
-      '.rowDrag': 'setRowDragEnd',
-    },
-    drop: {
-      'th:not([draggable="false"])': 'setColumnHeaderDragDrop',
-      'th:not([draggable="false"]) .drag': 'setColumnHeaderDragDrop',
-      'th:not([draggable="false"]) .toggle': 'setColumnHeaderDragDrop',
-      'td:not(:first-child)': 'dropDragItem',
-      '.rowDrag': 'setRowDragDrop'
-    },
-    touchstart: {
-      '.cellContentDraggable': 'setItemTouchStart',
-      '.rowDrag': 'setRowTouchStart'
-    },
-    touchmove: {
-      '.cellContentDraggable': 'touchDragItem',
-      '.rowDrag': 'touchDragRow'
-    },
-    touchend: {
-      '.cellContentDraggable': 'touchDropItem',
-      '.rowDrag': 'touchDropRow'
-    },
-  };
+    this.renderedEvents = {
+      click: {
+        'th .toggle': 'toggleColumn',
+        '.cellContentDraggable': 'toggleCell',
+        '.speakme': 'speakCell',
+        '.expand': 'toggleExpand',
+        '.entry-info .ellipsis': 'showInfoPopup',
+      },
+      contextmenu: {
+        'tbody': 'UserActionHandlers.preventDefault',
+        '.rowDrag': 'UserActionHandlers.preventDefault',
+        '.cellContentDraggable': 'UserActionHandlers.preventDefault',
+      },
+      dragstart: {
+        'th:not([draggable="false"])': 'setColumnHeaderDragStart',
+        '.cellContentDraggable': 'setItemDragStart',
+        '.rowDrag': 'setRowDragStart',
+      },
+      dragenter: {
+        'td:not(:first-child)': 'toggleDragoverElementHighlight',
+      },
+      dragleave: {
+        'td:not(:first-child)': 'toggleDragoverElementHighlight',
+      },
+      dragover: {
+        'th:not([draggable="false"])': 'UserActionHandlers.preventDefault',
+        'th:not([draggable="false"]) .drag': 'UserActionHandlers.preventDefault',
+        'th:not([draggable="false"]) .toggle': 'UserActionHandlers.preventDefault',
+        'td:not(:first-child)': 'UserActionHandlers.preventDefault',
+        '.rowDrag': 'dragRow',
+      },
+      dragend: {
+        'td:not(:first-child)': 'removeDragoverCellHighlights',
+        '.cellContentDraggable': 'removeDragoverCellHighlights',
+        '.rowDrag': 'setRowDragEnd',
+      },
+      drop: {
+        'th:not([draggable="false"])': 'setColumnHeaderDragDrop',
+        'th:not([draggable="false"]) .drag': 'setColumnHeaderDragDrop',
+        'th:not([draggable="false"]) .toggle': 'setColumnHeaderDragDrop',
+        'td:not(:first-child)': 'dropDragItem',
+        '.rowDrag': 'setRowDragDrop'
+      },
+      touchstart: {
+        '.cellContentDraggable': 'setItemTouchStart',
+        '.rowDrag': 'setRowTouchStart'
+      },
+      touchmove: {
+        '.cellContentDraggable': 'touchDragItem',
+        '.rowDrag': 'touchDragRow'
+      },
+      touchend: {
+        '.cellContentDraggable': 'touchDropItem',
+        '.rowDrag': 'touchDropRow'
+      },
+    };
 
   this.setTableEvents = function () {
     for (let event in this.renderedEvents) {
@@ -166,8 +166,8 @@ export const TableView = function () {
         return resHTML += '<tr><td><div draggable="true" class="rowDrag">↕️</div></td>'
           + cells.join('')
           + '<td class="entry-info">'
-          + '<div class="ellipsis">' 
-          + entryInfo 
+          + '<div class="ellipsis">'
+          + entryInfo
           + '<span class="expand" data-expanded="⋈">✥</span>'
           + '</div>'
           + '</td>'
@@ -384,7 +384,7 @@ export const TableView = function () {
     this.draggedRow = null;
   };
 
-  this.showInfoPopup = function(e) {
+  this.showInfoPopup = function (e) {
     e.stopPropagation();
     const content = e.target.innerHTML;
     let infoPopup = document.body.querySelector('.info-popup');
@@ -400,7 +400,7 @@ export const TableView = function () {
       infoPopup.querySelector('.infopopup-content').innerHTML = content;
     }
     infoPopup.style.display = '';
-    infoPopup.style.top = (e.y - Math.floor(infoPopup.offsetHeight/2)) + 'px';
+    infoPopup.style.top = (e.y - Math.floor(infoPopup.offsetHeight / 2)) + 'px';
     infoPopup.style.left = (e.x - infoPopup.offsetWidth) + 'px';
     if (!this.tableContainer.dataset.listeningForPopupclose) {
       this.closeListenerFunction = this.closeInfoPopup.bind(this);
@@ -413,12 +413,12 @@ export const TableView = function () {
     if (!e.target.classList.contains('info-popup')
       && !e.target.closest('.info-popup')
       || e.target.matches('.info-popup .close')) {
-        const infoPopup = document.body.querySelector('.info-popup');
-        if (infoPopup) {
-          infoPopup.style.display = 'none';
-          infoPopup.querySelector('.infopopup-content').innerHTML = '';
-        }
+      const infoPopup = document.body.querySelector('.info-popup');
+      if (infoPopup) {
+        infoPopup.style.display = 'none';
+        infoPopup.querySelector('.infopopup-content').innerHTML = '';
       }
+    }
   };
 
   this.createPlaceholder = function () {
@@ -483,13 +483,20 @@ export const TableView = function () {
     this.columnsCount = Math.max(...this.data.entries.map(e => e.lines.length))
     this.renderTable();
     this.setTableEvents();
+    setTimeout(() => {
+      if (Application.views.PreloaderView.isShown()) {
+        Application.views.PreloaderView.hide();
+      }
+    }, 0)
+    console.log('table render ended', new Date());
   }
 
   this.show = function () {
+    console.log('table show', new Date());
     View.prototype.show.call(this);
     this.tableContainer = this.element.querySelector('#tableContainer');
     this.actionsContainer = this.element.querySelector('#tableActions');
-    this.columnHideModeEl = this.element.querySelector('#hideMode')
+    this.columnHideModeEl = this.element.querySelector('#hideMode');
     this.render();
   }
 }

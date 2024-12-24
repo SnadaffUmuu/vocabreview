@@ -68,11 +68,13 @@ View.prototype = {
       this.data = {};
     }
     this.getContainer().appendChild(this.element);
+    console.log('show view', this._class.name)
     this.checkContainer();
   },
 
   hide() {
     this.getContainer().removeChild(this.element);
+    console.log('hide view ', this._class.name);
     this.checkContainer();
   },
 

@@ -268,7 +268,7 @@ export const DataFactory = {
               pronounceTarget = filteredLines[0];
             }
           };
-          //const mataFilteredLines = pronounce && pronounceTarget ? filteredLines.filter(l => l != pronounce) : filteredLines;
+          /* const mataFilteredLines = pronounce && pronounceTarget ? filteredLines.filter(l => l != pronounce) : filteredLines; */
           const mataFilteredLines = filteredLines;
           const resLines = mataFilteredLines.map((l, i) => {
             const isCompact = DataFactory.isNonJapanese(l) || DataFactory.isMixed(l);
@@ -435,6 +435,7 @@ export const DataFactory = {
     const mixed = DataFactory.getMixed(lines);
     const nonJapanese = DataFactory.getNonJapanese(lines);
     const kanaOnly = DataFactory.getKanaOnly(lines);
+    const hiraganaOnly = DataFactory.getHiraganaOnly(lines);
     const withKanji = DataFactory.getWithKanji(lines);
 
     if (
@@ -451,21 +452,30 @@ export const DataFactory = {
       res = types.READING
     } else if (
       length == 2
-      &&
+      && japaneseOnly.length == 1
+      && 
       (
-        kanaOnly.length == 0
-        && withKanji.length == 1
-        && nonJapanese.length == 1
-        ||
-        kanaOnly.length == 1
-        && 
-        (
-          nonJapanese.length == 1
-          || mixed.length == 1
-        )
+        nonJapanese.length == 1
+        || mixed.length == 1
       )
     ) {
       res = types.SIMPLE
+    } else if (
+      length > 2
+      && 
+      japaneseOnly.length > 1
+      &&
+      (
+        kanaOnly.length == 0
+        || typedLines[0].types.includes(lTypes.KANA_ONLY)
+      )
+      && 
+      (
+        nonJapanese.length == 1
+        && mixed.length == 1
+      )
+    ) {
+      res = types.SIMPLE_EXAMPLES
     } else if (
       length == 2
       && japaneseOnly.length == 2
@@ -474,15 +484,12 @@ export const DataFactory = {
       res = types.ALT_READING
     } else if (
       length == 3
-      && kanaOnly.length == 1
+      && hiraganaOnly.length == 1
+      && japaneseOnly.length == 2
       &&
-      (
-        japaneseOnly.length == 2
-        && withKanji.length == 1
-        && nonJapanese.length == 1
-        ||
-        japaneseOnly.length == 2
-        && mixed.length == 1
+      ( 
+        nonJapanese.length == 1
+        || mixed.length == 1
       )
     ) {
       res = types.DEFAULT

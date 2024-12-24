@@ -5,6 +5,7 @@
 @import url("../modules/structure/structure.css");
 @import url("../modules/infobar/infobar.css");
 @import url("../modules/table/table.css");
+@import url("../modules/preloader/preloader.css");
 
 :root {
   --bg: #f1e6e8;
@@ -13,6 +14,7 @@
   --icon-speakable-bg: #ffffde;
   --icon-expand-border: #ffffff;
   --appheader-title-color: #1e20c0;
+  --preloader-bg: rgba(128, 128, 128, 0.514);
 }
 
 body.night {

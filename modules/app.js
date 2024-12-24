@@ -5,6 +5,7 @@ import { InfobarView } from "./infobar/infobar.js";
 import { View } from "./view.js";
 import { DataFactory } from "./data.js"
 import { TableView } from "./table/table.js";
+import { PreloaderView } from "./preloader/preloader.js";
 
 const APPLICATION_TYPE = {
   CARDS: 'SLIDER',
@@ -31,6 +32,7 @@ export const Application = {
 
   initViews: async function () {
     this.views = {
+      PreloaderView : await View.create(PreloaderView),
       MenuView: await View.create(MenuView),
       SliderView: await View.create(Slider),
       TableView: await View.create(TableView),
@@ -44,14 +46,14 @@ export const Application = {
         target[property] = value;
         Application.saveToLocalStorage('review-state', target);
         if ('source' == property) {
-          const { excludedEntries, excludedLines, structure, allEntries, currentEntries } = DataFactory.parse(Application.rawData);
-          Object.assign(Application.data, { 
-            excludedEntries, 
-            excludedLines, 
-            structure, 
-            allEntries,
-            currentEntries
-          });
+         const { excludedEntries, excludedLines, structure, allEntries } = DataFactory.parse(Application.rawData);
+         Object.assign(Application.data, { 
+           excludedEntries, 
+           excludedLines, 
+           structure, 
+           allEntries,
+         });
+
         } else if ('appType' == property) {
           Router.switchView();
         }
@@ -220,7 +222,6 @@ const Router = {
   },
 
   renderMenuView: async function () {
-    //Application.views.MenuView.render();
     Application.views.StructureView.render();
     Application.views.InfobarView.render();
   },
@@ -232,10 +233,13 @@ const Router = {
   },
 
   showCurrentView : function () {
-    this.currentView.show()
+    this.currentView.show();
   },
 
   renderCurrentView : function () {
+    if (!Application.views.PreloaderView.isShown()) {
+      Application.views.PreloaderView.show();
+    }    
     this.currentView.render()
   },
 
@@ -283,6 +287,7 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   Application.initState();
   Application.initData();
   await Application.initViews();
+  Application.views.PreloaderView.show();
   Router.start();
   window.App = Application;
   window.DF = DataFactory;

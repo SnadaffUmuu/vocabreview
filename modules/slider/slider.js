@@ -65,6 +65,11 @@ export const Slider = function () {
     this.data.entries = Application.data.currentEntries
     await this.renderSlider();
     this.initSlider();
+    setTimeout(() => {
+      if (Application.views.PreloaderView.isShown()) {
+        Application.views.PreloaderView.hide();
+      }
+    }, 0)
   }
 
   this.show = async function () {

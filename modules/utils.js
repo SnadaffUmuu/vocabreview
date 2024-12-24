@@ -16,12 +16,12 @@
 }
 
 export function speak(text) {
-  console.log('speak', text)
   const utterThis = new SpeechSynthesisUtterance(text);
   utterThis.lang = DeviceUtils.isAndroid() ? "ja_JP" : "ja-JP";
   setTimeout(() => {
     window.speechSynthesis.speak(utterThis);
-  }, 0)
+    console.log('speak', text)
+  }, 1)
 }
 
 export function shuffleArray(array) {

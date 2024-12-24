@@ -10,11 +10,11 @@ export const Slide = function (entry) {
 Slide.prototype = Object.assign(Object.create(View.prototype), {
   templateSelector: '.js-slide',
   templatePath: 'modules/slide/slide.html',
-  containerSelector: '.js-slider',
+  slideSideHtml : '<div class="slide-side js-slide-side"></div>',
 
   sidesToSidesViews: async function () {
     const results = await Promise.all(
-      this.entry.lines.map(async (line) => {
+      this.lines.map(async (line) => {
         return View.create(SlideSide, line, this)
       })
     );
@@ -32,7 +32,9 @@ Slide.prototype = Object.assign(Object.create(View.prototype), {
     const pronounceLine = this.entry.lines.find(l => l.isPronounce);
     if (pronounceLine) {
       this.pronounceLine = pronounceLine;
-      this.entry.lines = this.entry.lines.filter(l => l != pronounceLine);
+      this.lines = this.entry.lines.filter(l => l != pronounceLine);
+    } else {
+      this.lines = this.entry.lines
     }
 
     this.element.querySelector('.slide-inner').addEventListener('click', function (e) {

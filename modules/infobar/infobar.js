@@ -36,7 +36,8 @@ export const InfobarView = function () {
     if (!Application.data.currentEntries?.length) {
       return
     }
-    this.setCount(Application.data.currentEntries.length)
+    this.setCount(Application.data.currentEntries.length);
+    console.log('count updated', Application.data.currentEntries.length)
   }
 
   this.show = function () {

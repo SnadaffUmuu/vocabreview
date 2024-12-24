@@ -29,7 +29,12 @@ export const MenuView = function () {
   };
 
   this.switchView = function (e) {
-    Application.switchView(e.target.value);
+    if (!Application.views.PreloaderView.isShown()) {
+      Application.views.PreloaderView.show();
+    }
+    setTimeout(() => {
+      Application.switchView(e.target.value);
+    }, 0)
   },
 
   this.resetApp = function() {
@@ -38,6 +43,9 @@ export const MenuView = function () {
   }
 
   this.reloadCurrentSource = function() {
+    if (!Application.views.PreloaderView.isShown()) {
+      Application.views.PreloaderView.show();
+    }
     Application.changeSource(Application.state.source)
   }
 
@@ -48,6 +56,9 @@ export const MenuView = function () {
   }
 
   this.changeSource = function (e) {
+    if (!Application.views.PreloaderView.isShown()) {
+      Application.views.PreloaderView.show();
+    }
     Application.changeSource(e.target.value);
   }
 
