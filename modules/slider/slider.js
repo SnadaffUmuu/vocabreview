@@ -60,6 +60,9 @@ export const Slider = function () {
   this.render = async function () {
     this.reset();
     if (!Application.data.currentEntries?.length) {
+      if (Application.views.PreloaderView.isShown()) {
+        Application.views.PreloaderView.hide();
+      }
       return
     }
     this.data.entries = Application.data.currentEntries
