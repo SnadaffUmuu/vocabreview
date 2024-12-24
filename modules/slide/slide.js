@@ -10,7 +10,7 @@ export const Slide = function (entry) {
 Slide.prototype = Object.assign(Object.create(View.prototype), {
   templateSelector: '.js-slide',
   templatePath: 'modules/slide/slide.html',
-  slideSideHtml : '<div class="slide-side js-slide-side"></div>',
+  containerSelector: '.js-slider',
 
   sidesToSidesViews: async function () {
     const results = await Promise.all(
