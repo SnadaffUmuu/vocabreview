@@ -455,6 +455,7 @@ export const TableView = function () {
   };
 
   this.render = function () {
+    const startTime = performance.now();
     this.reset();
     if (!Application.data.currentEntries?.length) {
       if (Application.views.PreloaderView.isShown()) {
@@ -467,16 +468,20 @@ export const TableView = function () {
     this.renderTable();
     this.setRenderedEvents(this.tableEl);
     Application.views.PreloaderView.hidePreloader();
-    console.log('table render ended', new Date());
+
+    const duration = performance.now() - startTime;
+    console.log(`table render took ${duration}ms`);    
   }
 
   this.show = function () {
-    console.log('table show', new Date());
+    const startTime = performance.now();
     View.prototype.show.call(this);
     this.tableContainer = this.element.querySelector('#tableContainer');
     this.actionsContainer = this.element.querySelector('#tableActions');
     this.columnHideModeEl = this.element.querySelector('#hideMode');
     this.render();
+    const duration = performance.now() - startTime;
+    console.log(`table show took ${duration}ms`);      
   }
 }
 

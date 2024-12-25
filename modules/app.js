@@ -232,7 +232,7 @@ const Router = {
     Application.views.InfobarView.show();
   },
 
-  renderMenuView: async function () {
+  renderMenuView: function () {
     Application.views.StructureView.render();
     Application.views.InfobarView.render();
   },
@@ -244,14 +244,26 @@ const Router = {
   },
 
   showCurrentView : function () {
+    const startTime = performance.now();
+
     this.currentView.show();
+
+    const duration = performance.now() - startTime;
+    console.log(`showCurrentView took ${duration}ms`);
+
   },
 
   renderCurrentView : function () {
+
+    const startTime = performance.now();
+
     if (!Application.views.PreloaderView.isShown()) {
       Application.views.PreloaderView.show();
     }    
     this.currentView.render()
+
+    const duration = performance.now() - startTime;
+    console.log(`renderCurrentView took ${duration}ms`);
   },
 
   resetCurrentView : function() {
@@ -263,34 +275,6 @@ const Router = {
     this.currentView.reset();
     Application.views.MenuView.toggleMenu();
   }
-
-  /*
-  showDefaultView: function () {
-    switch (this.applicationType) {
-      case APPLICATION_TYPE.SLIDER:
-        this.showSliderView();
-        break;
-    case APPLICATION_TYPE.TABLE:
-      this.showTableView();
-      break;
-    case APPLICATION_TYPE.RAW:
-      this.showRawView();
-      break;
-    case APPLICATION_TYPE.BOARD:
-      this.showBoardView();
-      break;
-    case APPLICATION_TYPE.QUIZBOARD:
-      this.showQuizboardView();
-      break;
-      default:
-        throw new Error('Unsupported application type');
-      }
-    },
-
-    showSliderView: function () {
-      Application.views.SliderView.show();
-    }
-  */
 
 };
 

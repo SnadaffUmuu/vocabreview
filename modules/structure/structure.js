@@ -53,10 +53,12 @@ export const StructureView = function () {
   }
 
   this.resetTreeFilters = function () {
-    Array.from(
-      this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
-    ).forEach(ch => ch.checked = false)
-    Application.filter(null)
+    Application.views.PreloaderView.showPreloaderAndRun(() => {
+      Array.from(
+        this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
+      ).forEach(ch => ch.checked = false)
+      Application.filter(null)
+    });
   }
 
   this.filterCollection = function () {
@@ -84,6 +86,17 @@ export const StructureView = function () {
     `
   }
 
+  this.checkAndSetMinimum = function(checkboxes) {
+    const minLevel = checkboxes.filter(el => !el.closest('li').querySelector('ul'));
+    if (!this.data.filteredEntries.length) {
+      minLevel[0].checked = true;
+      setTimeout(() => {
+        this.filterCollection();
+        this.checkFilteredCheckboxes(checkboxes);
+      }, 0)
+    }
+  }
+
   this.reset = function () {
     if (this.treeEl) {
       this.treeEl.querySelector('ul').innerHTML = '';
@@ -92,6 +105,9 @@ export const StructureView = function () {
   }
 
   this.render = function () {
+
+    const startTime = performance.now();
+
     this.reset();
     if (!Application.data.currentEntries?.length) {
       return;
@@ -114,7 +130,11 @@ export const StructureView = function () {
       el.addEventListener('change', (e) => {
         this.toggleTreeCheckboxes(e)
       })
-    })
+    });
+    //this.checkAndSetMinimum(treeCheckboxes);
+
+    const duration = performance.now() - startTime;
+    console.log(`renderStructureView took ${duration}ms`);    
   }
 
   this.show = function () {
