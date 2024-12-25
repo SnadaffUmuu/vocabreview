@@ -1,10 +1,10 @@
-export const View = function () {};
+export const View = function () { };
 
 View.prototype = {
   templatePath: null,
 
   containerSelector: null,
-  
+
   containerElement: null,
 
   templateSelector: null,
@@ -14,15 +14,17 @@ View.prototype = {
   template: null,
 
   element: null,
-  
+
   parentElement: null,
 
   events: null,
 
+  renderedEvents: null,
+
   data: null,
 
   getContainer() {
-    if(this.containerElement != null) {
+    if (this.containerElement != null) {
       return this.containerElement
     }
     if (this.containerSelector != null) {
@@ -33,7 +35,7 @@ View.prototype = {
   initTemplate: async function () {
     try {
       this.getContainer().insertAdjacentHTML(
-        'afterbegin', 
+        'afterbegin',
         this.templateHtmls[this._class.name].templateHtml
       );
       this.template = this.getContainer()
@@ -55,10 +57,31 @@ View.prototype = {
       var spaceIdx = k.indexOf(' ');
       if (spaceIdx != -1) {
         this.element.querySelector(k.substring(spaceIdx + 1))
-        .addEventListener(k.substring(0, spaceIdx), this[this.events[k]].bind(this));
+          .addEventListener(k.substring(0, spaceIdx), this[this.events[k]].bind(this));
       } else {
         this.element.addEventListener(k, this[this.events[k]].bind(this));
       }
+    }
+  },
+
+  setRenderedEvents(targetEl) {
+    const target = targetEl ? targetEl : this.element;
+    for (let event in this.renderedEvents) {
+      target.addEventListener(event, (e) => {
+        const entry = this.renderedEvents[event];
+        for (let selector in entry) {
+          if (e.target.matches && e.target.matches(selector)) {
+            if (entry[selector].indexOf('.') < 0) {
+              this[entry[selector]].bind(this).call(this, e);
+            } else {
+              const parts = entry[selector].split('.');
+              if (this.namespaces[parts[0]] && this.namespaces[parts[0]][parts[1]]) {
+                this.namespaces[parts[0]][parts[1]].bind(this).call(this, e)
+              }
+            }
+          }
+        }
+      })
     }
   },
 
@@ -110,9 +133,9 @@ View.prototype = {
     }
   },
 
-  init: async function () {
-    if (!View.prototype.templateHtmls[this._class.name] 
-        || !View.prototype.templateHtmls[this._class.name]._templateHtmlPromise) {
+  initViewTemplateHtml: async function () {
+    if (!View.prototype.templateHtmls[this._class.name]
+      || !View.prototype.templateHtmls[this._class.name]._templateHtmlPromise) {
       View.prototype.templateHtmls[this._class.name] = {};
       View.prototype.templateHtmls[this._class.name]._templateHtmlPromise = (async () => {
         const response = await fetch(this.templatePath);
@@ -121,7 +144,23 @@ View.prototype = {
       })()
     }
     await View.prototype.templateHtmls[this._class.name]._templateHtmlPromise;
-    
+  },
+
+  init: async function () {
+    /*
+    if (!View.prototype.templateHtmls[this._class.name]
+      || !View.prototype.templateHtmls[this._class.name]._templateHtmlPromise) {
+      View.prototype.templateHtmls[this._class.name] = {};
+      View.prototype.templateHtmls[this._class.name]._templateHtmlPromise = (async () => {
+        const response = await fetch(this.templatePath);
+        View.prototype.templateHtmls[this._class.name].templateHtml = await response.text();
+        return View.prototype.templateHtmls[this._class.name].templateHtml;
+      })()
+    }
+    await View.prototype.templateHtmls[this._class.name]._templateHtmlPromise;
+    */
+    await this.initViewTemplateHtml();
+
     if (this.templatePath == null) {
       throw new Error('template path not defined');
     }
@@ -145,7 +184,7 @@ View.create = async function (SubClass, ...args) {
   }
   const instance = new SubClass(...args);
   instance._class = SubClass;
-  
+
   await instance.init();
   return instance;
 };

@@ -1,41 +1,33 @@
-import { speak } from "../utils.js";
-import { View } from "../view.js";
+import { Element } from "../element.js";
 
-export const SlideSide = function (line, parent) {
-  this.parent = parent;
-  this.line = line;
-  this.containerElement = this.parent.element.querySelector('.js-slide-inner');
+export const SlideSide = function () {
 }
-SlideSide.prototype = Object.assign(Object.create(View.prototype), {
+SlideSide.prototype = Object.assign(Object.create(Element.prototype), {
   templateSelector : '.js-slide-side',
   templatePath : 'modules/slide/slide-side.html',
-  setClasses : function() {
-    if (this.line.isCompact) {
-      this.element.classList.add('compact')
+  
+  setClasses : function(line, element) {
+    if (line.isCompact) {
+      element.classList.add('compact')
     }
   },
 
-  show : function () {
-    View.prototype.show.call(this);
-    this.element.innerHTML = this.line.text;
-    if (this.line.speakable) {
-      this.element.setAttribute('data-reading', this.line.text);
-      //this.element.setAttribute('data-reading', this.line.pronounce ? this.line.pronounce : this.line.text);
-      this.element.addEventListener('click', (e) => {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        speak(e.target.dataset.reading)
-      })
+  render : function (line) {
+    const element = this.getElement();
+    element.innerHTML = line.text;
+    if (line.speakable) {
+      element.setAttribute('data-reading', line.text);
     }
-    if (this.line.pronounce) {
-      this.element.dataset.pronounce = this.line.pronounce;
+    if (line.pronounce) {
+      element.dataset.pronounce = line.pronounce;
     }
     /*
-    if (this.line.isPronounce) {
-      this.element.dataset.isPronounce = true;
+    if (line.isPronounce) {
+      element.dataset.isPronounce = true;
     }
     */
-    this.setClasses();
+    this.setClasses(line, element);
+    return element;
   }
 });
 SlideSide.prototype.constructor = SlideSide;

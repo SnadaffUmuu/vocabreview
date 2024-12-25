@@ -14,7 +14,8 @@
   --icon-speakable-bg: #ffffde;
   --icon-expand-border: #ffffff;
   --appheader-title-color: #1e20c0;
-  --preloader-bg: rgba(128, 128, 128, 0.514);
+  --preloader-color: #2525c2;
+  --preloader-bg: #9899c244;
 }
 
 body.night {

@@ -3,9 +3,12 @@ import { Slider } from "./slider/slider.js";
 import { StructureView } from "./structure/structure.js";
 import { InfobarView } from "./infobar/infobar.js";
 import { View } from "./view.js";
+import { Element } from "./element.js";
 import { DataFactory } from "./data.js"
 import { TableView } from "./table/table.js";
 import { PreloaderView } from "./preloader/preloader.js";
+import { SlideSide } from "./slide/slide-side.js";
+import { Slide } from "./slide/slide.js";
 
 const APPLICATION_TYPE = {
   CARDS: 'SLIDER',
@@ -16,6 +19,7 @@ const APPLICATION_TYPE = {
 
 export const Application = {
   views: null,
+  protoElements: null,
   rawData: null,
   defaultState: {
     nightMode: false,
@@ -37,6 +41,13 @@ export const Application = {
       SliderView: await View.create(Slider),
       TableView: await View.create(TableView),
     };
+  },
+  
+  initProtoElements: async function() {
+    this.protoElements = {
+      ProtoSlideSideElement : await Element.create(SlideSide),
+      ProtoSlideElement : await Element.create(Slide),
+    }
   },
 
   initState: function () {
@@ -286,6 +297,7 @@ const Router = {
 document.addEventListener("DOMContentLoaded", async function (event) {
   Application.initState();
   Application.initData();
+  await Application.initProtoElements();
   await Application.initViews();
   Application.views.PreloaderView.show();
   Router.start();

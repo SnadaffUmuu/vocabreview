@@ -40,6 +40,15 @@ export const DataFactory = {
     MIXED: 'MIXED',
     NON_JAPANESE: 'NON_JAPANESE'
   },
+  
+  LINE_ROLE: {
+    expression : 'expression',
+    reading : 'reading',
+    meaning: 'meaning',
+    alt_reading : 'alt_reading',
+    example : 'example',
+    example_translation : 'example_translation',
+  },
 
   vocabFilesIndex: [
     'SR_Kona2',

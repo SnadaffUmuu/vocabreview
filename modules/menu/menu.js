@@ -29,12 +29,9 @@ export const MenuView = function () {
   };
 
   this.switchView = function (e) {
-    if (!Application.views.PreloaderView.isShown()) {
-      Application.views.PreloaderView.show();
-    }
-    setTimeout(() => {
+    Application.views.PreloaderView.showPreloaderAndRun(() => {
       Application.switchView(e.target.value);
-    }, 0)
+    });
   },
 
   this.resetApp = function() {

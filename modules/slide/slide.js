@@ -1,95 +1,46 @@
 import { DataFactory } from "../data.js";
-import { shuffleArray, speak } from "../utils.js";
-import { View } from "../view.js";
-import { SlideSide } from "./slide-side.js";
+import { shuffleArray } from "../utils.js";
+import { Element } from "../element.js";
+import { Application } from "../app.js";
 
-export const Slide = function (entry) {
-  this.entry = entry;
-};
+export const Slide = function () {};
 
-Slide.prototype = Object.assign(Object.create(View.prototype), {
+Slide.prototype = Object.assign(Object.create(Element.prototype), {
   templateSelector: '.js-slide',
   templatePath: 'modules/slide/slide.html',
-  containerSelector: '.js-slider',
 
-  sidesToSidesViews: async function () {
-    const results = await Promise.all(
-      this.lines.map(async (line) => {
-        return View.create(SlideSide, line, this)
-      })
-    );
-    return results;
+  setSlideProps: function (entry, element) {
+    element.dataset.section = entry.section
+    if (entry.tag) {
+      element.classList.add(entry.tag)
+    }
+    element.querySelector('.slide-info').value = DataFactory.getEntryInfoString(entry);
   },
 
-  setSlideProps: function () {
-    this.element.dataset.section = this.entry.section
-    if (this.entry.tag) {
-      this.element.classList.add(this.entry.tag)
-    }
-
-    this.element.querySelector('.slide-info').value = DataFactory.getEntryInfoString(this.entry);
-
-    const pronounceLine = this.entry.lines.find(l => l.isPronounce);
+  render: function (entry) {
+    const element = this.getElement();
+    const pronounceLine = entry.lines.find(l => l.isPronounce);
+    let lines;
     if (pronounceLine) {
       this.pronounceLine = pronounceLine;
-      this.lines = this.entry.lines.filter(l => l != pronounceLine);
+      lines = entry.lines.filter(l => l != pronounceLine);
     } else {
-      this.lines = this.entry.lines
+      lines = entry.lines
     }
-
-    this.element.querySelector('.slide-inner').addEventListener('click', function (e) {
-      e.stopPropagation();
-      e.preventDefault();
-      if (e.target.classList.contains('js-slide-inner')) {
-        this.rotate(e.target);
-      }
-    }.bind(this));
-  },
-
-  renderSides: async function () {
-    this.sideViews = await this.sidesToSidesViews();
-    shuffleArray(this.sideViews)[0].element.classList.add('current');
-    shuffleArray(this.sideViews).forEach(o => o.show());
-    if (this.pronounceLine) {
-      this.element.insertAdjacentHTML('afterBegin', `<div class="slidePronounce">
-          ${this.pronounceLine.text}
+    this.setSlideProps(entry, element);
+    const sidesContainer = element.querySelector('.js-slide-inner');
+    const sides = lines.map(line => 
+      Application.protoElements.ProtoSlideSideElement.render(line)
+    );
+    shuffleArray(sides)[0].classList.add('current');
+    shuffleArray(sides).forEach(o => sidesContainer.appendChild(o));
+    if (pronounceLine) {
+      element.insertAdjacentHTML('afterBegin', `
+        <div class="slidePronounce">
+          ${pronounceLine.text}
         </div>`);
-      this.element.querySelector('.slidePronounce').addEventListener('click', (e) => {
-        const t = e.target;
-
-        if (!t.classList.contains('listened') && !t.classList.contains('revealed')) {
-          t.classList.add('listened');
-          speak(t.innerText);
-        } else if (t.classList.contains('listened') && !t.classList.contains('revealed')) {
-          t.classList.add('revealed');
-          t.classList.remove('listened');
-        } else if (t.classList.contains('revealed') && !t.classList.contains('listened')) {
-          t.classList.remove('revealed');
-        }
-      });
     }
-  },
-
-  rotate: function (el) {
-    const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
-    if (slide.querySelectorAll('.slide-side').length == 1) return;
-    const current = slide.querySelector('.current');
-    let newCurrent = null;
-    if (current && current.nextElementSibling) {
-      newCurrent = current.nextElementSibling
-    } else {
-      newCurrent = slide.querySelector('.slide-side')
-    }
-    newCurrent.classList.add('current');
-    if (current && current.classList) {
-      current.classList.remove('current');
-    }
-  },
-
-  show: async function () {
-    View.prototype.show.call(this);
-    this.setSlideProps();
-    await this.renderSides();
+    return element;    
   }
 });
 Slide.prototype.constructor = Slide;

@@ -2030,7 +2030,7 @@ dropping the "ra" in the potential form of verbs formed with "-rareru"
 食べれる、見れる、来れる
 ::term
 
-いわゆる ♦
+いわゆる ✔
 так называемый
 
 さ入れ言葉 ♦
@@ -2051,3 +2051,16 @@ adding a superfluous "re" to the potential form of a godan verb
 しみんけん
 гражданство; в переносном: общепризнанность, широкое использование
 
+[75]
+
+この先
+в будущем
+
+根付く、根づく
+ねづく
+укорениться
+
+現時点では
+в наши дни, в настоящем
+
+まだしも

@@ -33,8 +33,8 @@
   height: 64px;
   margin: 8px;
   border-radius: 50%;
-  border: 6.4px solid plum;
-  border-color: plum transparent plum transparent;
+  border: 6.4px solid var(--preloader-color);
+  border-color: var(--preloader-color) transparent var(--preloader-color) transparent;
   animation: review-ring 1.2s linear infinite;
 }
 

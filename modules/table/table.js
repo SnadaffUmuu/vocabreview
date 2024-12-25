@@ -23,82 +23,62 @@ export const TableView = function () {
     'UserActionHandlers': UserActionHandlers
   },
 
-    this.renderedEvents = {
-      click: {
-        'th .toggle': 'toggleColumn',
-        '.cellContentDraggable': 'toggleCell',
-        '.speakme': 'speakCell',
-        '.expand': 'toggleExpand',
-        '.entry-info .ellipsis': 'showInfoPopup',
-      },
-      contextmenu: {
-        'tbody': 'UserActionHandlers.preventDefault',
-        '.rowDrag': 'UserActionHandlers.preventDefault',
-        '.cellContentDraggable': 'UserActionHandlers.preventDefault',
-      },
-      dragstart: {
-        'th:not([draggable="false"])': 'setColumnHeaderDragStart',
-        '.cellContentDraggable': 'setItemDragStart',
-        '.rowDrag': 'setRowDragStart',
-      },
-      dragenter: {
-        'td:not(:first-child)': 'toggleDragoverElementHighlight',
-      },
-      dragleave: {
-        'td:not(:first-child)': 'toggleDragoverElementHighlight',
-      },
-      dragover: {
-        'th:not([draggable="false"])': 'UserActionHandlers.preventDefault',
-        'th:not([draggable="false"]) .drag': 'UserActionHandlers.preventDefault',
-        'th:not([draggable="false"]) .toggle': 'UserActionHandlers.preventDefault',
-        'td:not(:first-child)': 'UserActionHandlers.preventDefault',
-        '.rowDrag': 'dragRow',
-      },
-      dragend: {
-        'td:not(:first-child)': 'removeDragoverCellHighlights',
-        '.cellContentDraggable': 'removeDragoverCellHighlights',
-        '.rowDrag': 'setRowDragEnd',
-      },
-      drop: {
-        'th:not([draggable="false"])': 'setColumnHeaderDragDrop',
-        'th:not([draggable="false"]) .drag': 'setColumnHeaderDragDrop',
-        'th:not([draggable="false"]) .toggle': 'setColumnHeaderDragDrop',
-        'td:not(:first-child)': 'dropDragItem',
-        '.rowDrag': 'setRowDragDrop'
-      },
-      touchstart: {
-        '.cellContentDraggable': 'setItemTouchStart',
-        '.rowDrag': 'setRowTouchStart'
-      },
-      touchmove: {
-        '.cellContentDraggable': 'touchDragItem',
-        '.rowDrag': 'touchDragRow'
-      },
-      touchend: {
-        '.cellContentDraggable': 'touchDropItem',
-        '.rowDrag': 'touchDropRow'
-      },
-    };
-
-  this.setTableEvents = function () {
-    for (let event in this.renderedEvents) {
-      this.tableEl.addEventListener(event, (e) => {
-        const entry = this.renderedEvents[event];
-        for (let selector in entry) {
-          if (e.target.matches && e.target.matches(selector)) {
-            if (entry[selector].indexOf('.') < 0) {
-              this[entry[selector]].bind(this).call(this, e);
-            } else {
-              const parts = entry[selector].split('.');
-              if (this.namespaces[parts[0]] && this.namespaces[parts[0]][parts[1]]) {
-                this.namespaces[parts[0]][parts[1]].bind(this).call(this, e)
-              }
-            }
-          }
-        }
-      })
-    }
-  }
+  this.renderedEvents = {
+    click: {
+      'th .toggle': 'toggleColumn',
+      '.cellContentDraggable': 'toggleCell',
+      '.speakme': 'speakCell',
+      '.expand': 'toggleExpand',
+      '.entry-info .ellipsis': 'showInfoPopup',
+    },
+    contextmenu: {
+      'tbody': 'UserActionHandlers.preventDefault',
+      '.rowDrag': 'UserActionHandlers.preventDefault',
+      '.cellContentDraggable': 'UserActionHandlers.preventDefault',
+    },
+    dragstart: {
+      'th:not([draggable="false"])': 'setColumnHeaderDragStart',
+      '.cellContentDraggable': 'setItemDragStart',
+      '.rowDrag': 'setRowDragStart',
+    },
+    dragenter: {
+      'td:not(:first-child)': 'toggleDragoverElementHighlight',
+    },
+    dragleave: {
+      'td:not(:first-child)': 'toggleDragoverElementHighlight',
+    },
+    dragover: {
+      'th:not([draggable="false"])': 'UserActionHandlers.preventDefault',
+      'th:not([draggable="false"]) .drag': 'UserActionHandlers.preventDefault',
+      'th:not([draggable="false"]) .toggle': 'UserActionHandlers.preventDefault',
+      'td:not(:first-child)': 'UserActionHandlers.preventDefault',
+      '.rowDrag': 'dragRow',
+    },
+    dragend: {
+      'td:not(:first-child)': 'removeDragoverCellHighlights',
+      '.cellContentDraggable': 'removeDragoverCellHighlights',
+      '.rowDrag': 'setRowDragEnd',
+    },
+    drop: {
+      'th:not([draggable="false"])': 'setColumnHeaderDragDrop',
+      'th:not([draggable="false"]) .drag': 'setColumnHeaderDragDrop',
+      'th:not([draggable="false"]) .toggle': 'setColumnHeaderDragDrop',
+      'td:not(:first-child)': 'dropDragItem',
+      '.rowDrag': 'setRowDragDrop'
+    },
+    touchstart: {
+      '.cellContentDraggable': 'setItemTouchStart',
+      '.rowDrag': 'setRowTouchStart'
+    },
+    touchmove: {
+      '.cellContentDraggable': 'touchDragItem',
+      '.rowDrag': 'touchDragRow'
+    },
+    touchend: {
+      '.cellContentDraggable': 'touchDropItem',
+      '.rowDrag': 'touchDropRow'
+    },
+  };
 
   this.addColumn = function () {
     const columnsCount = this.tableEl.querySelectorAll('th').length;
@@ -485,12 +465,8 @@ export const TableView = function () {
     this.data.entries = Application.data.currentEntries;
     this.columnsCount = Math.max(...this.data.entries.map(e => e.lines.length))
     this.renderTable();
-    this.setTableEvents();
-    setTimeout(() => {
-      if (Application.views.PreloaderView.isShown()) {
-        Application.views.PreloaderView.hide();
-      }
-    }, 0)
+    this.setRenderedEvents(this.tableEl);
+    Application.views.PreloaderView.hidePreloader();
     console.log('table render ended', new Date());
   }
 

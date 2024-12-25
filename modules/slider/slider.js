@@ -1,5 +1,5 @@
 import { View } from "../view.js";
-import { shuffleArray } from "../utils.js";
+import { shuffleArray, speak } from "../utils.js";
 import { Application } from "../app.js";
 import { Slide } from "../slide/slide.js";
 
@@ -8,26 +8,66 @@ export const Slider = function () {
   this.slideViews = [];
   this.keensliderContainer = null;
   this.currentSlideIndexEl = null;
+  this.renderedEvents = {
+    click : {
+      '.slide-inner' : 'rotateSlide',
+      '.slidePronounce' : 'readPronounce',
+      '.js-slide-side' : 'speakLine',
+    },
+  };
+
+  this.speakLine = function (e) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    speak(e.target.dataset.reading)
+  }
+
+  this.readPronounce = function (e) {
+    const t = e.target;
+    if (!t.classList.contains('listened') && !t.classList.contains('revealed')) {
+      t.classList.add('listened');
+      speak(t.innerText);
+    } else if (t.classList.contains('listened') && !t.classList.contains('revealed')) {
+      t.classList.add('revealed');
+      t.classList.remove('listened');
+    } else if (t.classList.contains('revealed') && !t.classList.contains('listened')) {
+      t.classList.remove('revealed');
+    }
+  }
+
+  this.rotateSlide = function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (e.target.classList.contains('js-slide-inner')) {
+      const el = e.target;
+      const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
+      if (slide.querySelectorAll('.slide-side').length == 1) return;
+      const current = slide.querySelector('.current');
+      let newCurrent = null;
+      if (current && current.nextElementSibling) {
+        newCurrent = current.nextElementSibling
+      } else {
+        newCurrent = slide.querySelector('.slide-side')
+      }
+      newCurrent.classList.add('current');
+      if (current && current.classList) {
+        current.classList.remove('current');
+      }      
+    }    
+  }
 
   this.showCurrentIndex = function (index) {
     this.currentSlideIndexEl.innerHTML = index;
   }
 
-  this.entriesToSlideViews = async () => {
-    const entries = this.data.entries;
-    const results = await Promise.all(
-      shuffleArray(entries).map(async (entry) => {
-        return View.create(Slide, entry)
-      })
+  this.renderSlider =  () => {
+    const container = this.element.querySelector('.js-slider');
+    const slides = this.data.entries.map(e => 
+      Application.protoElements.ProtoSlideElement.render(e)
     );
-    return results;
-  };
-
-  this.renderSlider = async () => {
-    this.slideViews = await this.entriesToSlideViews();
-    await Promise.all(
-      this.slideViews.map(async o => o.show())
-    );
+    slides.forEach(el => {
+      container.appendChild(el);
+    });
   }
 
   this.initSlider = () => {
@@ -66,13 +106,10 @@ export const Slider = function () {
       return
     }
     this.data.entries = Application.data.currentEntries
-    await this.renderSlider();
+    this.renderSlider();
     this.initSlider();
-    setTimeout(() => {
-      if (Application.views.PreloaderView.isShown()) {
-        Application.views.PreloaderView.hide();
-      }
-    }, 0)
+    this.setRenderedEvents();
+    Application.views.PreloaderView.hidePreloader();
   }
 
   this.show = async function () {

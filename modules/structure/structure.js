@@ -60,15 +60,12 @@ export const StructureView = function () {
   }
 
   this.filterCollection = function () {
-    if (!Application.views.PreloaderView.isShown()) {
-      Application.views.PreloaderView.show();
-    }
-    setTimeout(() => {
+    Application.views.PreloaderView.showPreloaderAndRun(() => {
       const checkedSections = Array.from(
         this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
       ).map(ch => parseInt(ch.value))
       Application.filter(checkedSections)
-    }, 0)
+    });
   }
 
   this.toggleTree = function () {
