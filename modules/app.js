@@ -98,12 +98,24 @@ export const Application = {
     this.data.currentEntries = this.initialData.currentEntries;
     this.data.structure = this.initialData.structure;
 
+    if (this.data.allEntries?.length > 100 && !this.data.currentEntries?.length) {
+      //filtering the latest section only
+      const firstNode = this.data.structure[0].children ? this.data.structure[0].children[0].id : this.data.structure[0].id;
+      this.data.currentEntries = this.data.allEntries.filter(entry => entry.section == firstNode);
+      Application.saveToLocalStorage('review-data', this.data);
+    }
+
     this.data = new Proxy(Application.initialData, {
       set(target, property, value) {
         target[property] = value;
         if ('allEntries' == property) {
           delete Application.data.currentEntries;
           Application.saveToLocalStorage('review-data', target);
+          if (value.length > 100 && !Application.initialData.currentEntries?.length) {
+            const firstNode = Application.data.structure[0].children ? Application.data.structure[0].children[0].id : Application.data.structure[0].id;
+            Application.initialData.currentEntries = value.filter(entry => entry.section == firstNode);
+            Application.saveToLocalStorage('review-data', Application.data);
+          }
           Router.renderMenuView();
           Router.renderCurrentView();
         } else if ('currentEntries' == property) {
