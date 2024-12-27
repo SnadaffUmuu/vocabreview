@@ -48,6 +48,7 @@ export const DataFactory = {
     alt_reading : 'alt_reading',
     example : 'example',
     example_translation : 'example_translation',
+    info : 'info',
   },
 
   vocabFilesIndex: [
@@ -79,6 +80,7 @@ export const DataFactory = {
 
   toReplace: [
     '🎵',
+    '    ♪',
     '✔',
     '♦',
   ],
@@ -97,30 +99,6 @@ export const DataFactory = {
   isNonJapaneseCharacter: (ch) => {
     regex.nonJapanese.test(ch)
   },
-
-  /*
-  isHiraganaCharacter: (ch) => {
-    //return kanaExcl.includes(ch) || (ch >= "぀" && ch <= "ゟ")
-    return DataFactory.kanaExcl.includes(ch) || regex.hiraganaRegex.test(ch)
-  },
-  
-  isKatakanaCharacter: (ch) => {
-    //return kanaExcl.includes(ch) || (ch >= "゠" && ch <= "・")
-    return DataFactory.kanaExcl.includes(ch) || regex.katakanaRegex.test(ch)
-  },
-  
-  isKanjiCharacter: (ch) => {
-    return regex.kanjiRegex.test(ch)
-  },
-
-  /*
-  isForReading: (str) => {
-    return !Array.from(str.trim()).some(ch => !DataFactory.isHiraganaCharacter(ch)
-      && !DataFactory.isKatakanaCharacter(ch)
-      && !DataFactory.isKanjiCharacter(ch)
-    )
-  },
-  */
 
   getEntryInfoString: (entry, forHtml) => {
     const lineBreak = forHtml ? '<br>' : '\n';
@@ -160,7 +138,9 @@ export const DataFactory = {
     const structure = [];
     let currentUpperSection = null;
     let currentSection = null;
+    //breaking for entries
     text.split('\n\n').forEach(entry => {
+      //building structure
       if (entry.indexOf('~~') > -1) {
         const structureEntry = {
           name: entry.match(new RegExp(regex.upperSectionTitle))[1],
@@ -201,6 +181,7 @@ export const DataFactory = {
           structure.push(structureEntry)
         }
       }
+      //handling true entries
       if (DataFactory.entryFilter(entry)) {
         const resEntry = {};
         let replaced = entry;
@@ -209,6 +190,7 @@ export const DataFactory = {
         });
         const originalLines = replaced.split('\n');
         const filteredLines = [];
+        //meta lines: tags and review marks
         originalLines.forEach(l => {
           let lineText = l.trim();
           if (lineText.startsWith('::') && !lineText.startsWith('::diff')) {
@@ -250,12 +232,17 @@ export const DataFactory = {
             }
           }
         })
+
         //TODO: если kanaOnly КАТАКАНА, возможно, запись кандзи редкая и не является представительной
         //учесть порядок следования. индекс как фактор определения типа 
         if (filteredLines.length) {
+
           const entryType = DataFactory.guessEntryType(filteredLines, resEntry);
+
           const hiraganaOnly = DataFactory.getHiraganaOnly(filteredLines);
           const withKanji = DataFactory.getWithKanji(filteredLines);
+
+          //define entry's pronounce
           let pronounce = null;
           let pronounceTarget = null;
           if (entryType != DataFactory.ENTRY_TYPE.NON_STANDARD
@@ -277,9 +264,7 @@ export const DataFactory = {
               pronounceTarget = filteredLines[0];
             }
           };
-          /* const mataFilteredLines = pronounce && pronounceTarget ? filteredLines.filter(l => l != pronounce) : filteredLines; */
-          const mataFilteredLines = filteredLines;
-          const resLines = mataFilteredLines.map((l, i) => {
+          const resLines = filteredLines.map((l, i) => {
             const isCompact = DataFactory.isNonJapanese(l) || DataFactory.isMixed(l);
             const lineTypes = DataFactory.getLineTypes(l, filteredLines);
             const lineObject = {
@@ -293,14 +278,13 @@ export const DataFactory = {
 
               if (lineObject.text == pronounceTarget) {
                 lineObject.pronounce = pronounce;
-              } else if (
-                lineObject.text == pronounce
-              ) {
+              } else if (lineObject.text == pronounce) {
                 lineObject.isPronounce = true;
               }
 
             }
             return lineObject
+
           });
           resEntry.lines = resLines;
           if (entryType) {
@@ -365,6 +349,10 @@ export const DataFactory = {
     return lines.filter(l => DataFactory.isNonJapanese(l))
   },
 
+  getNotJapaneseOnly: (lines) => {
+    return lines.filter(l => DataFactory.isNonJapanese(l) || DataFactory.isMixed(l))
+  },
+
   isJapaneseOnly: (l) => {
     return regex.japaneseOnly.test(l)
   },
@@ -393,6 +381,11 @@ export const DataFactory = {
     return regex.nonJapanese.test(l)
   },
 
+  isNotJapaneseOnly : (l) => {
+    return regex.nonJapanese.test(l) 
+      || regex.mixed.test(l)
+  },
+
   getAnalyzedLines(lines, entry) {
     const lType = DataFactory.LINE_TYPE
     return lines.map(l => {
@@ -406,9 +399,14 @@ export const DataFactory = {
       if (DataFactory.isHiraganaOnly(l)) types.push(lType.HIRAGANA_ONLY);
       return {
         text: l,
-        types: types
+        types: types,
       }
     })
+  },
+
+  getLineRole(l, entry) {
+    const lRoles = DataFactory.LINE_ROLE;
+
   },
 
   getLineTypes(l) {
@@ -535,4 +533,5 @@ console.log(App.data.allEntries.filter(en => DF.isNonJapanese(en.lines[0].text))
 
 line 0 starts with tilda
 console.log(App.data.allEntries.filter(en => DF.isJapaneseOnly(en.lines[0].text) && en.lines[0].text.startsWith('〜')).map(en => en.lines.map(l => l.text).join(' - ')).join('\n'))
+
 */

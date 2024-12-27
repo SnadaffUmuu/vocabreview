@@ -40,10 +40,9 @@ export const MenuView = function () {
   }
 
   this.reloadCurrentSource = function() {
-    if (!Application.views.PreloaderView.isShown()) {
-      Application.views.PreloaderView.show();
-    }
-    Application.changeSource(Application.state.source)
+    Application.views.PreloaderView.showPreloaderAndRun(() => {
+      Application.changeSource(Application.state.source)
+    });
   }
 
   this.renderSelectOptions = function () {

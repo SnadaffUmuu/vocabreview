@@ -314,4 +314,14 @@ document.addEventListener("DOMContentLoaded", async function (event) {
     )
   }).map(e=>(e.type ? e.type + '\n' : '') + e.lines.map(l=>l.text).join('\n')).join('\n\n'))
   */
+
+//кол-во неяпонских строк больше 1
+var res = App.data.allEntries.filter(entry => 
+  DF.getNotJapaneseOnly(entry.lines.map(l=>l.text)).length > 1 
+).map(entry => 
+  entry.lines.map(l => l.text).join('\n')
+).join('\n\n')
+console.log(
+  res
+)
 });
