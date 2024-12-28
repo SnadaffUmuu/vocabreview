@@ -1,0 +1,15 @@
+<div id="dataView">
+  <div id="tests">
+    <select>
+    </select>
+  </div>
+  <div id="input">
+    
+return entries.map(en => 
+  DF.getEntryShortInfoString2(en, true, true)
+).join('<br>')
+    
+  </div>
+  <button id="run">Go</button>
+  <div id="output"></div>
+</div>

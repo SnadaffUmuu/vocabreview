@@ -5,6 +5,7 @@
 @import url("../modules/structure/structure.css");
 @import url("../modules/infobar/infobar.css");
 @import url("../modules/table/table.css");
+@import url("../modules/data-view/data-view.css");
 @import url("../modules/preloader/preloader.css");
 
 :root {

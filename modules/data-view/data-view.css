@@ -1,0 +1,25 @@
+#dataView {
+  padding:0 10px;
+}
+
+#input {
+  margin:20px;
+  width: calc(95% - 45px);
+  height:150px;
+  font-size:17px;
+}
+
+#output {
+  font-size:17px;
+  padding:20px;
+}
+
+#tests select {
+  height: 30px;
+  width: 150px;
+}
+
+#run {
+  height: 30px;
+  padding:0 20px; 
+}

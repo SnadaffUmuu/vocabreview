@@ -1,7 +1,7 @@
 import { Application } from "./app.js";
-import { 
-  regex, 
-  stringToHash, 
+import {
+  regex,
+  stringToHash,
   shortestString,
   countCharOccurrencesInString
 } from "./utils.js";
@@ -9,14 +9,14 @@ import {
 export const DataFactory = {
 
   ENTRY_TAG: {
-    counter : 'counter',
-    geo : 'geo',
-    grammar : 'grammar',
-    name : 'name',
-    onomatopoeia : 'onomatopoeia',
-    pattern : 'pattern',
-    term : 'term',
-    yojijukugo : 'yojijukugo',
+    counter: 'counter',
+    geo: 'geo',
+    grammar: 'grammar',
+    name: 'name',
+    onomatopoeia: 'onomatopoeia',
+    pattern: 'pattern',
+    term: 'term',
+    yojijukugo: 'yojijukugo',
   },
 
   ENTRY_TYPE: {
@@ -40,15 +40,15 @@ export const DataFactory = {
     MIXED: 'MIXED',
     NON_JAPANESE: 'NON_JAPANESE'
   },
-  
+
   LINE_ROLE: {
-    expression : 'expression',
-    reading : 'reading',
+    expression: 'expression',
+    reading: 'reading',
     meaning: 'meaning',
-    alt_reading : 'alt_reading',
-    example : 'example',
-    example_translation : 'example_translation',
-    info : 'info',
+    alt_reading: 'alt_reading',
+    example: 'example',
+    example_translation: 'example_translation',
+    info: 'info',
   },
 
   vocabFilesIndex: [
@@ -103,16 +103,31 @@ export const DataFactory = {
   getEntryInfoString: (entry, forHtml) => {
     const lineBreak = forHtml ? '<br>' : '\n';
     let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
-    + (entry.reviewLevel !== undefined ? 'reviewLevel: ' + entry.reviewLevel + lineBreak : '')
-    + entry.entryType + lineBreak
-    + 'lines: ' + entry.lines.length;
+      + (entry.reviewLevel !== undefined ? 'reviewLevel: ' + entry.reviewLevel + lineBreak : '')
+      + entry.entryType + lineBreak
+      + 'lines: ' + entry.lines.length;
     entryInfo += entry.lines.map(line => {
       return lineBreak + line.originalIndex + lineBreak
         + line.text + lineBreak
         + 'speakable:' + line.speakable + ';' + (line.isPronounce ? ' isPronounce' : '')
         + (line.pronounce ? ' pronounce:' + line.pronounce : '') + lineBreak
         + line.linetypes.join(', ')
-      }).join('');
+    }).join('');
+    return entryInfo;
+  },
+
+  getEntryShortInfoString: (entry, forHtml) => {
+    const lineBreak = forHtml ? '<br>' : '\n';
+    let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
+    entryInfo += entry.lines.map(line => line.text + lineBreak).join('') + lineBreak;
+    return entryInfo;
+  },
+
+  getEntryShortInfoString2: (entry, forHtml, insertLastBreak) => {
+    const lineBreak = forHtml ? '<br>' : '\n';
+    let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
+    entryInfo += entry.lines.map(line => line.text + lineBreak).join('')
+    + entry.entryType + lineBreak + (insertLastBreak ? lineBreak : '');
     return entryInfo;
   },
 
@@ -272,7 +287,7 @@ export const DataFactory = {
               originalIndex: i,
               speakable: DataFactory.isJapaneseOnly(l),
               isCompact: isCompact,
-              linetypes : lineTypes,
+              linetypes: lineTypes,
             }
             if (pronounce && pronounceTarget) {
 
@@ -381,8 +396,8 @@ export const DataFactory = {
     return regex.nonJapanese.test(l)
   },
 
-  isNotJapaneseOnly : (l) => {
-    return regex.nonJapanese.test(l) 
+  isNotJapaneseOnly: (l) => {
+    return regex.nonJapanese.test(l)
       || regex.mixed.test(l)
   },
 
@@ -418,23 +433,23 @@ export const DataFactory = {
     if (DataFactory.isWithKanji(l)) types.push(lType.WITH_KANJI);
     if (DataFactory.isKanaOnly(l)) types.push(lType.KANA_ONLY);
     if (DataFactory.isKatakanaOnly(l)) types.push(lType.KATAKANA_ONLY);
-    if (DataFactory.isHiraganaOnly(l)) types.push(lType.HIRAGANA_ONLY); 
+    if (DataFactory.isHiraganaOnly(l)) types.push(lType.HIRAGANA_ONLY);
     return types;
   },
 
-  guessEntryType (lines, entry) {
+  guessEntryType(lines, entry) {
     const types = DataFactory.ENTRY_TYPE;
     const tag = DataFactory.ENTRY_TAG;
     const lTypes = DataFactory.LINE_TYPE;
     const length = lines.length;
-    
+
     let res = types.NON_STANDARD;
 
-    const typedLines = lines.map((l,i) => {
+    const typedLines = lines.map((l, i) => {
       return {
         index: i,
         text: l,
-        types : DataFactory.getLineTypes(l)
+        types: DataFactory.getLineTypes(l)
       }
     });
 
@@ -460,7 +475,7 @@ export const DataFactory = {
     } else if (
       length == 2
       && japaneseOnly.length == 1
-      && 
+      &&
       (
         nonJapanese.length == 1
         || mixed.length == 1
@@ -469,14 +484,14 @@ export const DataFactory = {
       res = types.SIMPLE
     } else if (
       length > 2
-      && 
+      &&
       japaneseOnly.length > 1
       &&
       (
         kanaOnly.length == 0
         || typedLines[0].types.includes(lTypes.KANA_ONLY)
       )
-      && 
+      &&
       (
         nonJapanese.length == 1
         && mixed.length == 1
@@ -494,7 +509,7 @@ export const DataFactory = {
       && hiraganaOnly.length == 1
       && japaneseOnly.length == 2
       &&
-      ( 
+      (
         nonJapanese.length == 1
         || mixed.length == 1
       )

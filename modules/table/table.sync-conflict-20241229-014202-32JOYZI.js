@@ -1,6 +1,7 @@
 import { View } from "../view.js";
 import {
   speak,
+  isOverflow,
   UserActionHandlers,
 } from "../utils.js";
 import { Application } from "../app.js";
@@ -488,7 +489,7 @@ TableView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#appBody',
   templatePath: 'modules/table/table.html',
   templateSelector: '#tableView',
-  longtouchTimeout: 1500,
+  longtouchTimeout: 1200,
   maxCardHeight: 80,
 });
 

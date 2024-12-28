@@ -1,10 +1,12 @@
 import { MenuView } from "./menu/menu.js";
 import { Slider } from "./slider/slider.js";
+import { DataView } from "./data-view/data-view.js";
 import { StructureView } from "./structure/structure.js";
 import { InfobarView } from "./infobar/infobar.js";
 import { View } from "./view.js";
 import { Element } from "./element.js";
 import { DataFactory } from "./data.js"
+import { DataTests } from "./data-view/data-tests.js"
 import { TableView } from "./table/table.js";
 import { PreloaderView } from "./preloader/preloader.js";
 import { SlideSide } from "./slide/slide-side.js";
@@ -13,6 +15,7 @@ import { Slide } from "./slide/slide.js";
 const APPLICATION_TYPE = {
   CARDS: 'SLIDER',
   TABLE: 'TABLE',
+  DATA: 'DATA',
   BOARD: 'BOARD',
   QUIZBOARD: 'QUIZBOARD'
 }
@@ -40,6 +43,7 @@ export const Application = {
       MenuView: await View.create(MenuView),
       SliderView: await View.create(Slider),
       TableView: await View.create(TableView),
+      DataView: await View.create(DataView),
     };
   },
   
@@ -216,6 +220,10 @@ const Router = {
         this.applicationType = APPLICATION_TYPE.TABLE;
         this.currentView = Application.views.TableView;
         break;
+      case 'data':
+        this.applicationType = APPLICATION_TYPE.DATA;
+        this.currentView = Application.views.DataView;
+        break;
       case 'board':
         this.applicationType = APPLICATION_TYPE.BOARD;
         break;
@@ -268,10 +276,11 @@ const Router = {
   renderCurrentView : function () {
 
     const startTime = performance.now();
-
+    /*
     if (!Application.views.PreloaderView.isShown()) {
       Application.views.PreloaderView.show();
-    }    
+    } 
+    */   
     this.currentView.render()
 
     const duration = performance.now() - startTime;
@@ -295,10 +304,11 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   Application.initData();
   await Application.initProtoElements();
   await Application.initViews();
-  Application.views.PreloaderView.show();
+  //Application.views.PreloaderView.show();
   Router.start();
   window.App = Application;
   window.DF = DataFactory;
+  window.DT = DataTests;
 /*
 
 
@@ -313,9 +323,8 @@ document.addEventListener("DOMContentLoaded", async function (event) {
       && DF.isNonJapanese(e.lines[1].text)
     )
   }).map(e=>(e.type ? e.type + '\n' : '') + e.lines.map(l=>l.text).join('\n')).join('\n\n'))
-  */
-
-//кол-во неяпонских строк больше 1
+  
+  //кол-во неяпонских строк больше 1
 var res = App.data.allEntries.filter(entry => 
   DF.getNotJapaneseOnly(entry.lines.map(l=>l.text)).length > 1 
 ).map(entry => 
@@ -324,4 +333,5 @@ var res = App.data.allEntries.filter(entry =>
 console.log(
   res
 )
+*/
 });
