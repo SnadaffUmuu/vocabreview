@@ -488,7 +488,7 @@ TableView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#appBody',
   templatePath: 'modules/table/table.html',
   templateSelector: '#tableView',
-  longtouchTimeout: 1500,
+  longtouchTimeout: 1200,
   maxCardHeight: 80,
 });
 
