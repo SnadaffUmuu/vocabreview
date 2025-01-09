@@ -35,7 +35,7 @@ export const Slider = function () {
     }
   }
 
-  this.rotateSlide = function (e) {
+  this.rotateSlide = function (e, mode) {
     e.stopPropagation();
     e.preventDefault();
     if (e.target.classList.contains('js-slide-inner')) {

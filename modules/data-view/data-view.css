@@ -3,15 +3,18 @@
 }
 
 #input {
-  margin:20px;
-  width: calc(95% - 45px);
+  width: calc(100% - 10px);
   height:150px;
-  font-size:17px;
+  font-size:11px;
 }
 
 #output {
   font-size:17px;
   padding:20px;
+}
+
+#tests {
+  padding-bottom: 10px;
 }
 
 #tests select {
@@ -22,4 +25,14 @@
 #run {
   height: 30px;
   padding:0 20px; 
+  display: inline-block;
+}
+
+#filtered {
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+  margin-left: 10px;
+  margin-bottom: 0;
+  vertical-align: bottom;
 }

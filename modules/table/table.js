@@ -112,38 +112,78 @@ export const TableView = function () {
     }
   };
 
+  this.colRoles = [
+    'expression',
+    'meaning',
+    'reading',
+  ]; 
+
+  this.lineToTableElHtml = function (line, entry) {
+    return '<div draggable="true" '
+      + ' class="cellContentDraggable ellipsis'
+      + (line.speakable ? ' speakable' : '')
+      + '"'
+      + (entry.reviewLevel && line.originalIndex == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
+       + (line.isPronounce ? ' data-is-pronounce' : '')
+       + '>'
+       + (line.speakable ? '<span data-reading="'
+         + line.text
+         + '" class="speakme"></span>' : '')
+        + '<span class="line-text">' + line.text + '</span>'
+        + '<span class="expand" data-expanded="⋈">✥</span>'
+        + '</div>';
+  };
+
   this.buildTableHtml = function () {
+    const model = [];
+    this.data.entries.forEach(entry => {
+      const row = [];
+      const lines = entry.lines;
+      this.colRoles.forEach(role => {
+        const lineOfRole = lines.find(l => l.role == role);
+        row.push(lineOfRole ? lineOfRole.originalIndex : null);
+      });
+      console.log('row', row);
+      console.log('extra lines', lines.filter(l => !row.includes(l.originalIndex)).map(l => l.originalIndex));
+      lines.filter(l => !row.includes(l.originalIndex)).forEach(l => row.push(l.originalIndex));
+      model.push(row);
+    });
+    
+    console.log(model);
+    console.log(model.map(r => r.length));
+    
+    this.columnsCount = Math.max(...model.map(r => r.length));
+
+    console.log(this.columnsCount);
+    
     const resHTML = '<table id="table"><thead><tr><th draggable="false" data-index="0"></th>'
       + (Array.from({ length: this.columnsCount }).map((_, i) =>
-        '<th draggable="true" data-index="' + (i + 1) + '"><div class="drag">↔️</div><div class="toggle">toggle</div></th>').join(''))
+        '<th draggable="true" data-index="' + (i + 1) + '"><div class="drag">↔️</div><div class="toggle" toggle</div></th>').join(''))
       + '<th draggable="true" data-index="' + (this.columnsCount + 1) + '"><div class="drag">↔️</div></th>'
       + '</tr></thead><tbody>'
-      + this.data.entries.reduce((resHTML, entry) => {
+      + model.reduce((resHTML, row, i) => {
+        const entry = this.data.entries[i];
         let entryInfo = DataFactory.getEntryInfoString(entry, true);
         let cells = [];
-        for (let i = 0; i < this.columnsCount; i++) {
-          cells.push(`
+        row.forEach((cell, ii) => {
+          if (cell == null) {
+            cells.push(`
+            <td class="draggableContainer"></td>
+            `);
+          } else {
+            const theLine = entry.lines.find(l => l. originalIndex == cell);
+            cells.push(`
             <td class="draggableContainer">
-              ${i < entry.lines.length ?
-              '<div draggable="true" '
-              + ' class="cellContentDraggable ellipsis'
-              + (entry.lines[i]?.speakable ? ' speakable' : '')
-              + '"'
-              + (entry.reviewLevel && i == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
-              + (entry.lines[i].isPronounce ? ' data-is-pronounce' : '')
-              + '>'
-              + (entry.lines[i]?.speakable ? '<span data-reading="'
-                + entry.lines[i].text
-                + '" class="speakme"></span>' : '')
-              + '<span class="line-text">' + entry.lines[i].text + '</span>'
-              + '<span class="expand" data-expanded="⋈">✥</span>'
-              + '</div>'
-              : ''}
+              ${this.lineToTableElHtml(theLine, entry)}
             </td>
-          `)
-        };
+            `)
+          }
+        });
         return resHTML += '<tr><td><div draggable="true" class="rowDrag">↕️</div></td>'
           + cells.join('')
+          + (cells.length == this.columnsCount ? '' : 
+            Array.from({length: this.columnsCount - cells.length}).map((_, i) => '<td class="draggableContainer"></td>').join('')
+          )
           + '<td class="entry-info">'
           + '<div class="ellipsis">'
           + entryInfo
@@ -253,8 +293,9 @@ export const TableView = function () {
       const touch = e.touches[0];
       item.style.left = `${touch.clientX + 10}px`;
       item.style.top = `${touch.clientY + 10}px`;
-      this.potentialContainer = document
-        .elementFromPoint(touch.clientX, touch.clientY).closest('td');
+      const elFromPoint = document
+        .elementFromPoint(touch.clientX, touch.clientY);
+      this.potentialContainer = elFromPoint.tagName == 'TD' ? elFromPoint : elFromPoint.closest('td');
       if (this.potentialContainer && this.placeholder) {
         const afterElement = this.getDragAfterElement(
           this.potentialContainer,
@@ -463,7 +504,6 @@ export const TableView = function () {
       return
     }
     this.data.entries = Application.data.currentEntries;
-    this.columnsCount = Math.max(...this.data.entries.map(e => e.lines.length))
     this.renderTable();
     this.setRenderedEvents(this.tableEl);
     Application.views.PreloaderView.hidePreloader();

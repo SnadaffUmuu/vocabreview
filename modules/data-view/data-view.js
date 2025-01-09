@@ -10,7 +10,7 @@ export const DataView = function () {
 
   this.executeFromEditor = function () {
     const action = new Function('entries', this.editor.getValue());
-    this.outputEl.innerHTML = action(this.data.entries);
+    this.outputEl.innerHTML = action(this.getData());
   },
 
   this.buildTestsMenu = function () {
@@ -21,10 +21,15 @@ export const DataView = function () {
         ).join('');
     this.testsEl.querySelector('select').addEventListener('change', (e) => {
       if (e.target.value !== '') {
-        this.outputEl.innerHTML = DataTests.tests[e.target.value](this.data.entries);
+        this.outputEl.innerHTML = DataTests.tests[e.target.value](this.getData());
       }
     })
   }
+  
+  this.getData = function () {
+    return structuredClone(this.element.querySelector('#filtered').checked 
+    && Application.data.currentEntries?.length ? Application.data.currentEntries : Application.data.allEntries);
+  },
 
   this.reset = function () {
     this.data = {};
@@ -34,17 +39,12 @@ export const DataView = function () {
 
   this.render = function () {
     this.reset();
-    if (!Application.data.allEntries?.length) {
-      if (Application.views.PreloaderView.isShown()) {
+    if (Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();
       }
+    if (!Application.data.allEntries?.length) {
       return
     }
-    if (!Application.views.PreloaderView.isShown()) {
-      Application.views.PreloaderView.show();
-    }
-    this.data.entries = structuredClone(Application.data.allEntries);
-    Application.views.PreloaderView.hide();
     this.editor = ace.edit("input");
     this.editor.setTheme("ace/theme/github_dark");
     this.editor.session.setMode("ace/mode/javascript");
@@ -67,6 +67,7 @@ export const DataView = function () {
     this.outputEl = this.element.querySelector('#output');
     this.testsEl = this.element.querySelector('#tests');
     this.runEl = this.element.querySelector('#run');
+    //this.onlyFilteredEl = this.element.querySelector('#filtered');
     this.render();
   }
 }

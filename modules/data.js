@@ -102,17 +102,22 @@ export const DataFactory = {
 
   getEntryInfoString: (entry, forHtml) => {
     const lineBreak = forHtml ? '<br>' : '\n';
+    
     let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
       + (entry.reviewLevel !== undefined ? 'reviewLevel: ' + entry.reviewLevel + lineBreak : '')
       + entry.entryType + lineBreak
+      + (entry.info !== undefined ? 'info: ' + entry.info + lineBreak : '')
       + 'lines: ' + entry.lines.length;
+
     entryInfo += entry.lines.map(line => {
       return lineBreak + line.originalIndex + lineBreak
         + line.text + lineBreak
+        + (line.role ? 'role: ' + line.role + lineBreak : '')
         + 'speakable:' + line.speakable + ';' + (line.isPronounce ? ' isPronounce' : '')
         + (line.pronounce ? ' pronounce:' + line.pronounce : '') + lineBreak
         + line.linetypes.join(', ')
     }).join('');
+
     return entryInfo;
   },
 
@@ -125,9 +130,16 @@ export const DataFactory = {
 
   getEntryShortInfoString2: (entry, forHtml, insertLastBreak) => {
     const lineBreak = forHtml ? '<br>' : '\n';
+    
     let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
-    entryInfo += entry.lines.map(line => line.text + lineBreak).join('')
+    + (entry.info !== undefined ? 'info: ' + entry.info + lineBreak : '');
+
+    entryInfo += entry.lines.map(line => 
+      line.text + lineBreak
+      + (line.role ? 'role: ' + line.role + lineBreak : '')
+      ).join('')
     + entry.entryType + lineBreak + (insertLastBreak ? lineBreak : '');
+    
     return entryInfo;
   },
 
@@ -199,6 +211,11 @@ export const DataFactory = {
       //handling true entries
       if (DataFactory.entryFilter(entry)) {
         const resEntry = {};
+        if (currentSection) {
+          resEntry.section = currentSection
+        } else if (currentUpperSection) {
+          resEntry.section = currentUpperSection
+        }
         let replaced = entry;
         DataFactory.toReplace.forEach(s => {
           replaced = replaced.replaceAll(s, '')
@@ -251,16 +268,15 @@ export const DataFactory = {
         //TODO: если kanaOnly КАТАКАНА, возможно, запись кандзи редкая и не является представительной
         //учесть порядок следования. индекс как фактор определения типа 
         if (filteredLines.length) {
-
           const entryType = DataFactory.guessEntryType(filteredLines, resEntry);
-
+          resEntry.entryType = entryType;
           const hiraganaOnly = DataFactory.getHiraganaOnly(filteredLines);
           const withKanji = DataFactory.getWithKanji(filteredLines);
 
           //define entry's pronounce
           let pronounce = null;
           let pronounceTarget = null;
-          if (entryType != DataFactory.ENTRY_TYPE.NON_STANDARD
+          if (entry.entryType != DataFactory.ENTRY_TYPE.NON_STANDARD
             && hiraganaOnly.length == 1
             && withKanji.length > 0
           ) {
@@ -280,7 +296,7 @@ export const DataFactory = {
             }
           };
           const resLines = filteredLines.map((l, i) => {
-            const isCompact = DataFactory.isNonJapanese(l) || DataFactory.isMixed(l);
+            const isCompact = DataFactory.isNotJapaneseOnly(l);
             const lineTypes = DataFactory.getLineTypes(l, filteredLines);
             const lineObject = {
               text: l,
@@ -290,21 +306,18 @@ export const DataFactory = {
               linetypes: lineTypes,
             }
             if (pronounce && pronounceTarget) {
-
               if (lineObject.text == pronounceTarget) {
                 lineObject.pronounce = pronounce;
               } else if (lineObject.text == pronounce) {
                 lineObject.isPronounce = true;
               }
-
             }
             return lineObject
-
           });
           resEntry.lines = resLines;
-          if (entryType) {
-            resEntry.entryType = entryType
-          }
+          resEntry.lines.forEach(l => 
+            DataFactory.setLineRoles(resEntry)
+          );
           /*
           const analyzedLines = DataFactory.getAnalyzedLines(filteredLines, resEntry);
           console.log('resEntry:');
@@ -312,11 +325,6 @@ export const DataFactory = {
           console.log('analyzedLines');
           cosole.log(analyzedLines.map(o=> `[ ${o.text} ] : [ ${o.types.join('   ')} ]`).join('\n'));
           */
-          if (currentSection) {
-            resEntry.section = currentSection
-          } else if (currentUpperSection) {
-            resEntry.section = currentUpperSection
-          }
           entries.push(resEntry)
         }
       } else {
@@ -419,9 +427,24 @@ export const DataFactory = {
     })
   },
 
-  getLineRole(l, entry) {
+  setLineRoles(entry) {
     const lRoles = DataFactory.LINE_ROLE;
-
+    const lines = entry.lines;
+    const firstNotJp = lines.find(l => DataFactory.isNotJapaneseOnly(l.text));
+    if (firstNotJp) {
+      firstNotJp.role = lRoles.meaning;
+    } else if (lines[1]) {
+      lines[1].role = lRoles.meaning;
+    }
+    if (DataFactory.isNotJapaneseOnly(lines[0].text)) {
+      lines[1].role = lRoles.expression
+    } else {
+      lines[0].role = lRoles.expression;
+    }
+    const lPronounce = lines.find(l => l.isPronounce);
+    if (lPronounce) {
+      lPronounce.role = lRoles.reading
+    }
   },
 
   getLineTypes(l) {

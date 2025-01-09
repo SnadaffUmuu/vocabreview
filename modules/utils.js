@@ -21,7 +21,16 @@ export function speak(text) {
   setTimeout(() => {
     window.speechSynthesis.speak(utterThis);
     console.log('speak', text)
-  }, 1)
+  }, 1);
+
+  let r = setInterval(() => {
+    //console.log(speechSynthesis.speaking);
+    if (!speechSynthesis.speaking) {
+      clearInterval(r);
+    } else {
+      speechSynthesis.resume();
+  }
+}, 14000);
 }
 
 export function shuffleArray(array) {
