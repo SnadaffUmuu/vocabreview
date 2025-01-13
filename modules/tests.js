@@ -1,9 +1,11 @@
+import { DataFactory } from "./data";
+
 const getEntryShortInfoString2 = (entry, forHtml) => {
   const lineBreak = forHtml ? '<br>' : '\n';
   let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '');
   entryInfo += entry.lines.map(line => {
     let templ = `${line.text}`;
-    if (line.isPronounce) {
+    if (line.role && line.role == DataFactory.LINE_ROLE.reading) {
       templ = `<span style="text-decoration:underline">${line.text}</span>`
     }
     return templ + lineBreak

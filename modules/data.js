@@ -8,6 +8,25 @@ import {
 
 export const DataFactory = {
 
+  vocabFilesIndex: [
+    'SR_Kona2',
+    'SR_autumn',
+    'goshogun0',
+    'shirobanba',
+    'kokugo-osarai',
+    'SR_Nutshell',
+    'SR-subway-attack',
+    'hp1',
+    'kana-enokura-kouson',
+    'murakami-sheep-1',
+    'SR_summer',
+    'SR_Jam',
+    'SR_spring',
+    'SR_Obon_Society',
+    'chat',
+    'boxes_packs',
+  ],  
+
   ENTRY_TAG: {
     counter: 'counter',
     geo: 'geo',
@@ -45,30 +64,12 @@ export const DataFactory = {
     expression: 'expression',
     reading: 'reading',
     meaning: 'meaning',
+    explanation : 'explanation',
     alt_reading: 'alt_reading',
     example: 'example',
     example_translation: 'example_translation',
     info: 'info',
   },
-
-  vocabFilesIndex: [
-    'SR_Kona2',
-    'SR_autumn',
-    'goshogun0',
-    'shirobanba',
-    'kokugo-osarai',
-    'SR_Nutshell',
-    'SR-subway-attack',
-    'hp1',
-    'kana-enokura-kouson',
-    'murakami-sheep-1',
-    'SR_summer',
-    'SR_Jam',
-    'SR_spring',
-    'SR_Obon_Society',
-    'chat',
-    'boxes_packs',
-  ],
 
   kanaExcl: [
     '〜',
@@ -113,8 +114,8 @@ export const DataFactory = {
       return lineBreak + line.originalIndex + lineBreak
         + line.text + lineBreak
         + (line.role ? 'role: ' + line.role + lineBreak : '')
-        + 'speakable:' + line.speakable + ';' + (line.isPronounce ? ' isPronounce' : '')
-        + (line.pronounce ? ' pronounce:' + line.pronounce : '') + lineBreak
+        + 'speakable:' + line.speakable + ';' + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' isReading' : '')
+        + (line.reading ? ' reading:' + line.reading : '') + lineBreak
         + line.linetypes.join(', ')
     }).join('');
 
@@ -270,31 +271,6 @@ export const DataFactory = {
         if (filteredLines.length) {
           const entryType = DataFactory.guessEntryType(filteredLines, resEntry);
           resEntry.entryType = entryType;
-          const hiraganaOnly = DataFactory.getHiraganaOnly(filteredLines);
-          const withKanji = DataFactory.getWithKanji(filteredLines);
-
-          //define entry's pronounce
-          let pronounce = null;
-          let pronounceTarget = null;
-          if (entry.entryType != DataFactory.ENTRY_TYPE.NON_STANDARD
-            && hiraganaOnly.length == 1
-            && withKanji.length > 0
-          ) {
-            if (
-              !DataFactory.isHiraganaOnly(filteredLines[0])
-              && !filteredLines[0].startsWith('〜')
-            ) {
-              pronounce = hiraganaOnly[0];
-              pronounceTarget = shortestString(DataFactory.getWithKanji(filteredLines));
-            } else if (
-              filteredLines[0].startsWith('〜')
-              && DataFactory.isWithKanji(filteredLines[0])
-              && DataFactory.isHiraganaOnly(filteredLines[1])
-            ) {
-              pronounce = hiraganaOnly[0];
-              pronounceTarget = filteredLines[0];
-            }
-          };
           const resLines = filteredLines.map((l, i) => {
             const isCompact = DataFactory.isNotJapaneseOnly(l);
             const lineTypes = DataFactory.getLineTypes(l, filteredLines);
@@ -305,26 +281,10 @@ export const DataFactory = {
               isCompact: isCompact,
               linetypes: lineTypes,
             }
-            if (pronounce && pronounceTarget) {
-              if (lineObject.text == pronounceTarget) {
-                lineObject.pronounce = pronounce;
-              } else if (lineObject.text == pronounce) {
-                lineObject.isPronounce = true;
-              }
-            }
             return lineObject
           });
           resEntry.lines = resLines;
-          resEntry.lines.forEach(l => 
-            DataFactory.setLineRoles(resEntry)
-          );
-          /*
-          const analyzedLines = DataFactory.getAnalyzedLines(filteredLines, resEntry);
-          console.log('resEntry:');
-          console.log(JSON.stringify(resEntry));
-          console.log('analyzedLines');
-          cosole.log(analyzedLines.map(o=> `[ ${o.text} ] : [ ${o.types.join('   ')} ]`).join('\n'));
-          */
+          DataFactory.setLineRoles(resEntry);
           entries.push(resEntry)
         }
       } else {
@@ -339,7 +299,6 @@ export const DataFactory = {
     if (excludedLines.length) {
       collection.excludedLines = excludedLines;
     }
-    //console.log('structure', structure)
     collection.structure = structure;
     return collection;
   },
@@ -409,30 +368,13 @@ export const DataFactory = {
       || regex.mixed.test(l)
   },
 
-  getAnalyzedLines(lines, entry) {
-    const lType = DataFactory.LINE_TYPE
-    return lines.map(l => {
-      let types = [];
-      if (DataFactory.isMixed(l)) types.push(lType.MIXED);
-      if (DataFactory.isNonJapanese(l)) types.push(lType.NON_JAPANESE);
-      if (DataFactory.isJapaneseOnly(l)) types.push(lType.JAPANESE_ONLY);
-      if (DataFactory.isWithKanji(l)) types.push(lType.WITH_KANJI);
-      if (DataFactory.isKanaOnly(l)) types.push(lType.KANA_ONLY);
-      if (DataFactory.isKatakanaOnly(l)) types.push(lType.KATAKANA_ONLY);
-      if (DataFactory.isHiraganaOnly(l)) types.push(lType.HIRAGANA_ONLY);
-      return {
-        text: l,
-        types: types,
-      }
-    })
-  },
-
   setLineRoles(entry) {
     const lRoles = DataFactory.LINE_ROLE;
     const lines = entry.lines;
-    const firstNotJp = lines.find(l => DataFactory.isNotJapaneseOnly(l.text));
-    if (firstNotJp) {
-      firstNotJp.role = lRoles.meaning;
+    const firstNotJpOnly = lines.find(l => 
+      DataFactory.isNotJapaneseOnly(l.text));
+    if (firstNotJpOnly) {
+      firstNotJpOnly.role = lRoles.meaning;
     } else if (lines[1]) {
       lines[1].role = lRoles.meaning;
     }
@@ -441,9 +383,37 @@ export const DataFactory = {
     } else {
       lines[0].role = lRoles.expression;
     }
-    const lPronounce = lines.find(l => l.isPronounce);
-    if (lPronounce) {
-      lPronounce.role = lRoles.reading
+    let lReading = null;
+    let lReadingTarget = null;
+    const firstHiraganaOnlyLine = lines.find(l => 
+      DataFactory.isHiraganaOnly(l.text));
+      
+    const linesWithKanji = DataFactory.getWithKanji(lines.map(l => l.text));
+
+    if (firstHiraganaOnlyLine
+      && linesWithKanji.length > 0
+    ) {
+      if (
+        //линия "только хирагана" не первая, а первая не начинается с 〜
+        firstHiraganaOnlyLine.originalIndex > 0
+        && !lines[0].text.startsWith('〜')
+      ) {
+        lReading = firstHiraganaOnlyLine;
+        lReadingTarget = lines.find(l => l.text == shortestString(linesWithKanji));
+      } else if (
+        //первая начинается с 〜 и она с кандзи, 
+        lines[0].text.startsWith('〜')
+        && DataFactory.isWithKanji(lines[0].text)
+        && firstHiraganaOnlyLine.originalIndex == 1
+      ) {
+        lReading = firstHiraganaOnlyLine;
+        lReadingTarget = lines[0];
+      }
+    };
+    
+    if (lReading && lReadingTarget) {
+      lReading.role = lRoles.reading
+      lReadingTarget.reading = lReading.text;
     }
   },
 

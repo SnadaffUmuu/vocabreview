@@ -124,7 +124,7 @@ export const TableView = function () {
       + (line.speakable ? ' speakable' : '')
       + '"'
       + (entry.reviewLevel && line.originalIndex == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
-       + (line.isPronounce ? ' data-is-pronounce' : '')
+       + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' data-is-reading' : '')
        + '>'
        + (line.speakable ? '<span data-reading="'
          + line.text

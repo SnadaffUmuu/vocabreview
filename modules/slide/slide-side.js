@@ -15,17 +15,16 @@ SlideSide.prototype = Object.assign(Object.create(Element.prototype), {
   render : function (line) {
     const element = this.getElement();
     element.innerHTML = line.text;
+    element.dataset.index = line.originalIndex;
     if (line.speakable) {
-      element.setAttribute('data-reading', line.text);
+      element.dataset.reading = line.text;
     }
-    if (line.pronounce) {
-      element.dataset.pronounce = line.pronounce;
+    if (line.reading) {
+      element.dataset.reading = line.reading;
     }
-    /*
-    if (line.isPronounce) {
-      element.dataset.isPronounce = true;
+    if (line.role) {
+      element.dataset.role = line.role;
     }
-    */
     this.setClasses(line, element);
     return element;
   }

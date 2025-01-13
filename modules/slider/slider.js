@@ -11,8 +11,11 @@ export const Slider = function () {
   this.renderedEvents = {
     click : {
       '.slide-inner' : 'rotateSlide',
-      '.slidePronounce' : 'readPronounce',
+      '.slideReading' : 'read',
       '.js-slide-side' : 'speakLine',
+    },
+    change : {
+      '#cardMode' : 'setCardMode',
     },
   };
 
@@ -22,7 +25,7 @@ export const Slider = function () {
     speak(e.target.dataset.reading)
   }
 
-  this.readPronounce = function (e) {
+  this.read = function (e) {
     const t = e.target;
     if (!t.classList.contains('listened') && !t.classList.contains('revealed')) {
       t.classList.add('listened');
@@ -36,28 +39,58 @@ export const Slider = function () {
   }
 
   this.rotateSlide = function (e, mode) {
+    console.log('rotate slide', e.target);
     e.stopPropagation();
     e.preventDefault();
     if (e.target.classList.contains('js-slide-inner')) {
       const el = e.target;
       const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
-      if (slide.querySelectorAll('.slide-side').length == 1) return;
+      const currentSideIndexDisplayEl = slide.closest('.js-slide').querySelector('#current-side');
+      if (slide.querySelectorAll('.js-slide-side').length == 1) { 
+        console.log('non-rotatiable, only 1 side');
+        currentSideIndexDisplayEl.innerHTML = slide.querySelector('.js-slide-side').dataset.index;
+        return;
+      }
       const current = slide.querySelector('.current');
       let newCurrent = null;
       if (current && current.nextElementSibling) {
         newCurrent = current.nextElementSibling
       } else {
-        newCurrent = slide.querySelector('.slide-side')
+        newCurrent = slide.querySelector('.js-slide-side')
       }
       newCurrent.classList.add('current');
       if (current && current.classList) {
         current.classList.remove('current');
-      }      
+      }
+      currentSideIndexDisplayEl.innerHTML = newCurrent.dataset.index;
     }    
   }
 
   this.showCurrentIndex = function (index) {
     this.currentSlideIndexEl.innerHTML = index;
+  }
+  
+  this.setCardMode = function (e) {
+    switch (e.target.value) {
+      case 'random':
+        // Tab to edit
+        break;
+        
+      case 'default':
+        //
+        break;
+        
+      case 'reverse':
+        //
+        break;
+        
+      case 'examples':
+        //
+        break;
+      
+      default:
+        // Tab to edit
+    }
   }
 
   this.renderSlider =  () => {
@@ -94,7 +127,7 @@ export const Slider = function () {
     if (this.slider) {
       this.slider.destroy();
     }
-    this.keensliderContainer.innerHTML = '';
+    this.sliderOuter.innerHTML = this.keensliderContainerTemplate.outerHTML;
   };
 
   this.render = async function () {
@@ -108,14 +141,15 @@ export const Slider = function () {
     this.data.entries = Application.data.currentEntries
     this.renderSlider();
     this.initSlider();
-    this.setRenderedEvents();
+    this.setRenderedEvents(this.sliderOuter.querySelector('.js-slider'));
     Application.views.PreloaderView.hidePreloader();
   }
 
   this.show = async function () {
     View.prototype.show.call(this);
     this.currentSlideIndexEl = this.element.querySelector('#currentSlideIndex');
-    this.keensliderContainer = this.element.querySelector('#my-keen-slider');
+    this.sliderOuter = this.element.querySelector('#js-slider-outer');
+    this.keensliderContainerTemplate = this.sliderOuter.removeChild(this.element.querySelector('#my-keen-slider'));
     this.speakEl = this.element.querySelector('#speak');
     this.render();
   }

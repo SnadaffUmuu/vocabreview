@@ -4,7 +4,7 @@
   //katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
   //kanjiRegex: /^[\p{Script=Han}]$/u,
   //nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
-  hasKanji: /[\p{Script=Han}]/u,
+  hasKanji: /^[\p{Script=Han}]+$/u,
   kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   hiraganaOnly: /^[\p{Script=Hiragana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   katakanaOnly: /^[\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
@@ -21,13 +21,15 @@ export function speak(text) {
   setTimeout(() => {
     window.speechSynthesis.speak(utterThis);
     console.log('speak', text)
-  }, 1);
+  }, 0);
 
   let r = setInterval(() => {
-    //console.log(speechSynthesis.speaking);
+   console.log('!', speechSynthesis.speaking);
     if (!speechSynthesis.speaking) {
+      console.log('no speaking, clear interval', r);
       clearInterval(r);
     } else {
+      console.log('was speaking, but stoped, resuming');
       speechSynthesis.resume();
   }
 }, 14000);

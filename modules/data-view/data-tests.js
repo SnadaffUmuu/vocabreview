@@ -14,7 +14,7 @@ export const DataTests = {
       let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '');
       entryInfo += entry.lines.map((line, i) => {
         let templ = `${line.text}`;
-        if (line.isPronounce) {
+        if (line.role && line.role == DataFactory.LINE_ROLE.reading) {
           templ = `<span style="border-bottom:1px dotted">${line.text}</span>`
         } else if (i == 0 
         && entry.reviewLevel) {

@@ -19,11 +19,10 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
 
   render: function (entry) {
     const element = this.getElement();
-    const pronounceLine = entry.lines.find(l => l.isPronounce);
+    const readingLine = entry.lines.find(l => l.role == DataFactory.LINE_ROLE.reading);
     let lines;
-    if (pronounceLine) {
-      this.pronounceLine = pronounceLine;
-      lines = entry.lines.filter(l => l != pronounceLine);
+    if (readingLine) {
+      lines = entry.lines.filter(l => l.role != DataFactory.LINE_ROLE.reading);
     } else {
       lines = entry.lines
     }
@@ -32,15 +31,18 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     const sides = lines.map(line => 
       Application.protoElements.ProtoSlideSideElement.render(line)
     );
-    shuffleArray(sides)[0].classList.add('current');
+    const upperSide = shuffleArray(sides)[0];
+    upperSide.classList.add('current');
     shuffleArray(sides).forEach(o => sidesContainer.appendChild(o));
-    if (pronounceLine) {
+    if (readingLine) {
       element.insertAdjacentHTML('afterBegin', `
-        <div class="slidePronounce">
-          ${pronounceLine.text}
+        <div class="slideReading">
+          ${readingLine.text}
         </div>`);
     }
-    return element;    
+    element.querySelector('#sides-count').innerHTML = sides.length;
+    element.querySelector('#current-side').innerHTML = upperSide.dataset.index;
+    return element;
   }
 });
 Slide.prototype.constructor = Slide;

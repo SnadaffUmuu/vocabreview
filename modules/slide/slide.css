@@ -2,9 +2,6 @@
   display: flex;
   align-items: stretch;
   justify-content: center;
-  height: calc(99vh - 60px);
-  max-height: 100vh;
-  position:relative;
 }
 
 .slide-info {
@@ -13,7 +10,7 @@
   left:10px;
   right:40px;
   font-size: 12px;
-  height:100px;
+  height:50px;
   background: #dadada;
   color: var(--text-color);
   border:0;
@@ -24,9 +21,24 @@
 .night .slide-info {
   color: black;
   background: #555;
+  font-size:12px;
 }
 
-.slidePronounce {
+#sides-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size:13px;
+}
+
+#current-side {
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  font-size:13px;
+}
+
+.slideReading {
   position: absolute;
   bottom: 40px;
   right:10px;
@@ -34,7 +46,7 @@
   padding:10px;
 }
 
-.slidePronounce::after {
+.slideReading::after {
   content: '';
   position: absolute;
   top:0;left:0;right:0;bottom:0;
@@ -43,7 +55,7 @@
   border-radius: 10px;
 }
 
-.slidePronounce.revealed::after {
+.slideReading.revealed::after {
   opacity:0;
 }
 
@@ -92,6 +104,7 @@
 
 .slide-side[data-reading] {
   border-bottom: 2px dashed rgba(56, 119, 255, 0.514);
+  position: relative;
 }
 
 .slide-side {
@@ -101,26 +114,3 @@
   margin: 0 20px;
   padding: 0 0 25px;
 }
-
-.slide-side[data-pronounce] {
-  position: relative;
-}
-
-/*
-.slide-side[data-pronounce]::after {
-  position: absolute;
-  top: -35px;
-  left: 0;
-  font-size: 15px;
-  content: attr(data-pronounce);
-  opacity: 0;
-}
-
-.slide-side[data-pronounce]:hover::after {
-  opacity: 1;
-} 
-
-.slide-side[data-is-pronounce] {
-  opacity: 0.5;
-}
-*/

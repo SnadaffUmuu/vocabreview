@@ -11,7 +11,7 @@
 :root {
   --bg: #f1e6e8;
   --text-color-speakable: #2525c2;
-  --text-color-pronounce: #2525c293;
+  --text-color-reading: #2525c293;
   --icon-speakable-bg: #ffffde;
   --icon-expand-border: #ffffff;
   --appheader-title-color: #1e20c0;
@@ -23,7 +23,7 @@ body.night {
   --bg: #4d000e;
   --text-color: #a6cecf;
   --text-color-speakable: #f7d4ff;
-  --text-color-pronounce: #f7d4ff6e;
+  --text-color-reading: #f7d4ff6e;
   --icon-speakable-bg: #712e52;
   --icon-expand-border: #6b526d;
   --appheader-title-color: #daa7e5;
@@ -45,5 +45,13 @@ body {
 
 #appBody {
   box-sizing: border-box;
-  padding-top:60px;
+  padding-top:40px;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items:stretch;
+}
+
+.appView {
+  flex: 1 0 auto;
 }
