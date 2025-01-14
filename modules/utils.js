@@ -4,7 +4,7 @@
   //katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
   //kanjiRegex: /^[\p{Script=Han}]$/u,
   //nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
-  hasKanji: /^[\p{Script=Han}]+$/u,
+  hasKanji: /[\p{Script=Han}]+/u,
   kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   hiraganaOnly: /^[\p{Script=Hiragana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   katakanaOnly: /^[\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
