@@ -356,7 +356,7 @@ export const DataFactory = {
   },
 
   isWithKanji: (l) => {
-    return regex.japaneseOnly.test(l) && Array.from(l).some(ch => regex.withKanji.test(l));
+    return regex.japaneseOnly.test(l) && Array.from(l).some(ch => regex.hasKanji.test(l));
   },
 
   isNonJapanese: (l) => {
