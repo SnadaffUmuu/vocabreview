@@ -1,0 +1,21 @@
+{
+  "editor.fontSize": 12,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "local-history.path": "E:\\visual-studio-code-local-history\\",
+    "diffEditor.renderSideBySide": true,
+		"explorer.openEditors.sortOrder": "alphabetical",
+	"editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "editor.renderWhitespace": "all",
+  "editor.hover.enabled": false,
+  "json.maxItemsComputed": 10000,
+  "security.workspace.trust.untrustedFiles": "open",
+  "files.associations": {
+    "*.doc": "html"
+  },
+  "window.zoomLevel": 1,
+  "git.enableSmartCommit": true,
+  "local-history.saveDelay": 300,
+  "local-history.daysLimit": 90,
+  "workbench.colorTheme": "Visual Studio Dark"
+}

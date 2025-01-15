@@ -1,5 +1,13 @@
 #menuContainer {
-  position: relative;
+  position: absolute;
+  left:0;
+  top:0;
+}
+
+#menuContainer:has(#menu.isOpened) {
+  right:0;
+  bottom:0;
+  background: rgba(85, 74, 123, 0.24);
 }
 
 #menuTrigger {

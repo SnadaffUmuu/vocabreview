@@ -5,7 +5,7 @@
 #input {
   width: calc(100% - 10px);
   height:150px;
-  font-size:11px;
+  font-size:15px;
 }
 
 #output {

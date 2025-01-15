@@ -67,7 +67,6 @@ export const DataView = function () {
     this.outputEl = this.element.querySelector('#output');
     this.testsEl = this.element.querySelector('#tests');
     this.runEl = this.element.querySelector('#run');
-    //this.onlyFilteredEl = this.element.querySelector('#filtered');
     this.render();
   }
 }

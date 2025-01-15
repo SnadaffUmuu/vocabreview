@@ -41,17 +41,12 @@ export const DataTests = {
     },
     
     nonJapLinesAfter3 : function(lines) {
-      return lines.some(l => 
-        DF.isNotJapaneseOnly(l) && l.originalIndex > 2) 
-          && lines.filter(l => DF.isNotJapaneseOnly(l)).length > 1
+      return lines.some(l => DF.isNotJapaneseOnly(l) && l.originalIndex > 2) && lines.filter(l => DF.isNotJapaneseOnly(l)).length > 1
     },
 
     //two non japanese lines in a row
     twoNonJapaneseInaRow : function (lines) {
-      return lines.some((l, i) => 
-        DF.isNotJapaneseOnly(l.text) 
-          && lines[i+1] 
-          && DF.isNotJapaneseOnly(lines[i+1].text))
+      return lines.some((l, i) => DF.isNotJapaneseOnly(l.text) && lines[i+1] && DF.isNotJapaneseOnly(lines[i+1].text))
     },
 
     //num of line equals...

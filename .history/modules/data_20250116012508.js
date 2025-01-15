@@ -116,7 +116,6 @@ export const DataFactory = {
         + (line.role ? 'role: ' + line.role + lineBreak : '')
         + 'speakable:' + line.speakable + ';' + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' isReading' : '')
         + (line.reading ? ' reading:' + line.reading : '') + lineBreak
-        + (line.translationLineIndex ? ' translationLineIndex: ' + line.translationLineIndex + lineBreak : '')
         + line.linetypes.join(', ')
     }).join('');
 
@@ -393,9 +392,12 @@ export const DataFactory = {
 
     let lMeaning = null;
     let lExpression = null;
+    let lExamples = [];
+    let lExamplesTranslations = [];
 
     const firstNotJpOnly = lines.find(l => 
-      DataFactory.isNotJapaneseOnly(l.text));
+      DataFactory.isNotJapaneseOnly(l.text)
+        && !this.isJapaneseWithEigaChars(l.text));
 
     if (firstNotJpOnly) {
       firstNotJpOnly.role = lRoles.meaning;
@@ -404,7 +406,8 @@ export const DataFactory = {
       lines[1].role = lRoles.meaning;
       lMeaning = lines[1];
     }
-    if (DataFactory.isNotJapaneseOnly(lines[0].text)) {
+    if (DataFactory.isNotJapaneseOnly(lines[0].text)
+      && !DataFactory.isJapaneseWithEigaChars(lines[0].text)) {
       lines[1].role = lRoles.expression;
       lExpression = lines[1];
       entry.reversed = true;
@@ -452,17 +455,16 @@ export const DataFactory = {
 
     remainingLines.forEach(l => {
       const prevLine = lines[l.originalIndex - 1];
-      if (!entry.reversed && prevLine 
-        && prevLine.role && prevLine.role !== lRoles.example
-        && DataFactory.isNotJapaneseOnly(l.text)) {
+      if (!entry.reversed && prevLine && prevLine.role
+        && DataFactory.isNotJapaneseOnly(l)) {
         //предыдущая строка имеет роль, а данная - следующая и не японская, т.е. разъяснение
         l.role = lRoles.info;
-      } else if ((DataFactory.isJapaneseOnly(l.text)
-        || DataFactory.isJapaneseWithEigaChars(l.text)
+      } else if ((DataFactory.isJapaneseOnly(l)
+        || DataFactory.isJapaneseWithEigaChars(l)
         )) {
           l.role = lRoles.example;
       } else if (prevLine && prevLine.role && prevLine.role == lRoles.example
-        && DataFactory.isNotJapaneseOnly(l.text)) {
+        && DataFactory.isNotJapaneseOnly(l)) {
           l.role = lRoles.example_translation;
           prevLine.translationLineIndex = l.originalIndex;
       }

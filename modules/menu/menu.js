@@ -18,12 +18,11 @@ export const MenuView = function () {
 
   this.toggleMenu = function (e) {
     e && e.preventDefault();
-    var menu = this.find('#menu');
-    if (menu.classList.contains("isOpened")) {
-      menu.classList.remove("isOpened")
+    if (this.menu.classList.contains("isOpened")) {
+      this.menu.classList.remove("isOpened")
       this.menuTrigger.innerText = ">>"
     } else {
-      menu.classList.add("isOpened")
+      this.menu.classList.add("isOpened")
       this.menuTrigger.innerText = "<<"
     }
   };
@@ -76,6 +75,12 @@ export const MenuView = function () {
     } else {
       this.toggleMenu()
     }
+    this.element.addEventListener('click', (e) => {
+      if (e.target.id && e.target.id == 'menuContainer'
+        && this.menu.classList.contains("isOpened")) {
+        this.toggleMenu();
+      }
+    })
   }
   
   this.show = function () {
@@ -83,6 +88,7 @@ export const MenuView = function () {
     this.sourcesSelect = this.element.querySelector('#vocabSources');
     this.menuTrigger = this.element.querySelector('#menuTrigger');
     this.viewSelect = this.element.querySelector('#viewSelect');
+    this.menu = this.element.querySelector('#menu');
     this.renderSelectOptions();
     this.render();
   }
