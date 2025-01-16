@@ -1,6 +1,7 @@
 import { View } from "../view.js";
-import { speak } from "../utils.js";
+import { shuffleArray, speak } from "../utils.js";
 import { Application } from "../app.js";
+import { Slide } from "../slide/slide.js";
 
 export const Slider = function () {
   this.slider = null;
@@ -12,6 +13,9 @@ export const Slider = function () {
       '.slide-inner' : 'rotateSlide',
       '.slideReading' : 'read',
       '.js-slide-side' : 'speakLine',
+    },
+    change : {
+      '#cardMode' : 'setCardMode',
     },
   };
 
@@ -67,14 +71,32 @@ export const Slider = function () {
   }
   
   this.setCardMode = function (e) {
-    this.state.mode = e.target.value;
+    switch (e.target.value) {
+      case 'random':
+        // Tab to edit
+        break;
+        
+      case 'default':
+        //
+        break;
+        
+      case 'reverse':
+        //
+        break;
+        
+      case 'examples':
+        //
+        break;
+      
+      default:
+        // Tab to edit
+    }
   }
 
-  this.renderSlider = () => {
-    const mode = this.state.mode ? this.state.mode : 'random';
+  this.renderSlider =  () => {
     const container = this.element.querySelector('.js-slider');
     const slides = this.data.entries.map(e => 
-      Application.protoElements.ProtoSlideElement.render(e, mode)
+      Application.protoElements.ProtoSlideElement.render(e)
     );
     slides.forEach(el => {
       container.appendChild(el);
@@ -116,12 +138,7 @@ export const Slider = function () {
       }
       return
     }
-    this.data.entries = Application.data.currentEntries;
-    if (this.state.mode) {
-      Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
-        op.selected = op.value == this.state.mode;
-      })
-    }
+    this.data.entries = Application.data.currentEntries
     this.renderSlider();
     this.initSlider();
     this.setRenderedEvents(this.sliderOuter.querySelector('.js-slider'));
@@ -134,10 +151,6 @@ export const Slider = function () {
     this.sliderOuter = this.element.querySelector('#js-slider-outer');
     this.keensliderContainerTemplate = this.sliderOuter.removeChild(this.element.querySelector('#my-keen-slider'));
     this.speakEl = this.element.querySelector('#speak');
-    this.cardModeEl = this.element.querySelector('#cardMode');
-    this.cardModeEl.addEventListener('change', (e) => {
-      this.setCardMode(e)
-    });
     this.render();
   }
 };

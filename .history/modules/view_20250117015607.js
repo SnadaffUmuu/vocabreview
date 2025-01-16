@@ -1,5 +1,3 @@
-import { Application } from "./app.js";
-
 export const View = function () { };
 
 View.prototype = {
@@ -90,20 +88,7 @@ View.prototype = {
   },
 
   initState() {
-    const initialState = Application.loadFromLocalStorage(this._class.name, {});
-    this.initialState = initialState;
-    const instance = this;
-    this.state = new Proxy(initialState, {
-      set(target, property, value) {
-        target[property] = value;
-        Application.saveToLocalStorage(instance._class.name, target);
-        instance.render();
-        return true;
-      },
-      get(target, property) {
-        return target[property]
-      }
-    });
+
   },
 
   show() {

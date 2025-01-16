@@ -1,5 +1,3 @@
-import { Application } from "./app.js";
-
 export const View = function () { };
 
 View.prototype = {
@@ -24,8 +22,6 @@ View.prototype = {
   renderedEvents: null,
 
   data: null,
-
-  state: null,
 
   getContainer() {
     if (this.containerElement != null) {
@@ -89,27 +85,9 @@ View.prototype = {
     }
   },
 
-  initState() {
-    const initialState = Application.loadFromLocalStorage(this._class.name, {});
-    this.initialState = initialState;
-    const instance = this;
-    this.state = new Proxy(initialState, {
-      set(target, property, value) {
-        target[property] = value;
-        Application.saveToLocalStorage(instance._class.name, target);
-        instance.render();
-        return true;
-      },
-      get(target, property) {
-        return target[property]
-      }
-    });
-  },
-
   show() {
     if (this.element === null) {
       this.initElement();
-      this.initState();
       this.data = {};
     }
     this.getContainer().appendChild(this.element);
@@ -190,7 +168,6 @@ View.prototype = {
       this.initTemplate();
       this.initElement();
       this.data = {};
-      this.initState();
     } catch (error) {
       console.error('Error during initialization:', error);
     }

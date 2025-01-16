@@ -104,6 +104,7 @@ View.prototype = {
         return target[property]
       }
     });
+    this._class.name
   },
 
   show() {

@@ -276,6 +276,11 @@ const Router = {
   renderCurrentView : function () {
 
     const startTime = performance.now();
+    /*
+    if (!Application.views.PreloaderView.isShown()) {
+      Application.views.PreloaderView.show();
+    } 
+    */   
     this.currentView.render()
 
     const duration = performance.now() - startTime;
@@ -299,8 +304,34 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   Application.initData();
   await Application.initProtoElements();
   await Application.initViews();
+  //Application.views.PreloaderView.show();
   Router.start();
   window.App = Application;
   window.DF = DataFactory;
   window.DT = DataTests;
+/*
+
+
+  console.log('types');
+  console.log(Array.from(new Set(App.data.allEntries.filter(e => e.type).map(e=> e.type))).join('\n'));
+
+  //console.log(App.data.allEntries.filter(e=>e.lines.length == 2).map(e=>e.lines.map(l=>l.text).join('\n')).join('\n\n'))
+  console.log(App.data.allEntries.filter(e => {
+    return (
+      e.lines.length == 2 
+      && DF.isKanaOnly(e.lines[0].text)
+      && DF.isNonJapanese(e.lines[1].text)
+    )
+  }).map(e=>(e.type ? e.type + '\n' : '') + e.lines.map(l=>l.text).join('\n')).join('\n\n'))
+  
+  //кол-во неяпонских строк больше 1
+var res = App.data.allEntries.filter(entry => 
+  DF.getNotJapaneseOnly(entry.lines.map(l=>l.text)).length > 1 
+).map(entry => 
+  entry.lines.map(l => l.text).join('\n')
+).join('\n\n')
+console.log(
+  res
+)
+*/
 });

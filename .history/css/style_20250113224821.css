@@ -8,10 +8,7 @@
 @import url("../modules/data-view/data-view.css");
 @import url("../modules/preloader/preloader.css");
 
-/*@import url("theme.css")*/
-
 :root {
-
   --bg: #f1e6e8;
   --text-color-speakable: #2525c2;
   --text-color-reading: #2525c293;
@@ -20,8 +17,6 @@
   --appheader-title-color: #1e20c0;
   --preloader-color: #2525c2;
   --preloader-bg: #9899c244;
-
-  
 }
 
 body.night {

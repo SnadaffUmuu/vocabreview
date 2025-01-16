@@ -1,4 +1,4 @@
-import { Application } from "./app.js";
+import { Application } from "./app";
 
 export const View = function () { };
 
@@ -104,6 +104,7 @@ View.prototype = {
         return target[property]
       }
     });
+    this._class.name
   },
 
   show() {

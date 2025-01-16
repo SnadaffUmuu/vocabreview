@@ -13,6 +13,9 @@ export const Slider = function () {
       '.slideReading' : 'read',
       '.js-slide-side' : 'speakLine',
     },
+    change : {
+      '#cardMode' : 'setCardMode',
+    },
   };
 
   this.speakLine = function (e) {
@@ -67,11 +70,9 @@ export const Slider = function () {
   }
   
   this.setCardMode = function (e) {
-    this.state.mode = e.target.value;
   }
 
-  this.renderSlider = () => {
-    const mode = this.state.mode ? this.state.mode : 'random';
+  this.renderSlider = (mode) => {
     const container = this.element.querySelector('.js-slider');
     const slides = this.data.entries.map(e => 
       Application.protoElements.ProtoSlideElement.render(e, mode)
@@ -116,12 +117,7 @@ export const Slider = function () {
       }
       return
     }
-    this.data.entries = Application.data.currentEntries;
-    if (this.state.mode) {
-      Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
-        op.selected = op.value == this.state.mode;
-      })
-    }
+    this.data.entries = Application.data.currentEntries
     this.renderSlider();
     this.initSlider();
     this.setRenderedEvents(this.sliderOuter.querySelector('.js-slider'));
@@ -134,10 +130,6 @@ export const Slider = function () {
     this.sliderOuter = this.element.querySelector('#js-slider-outer');
     this.keensliderContainerTemplate = this.sliderOuter.removeChild(this.element.querySelector('#my-keen-slider'));
     this.speakEl = this.element.querySelector('#speak');
-    this.cardModeEl = this.element.querySelector('#cardMode');
-    this.cardModeEl.addEventListener('change', (e) => {
-      this.setCardMode(e)
-    });
     this.render();
   }
 };

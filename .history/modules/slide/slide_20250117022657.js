@@ -46,7 +46,6 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
         //random example
         const examples = sides.filter(side => side.dataset.role == lRoles.example);
         upperSide = examples.length ? shuffleArray(examples)[0] : null;
-        //TODO: make examples go in a row
         break;
       case 'random':
       default:

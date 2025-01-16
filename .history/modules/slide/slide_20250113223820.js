@@ -17,8 +17,7 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     element.querySelector('.slide-info').value = DataFactory.getEntryInfoString(entry);
   },
 
-  render: function (entry, mode) {
-    const lRoles = DataFactory.LINE_ROLE;
+  render: function (entry) {
     const element = this.getElement();
     const readingLine = entry.lines.find(l => l.role == DataFactory.LINE_ROLE.reading);
     let lines;
@@ -32,29 +31,7 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     const sides = lines.map(line => 
       Application.protoElements.ProtoSlideSideElement.render(line)
     );
-    let upperSide = null;
-    switch (mode) {
-      case 'default':
-        //expression first
-        upperSide = sides.find(side => side.dataset.role == lRoles.expression)
-        break;
-      case 'reverse':
-        //meaning first
-        upperSide = sides.find(side => side.dataset.role == lRoles.meaning)
-        break;
-      case 'examples':
-        //random example
-        const examples = sides.filter(side => side.dataset.role == lRoles.example);
-        upperSide = examples.length ? shuffleArray(examples)[0] : null;
-        //TODO: make examples go in a row
-        break;
-      case 'random':
-      default:
-        upperSide = shuffleArray(sides)[0];
-    }
-    if (!upperSide) {
-      upperSide = shuffleArray(sides)[0];
-    }
+    const upperSide = shuffleArray(sides)[0];
     upperSide.classList.add('current');
     shuffleArray(sides).forEach(o => sidesContainer.appendChild(o));
     if (readingLine) {
