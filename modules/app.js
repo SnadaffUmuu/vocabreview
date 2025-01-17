@@ -26,7 +26,8 @@ export const Application = {
   rawData: null,
   defaultState: {
     nightMode: false,
-    appType : 'slider'
+    appType : 'slider',
+    views : {},
   },
   initialState: null,
   initialData: {},
@@ -55,7 +56,13 @@ export const Application = {
   },
 
   initState: function () {
-    this.initialState = this.loadFromLocalStorage('review-state', this.defaultState);
+    const initialState = this.loadFromLocalStorage('review-state');
+    if (!initialState) {
+      this.initialState = this.defaultState;
+      this.saveToLocalStorage('review-state', this.initialState);
+    } else {
+      this.initialState = this.loadFromLocalStorage('review-state', this.defaultState);
+    }
     this.state = new Proxy(Application.initialState, {
       set(target, property, value) {
         target[property] = value;
@@ -68,7 +75,6 @@ export const Application = {
            structure, 
            allEntries,
          });
-
         } else if ('appType' == property) {
           Router.switchView();
         }
@@ -153,6 +159,16 @@ export const Application = {
         return true
       }
     });
+  },
+
+  setViewState : function (instance) {
+    const stateViews = this.state.views;
+    stateViews[instance._class.name] = instance.initialState;
+    Application.state.views = stateViews;
+  },
+
+  getViewState : function(instance) {
+    return this.state.views[instance._class.name] || null;
   },
 
   getFilteredEntries : function () {

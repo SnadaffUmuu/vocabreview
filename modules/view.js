@@ -90,14 +90,16 @@ View.prototype = {
   },
 
   initState() {
-    const initialState = Application.loadFromLocalStorage(this._class.name, {});
+    const initialState = Application.getViewState(this) || {};
     this.initialState = initialState;
     const instance = this;
     this.state = new Proxy(initialState, {
       set(target, property, value) {
         target[property] = value;
-        Application.saveToLocalStorage(instance._class.name, target);
-        instance.render();
+        Application.setViewState(instance);
+        if (instance.handleStateChange) {
+          instance.handleStateChange(target);
+        }
         return true;
       },
       get(target, property) {

@@ -73,8 +73,8 @@ export const Slider = function () {
   this.renderSlider = () => {
     const mode = this.state.mode ? this.state.mode : 'random';
     const container = this.element.querySelector('.js-slider');
-    const slides = this.data.entries.map(e => 
-      Application.protoElements.ProtoSlideElement.render(e, mode)
+    const slides = this.data.entries.map((e, i) => 
+      Application.protoElements.ProtoSlideElement.render(e, mode, i)
     );
     slides.forEach(el => {
       container.appendChild(el);
@@ -106,6 +106,13 @@ export const Slider = function () {
       this.slider.destroy();
     }
     this.sliderOuter.innerHTML = this.keensliderContainerTemplate.outerHTML;
+  };
+
+  this.handleStateChange = function (newState) {
+    if ('mode' in newState) {
+      console.log('Slider mode changed: re-render')
+      this.render();
+    }
   };
 
   this.render = async function () {
