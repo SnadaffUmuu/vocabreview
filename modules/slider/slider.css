@@ -8,6 +8,18 @@
 
 #sliderActions {
   flex: 0 0 40px;
+  font-size: 18px;
+}
+
+#randomSlidesOrder {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  vertical-align: bottom;
+}
+
+#cardMode {
+  height:20px;
 }
 
 /*TODO: fix*/

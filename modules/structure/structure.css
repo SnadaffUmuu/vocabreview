@@ -1,6 +1,7 @@
 #structure ul {
   padding:0 0 10px 10px;
   list-style-type: none;
+  line-height: 180%;
 }
 
 #structure ul ul {
@@ -11,8 +12,8 @@
   margin:0;
   display:inline-block;
   vertical-align: middle;
-  height:15px;
-  width:15px;
+  height:20px;
+  width:20px;
 }
 
 .collapsibleListCheckbox[type="checkbox"] {

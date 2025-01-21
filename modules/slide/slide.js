@@ -34,7 +34,7 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     );
     let upperSide = null;
     switch (mode) {
-      case 'default':
+      case 'expression':
         upperSide = sides.find(side => side.dataset.role == lRoles.expression)
         break;
       case 'reverse':
@@ -46,11 +46,13 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
         //TODO: make examples go in a row
         break;
       case 'random':
-      default:
         upperSide = shuffleArray(sides)[0];
+      case 'original':
+      default:
+        upperSide = sides[0];
     }
     if (!upperSide) {
-      upperSide = shuffleArray(sides)[0];
+      upperSide = sides[0];
     }
     upperSide.classList.add('current');
     shuffleArray(sides).forEach(o => sidesContainer.appendChild(o));

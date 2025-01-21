@@ -1,9 +1,4 @@
 ﻿export const regex = {
-  //japaneseRegex: /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u,
-  //hiraganaRegex: /[\p{Script_Extensions=Hiragana}]/u,
-  //katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
-  //kanjiRegex: /^[\p{Script=Han}]$/u,
-  //nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
   hasKanji: /[\p{Script=Han}]+/u,
   kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   hiraganaOnly: /^[\p{Script=Hiragana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
@@ -44,6 +39,25 @@ export function shuffleArray(array) {
     array[j] = temp;
   }
   return array;
+}
+
+export function shuffleArraySaveOrder (array) {
+  let indexedArray = array.map((o, i) => {
+    return {
+      i : i,
+      o : o
+    }
+  });
+  for (let i = indexedArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = indexedArray[i];
+    indexedArray[i] = indexedArray[j];
+    indexedArray[j] = temp;
+  }
+  return {
+    order : indexedArray.map(o => o.i),
+    array : indexedArray.map(o => o.o),
+  };
 }
 
 export function stringToHash(string) {

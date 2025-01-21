@@ -104,6 +104,16 @@ View.prototype = {
       },
       get(target, property) {
         return target[property]
+      },
+      deleteProperty(target, property) {
+        if (property in target) {
+          delete target[property];
+          Application.setViewState(instance);
+          if (instance.handleStatePropDelete) {
+            instance.handleStatePropDelete(target, property);
+          }
+        }
+        return true;
       }
     });
   },

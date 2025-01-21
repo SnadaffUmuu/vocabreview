@@ -131,7 +131,7 @@ export const Application = {
         } else if ('currentEntries' == property) {
           Application.saveToLocalStorage('review-data', target);
           Application.views.InfobarView.render();
-          Router.renderCurrentView();
+          Router.renderCurrentView(true);
         }
         return true;
       },
@@ -188,8 +188,9 @@ export const Application = {
     if ('' == name) {
       this.reset();
     }
+    const now = new Date().getMilliseconds();
     const request = new XMLHttpRequest();
-    request.open('GET', './vocab/' + name + '.txt', true);
+    request.open('GET', './vocab/' + name + '.txt?n=' + now, true);
     request.onload = function () {
       if (request.responseText) {
         Application.rawData = request.responseText;
@@ -200,6 +201,7 @@ export const Application = {
   },
 
   reset : function() {
+    //TODO: reset other data too
     delete this.state.source
   },
 
@@ -289,10 +291,10 @@ const Router = {
 
   },
 
-  renderCurrentView : function () {
+  renderCurrentView : function (resetAll) {
 
     const startTime = performance.now();
-    this.currentView.render()
+    this.currentView.render(resetAll)
 
     const duration = performance.now() - startTime;
     console.log(`renderCurrentView took ${duration}ms`);
