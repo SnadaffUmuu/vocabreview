@@ -98,7 +98,7 @@ View.prototype = {
         target[property] = value;
         Application.setViewState(instance);
         if (instance.handleStateChange) {
-          instance.handleStateChange(target);
+          instance.handleStateChange(target, property, value);
         }
         return true;
       },
@@ -106,12 +106,14 @@ View.prototype = {
         return target[property]
       },
       deleteProperty(target, property) {
-        if (property in target) {
-          delete target[property];
-          Application.setViewState(instance);
-          if (instance.handleStatePropDelete) {
-            instance.handleStatePropDelete(target, property);
-          }
+        if (!(property in target)) {
+          console.log(`property not found: ${property}`);
+          return false;
+        }
+        delete target[property];
+        Application.setViewState(instance);
+        if (instance.handleStatePropDelete) {
+          instance.handleStatePropDelete(target, property);
         }
         return true;
       }

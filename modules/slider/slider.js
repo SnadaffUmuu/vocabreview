@@ -9,7 +9,8 @@ export const Slider = function () {
   this.currentSlideIndexEl = null;
   this.events = {
     'change #cardMode' : 'setCardMode',
-    'change #randomSlidesOrder' : 'setSlidesOrder'
+    'change #randomSlidesOrder' : 'setSlidesOrder',
+    'click #resetSlider' : 'resetSlider',
   },
   this.renderedEvents = {
     click : {
@@ -18,6 +19,10 @@ export const Slider = function () {
       '.js-slide-side' : 'speakLine',
     },
   };
+
+  this.resetSlider = function () {
+    this.render(true);
+  }
 
   this.speakLine = function (e) {
     e.stopImmediatePropagation();
@@ -45,7 +50,8 @@ export const Slider = function () {
     if (e.target.classList.contains('js-slide-inner')) {
       const el = e.target;
       const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
-      const currentSideIndexDisplayEl = slide.closest('.js-slide').querySelector('#current-side');
+      const slideOuter = e.target.closest('.js-slide');
+      const currentSideIndexDisplayEl = slideOuter.querySelector('#current-side');
       if (slide.querySelectorAll('.js-slide-side').length == 1) { 
         console.log('non-rotatiable, only 1 side');
         currentSideIndexDisplayEl.innerHTML = slide.querySelector('.js-slide-side').dataset.index;
@@ -63,7 +69,17 @@ export const Slider = function () {
         current.classList.remove('current');
       }
       currentSideIndexDisplayEl.innerHTML = newCurrent.dataset.index;
+      this.setCurrentSideIndex(slideOuter.dataset.originalIndex, newCurrent.dataset.index);
     }    
+  }
+
+  this.setCurrentSideIndex = function (slideIndex, sideIndex) {
+    if (this.state.sideIndexes[slideIndex]) {
+      this.state.sideIndexes[slideIndex] = sideIndex;
+      this.state.sideIndexes = this.state.sideIndexes;
+    } else {
+      this.state.sideIndexes = Object.assign({[slideIndex] : sideIndex}, this.state.sideIndexes)
+    }
   }
 
   this.showCurrentIndex = function (index) {
@@ -73,6 +89,8 @@ export const Slider = function () {
   this.setCardMode = function (e) {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       this.state.mode = e.target.value;
+      this.state.sideIndexes && delete this.state.sideIndexes;
+      this.render();
     });
   }
 
@@ -82,7 +100,8 @@ export const Slider = function () {
         this.shuffleSlides();
       } else {
         this.data.shuffledEntries = null;
-        delete this.state.order;
+        this.state.order && delete this.state.order;
+        this.state.currentIndex && delete this.state.currentIndex;
         this.render();
       }
     });
@@ -91,15 +110,20 @@ export const Slider = function () {
   this.shuffleSlides = function () {
     const shuffled = shuffleArraySaveOrder(this.data.entries);
     this.data.shuffledEntries = shuffled.array;
+    this.state.currentIndex && delete this.state.currentIndex;
     this.state.order = shuffled.order;
+    this.render();
   }
 
   this.renderSlider = () => {
     const mode = this.state.mode ? this.state.mode : 'random';
     const container = this.element.querySelector('.js-slider');
     const entries = this.data.shuffledEntries || this.data.entries;
-    const slides = entries.map((e, i) => 
-      Application.protoElements.ProtoSlideElement.render(e, mode, i)
+    const slides = entries.map((e, i) => {
+        let currSideIndex = this.state.sideIndexes && this.state.sideIndexes[e.originalIndex] ? 
+        this.state.sideIndexes[e.originalIndex] : null;
+        return Application.protoElements.ProtoSlideElement.render(e, mode, currSideIndex);
+      }
     );
     slides.forEach(el => {
       container.appendChild(el);
@@ -110,19 +134,25 @@ export const Slider = function () {
     const showIndex = (index) => {
       this.showCurrentIndex(index)
     }
+    const instance = this;
     const slider = new KeenSlider(
       "#my-keen-slider",
       {
         loop: true,
         created: (slider) => {
-          showIndex(slider.track.details.rel)
+          showIndex(slider.track.details.rel);
         },
         slideChanged: (slider) => {
-          showIndex(slider.track.details.rel)
+          showIndex(slider.track.details.rel);
+          instance.state.currentIndex = slider.track.details.rel;
         }
       },
     );
     this.slider = slider;
+    if (this.state.currentIndex) {
+      this.showCurrentIndex(this.state.currentIndex);
+      this.slider.moveToIdx(this.state.currentIndex, false)
+    }
   };
 
   this.reset = function (resetAll) {
@@ -132,17 +162,21 @@ export const Slider = function () {
     }
     this.sliderOuter.innerHTML = this.keensliderContainerTemplate.outerHTML;
     if (resetAll) {
-      delete this.state.order;
+      this.state.order && delete this.state.order;
+      this.state.currentIndex && delete this.state.currentIndex;
+      this.state.sideIndexes && delete this.state.sideIndexes;
+      this.isRandomEl.checked = false;
     }
   };
 
-  this.handleStateChange = function (newState) {
-    if ('mode' in newState) {
-      console.log('Slider mode changed: re-render')
-      this.render();
-    } else if ('order' in newState) {
+  this.handleStateChange = function (newState, prop, value) {
+    if (prop == 'mode') {
+      console.log('Slider mode changed: re-render');
+      delete this.state.sideIndexes;
+      //this.render();
+    } else if (prop == 'order') {
       console.log('Slides order set to random');
-      this.render();
+      //this.render();
     }
   };
 
@@ -163,6 +197,9 @@ export const Slider = function () {
       Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
         op.selected = op.value == this.state.mode;
       })
+    }
+    if (!this.state.sideIndexes) {
+      this.state.sideIndexes = [];
     }
     this.renderSlider();
     this.initSlider();

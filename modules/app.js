@@ -84,12 +84,14 @@ export const Application = {
         return target[property]
       },
       deleteProperty(target, property) {
-        if (property in target) {
-          delete target[property];
-          if ('source' == property) {
-            Application.saveToLocalStorage('review-state', Application.defaultState);
-            delete Application.data.allEntries;
-          }
+        if (!(property in target)) {
+          console.log(`property not found: ${property}`);
+          return false;
+        }
+        delete target[property];
+        if ('source' == property) {
+          Application.saveToLocalStorage('review-state', Application.defaultState);
+          delete Application.data.allEntries;
         }
         return true;
       }
@@ -119,7 +121,9 @@ export const Application = {
       set(target, property, value) {
         target[property] = value;
         if ('allEntries' == property) {
-          delete Application.data.currentEntries;
+          if (Application.initialData.currentEntries) {
+            delete Application.initialData.currentEntries;
+          }
           Application.saveToLocalStorage('review-data', target);
           if (value.length > 100 && !Application.initialData.currentEntries?.length) {
             const firstNode = Application.data.structure[0].children ? Application.data.structure[0].children[0].id : Application.data.structure[0].id;
@@ -127,7 +131,7 @@ export const Application = {
             Application.saveToLocalStorage('review-data', Application.data);
           }
           Router.renderMenuView();
-          Router.renderCurrentView();
+          Router.renderCurrentView(true);
         } else if ('currentEntries' == property) {
           Application.saveToLocalStorage('review-data', target);
           Application.views.InfobarView.render();
@@ -144,30 +148,31 @@ export const Application = {
         }
       },
       deleteProperty(target, property) {
-        if (property in target) {
-          if ('allEntries' == property) {
-            delete target[property];
-            localStorage.removeItem('review-data');
-            if (Application.initialData.currentEntries) {
-              delete Application.data.currentEntries;
-            }
-            Router.resetViews();
-          } else {
-            delete target[property];
-          }
+        if (!(property in target)) {
+          console.log(`property not found: ${property}`);
+          return false;
         }
+        delete target[property];
+        if ('allEntries' == property) {
+          localStorage.removeItem('review-data');
+          if (Application.initialData.currentEntries) {
+            delete Application.data.currentEntries;
+          }
+          Router.resetViews();
+        } 
         return true
       }
     });
   },
 
   setViewState : function (instance) {
-    const stateViews = this.state.views;
+    const stateViews = this.state.views || {};
     stateViews[instance._class.name] = instance.initialState;
-    Application.state.views = stateViews;
+    this.state.views = stateViews;
   },
 
   getViewState : function(instance) {
+    if (!this.state.views) return null;
     return this.state.views[instance._class.name] || null;
   },
 
@@ -202,7 +207,12 @@ export const Application = {
 
   reset : function() {
     //TODO: reset other data too
-    delete this.state.source
+    if (this.state.source) {
+      delete this.state.source
+    }
+    if (this.state.views) {
+      delete this.state.views
+    }
   },
 
   filter : function(data) {

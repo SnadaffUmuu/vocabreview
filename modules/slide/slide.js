@@ -10,14 +10,15 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
   templatePath: 'modules/slide/slide.html',
 
   setSlideProps: function (entry, element) {
-    element.dataset.section = entry.section
+    element.dataset.section = entry.section;
+    element.dataset.originalIndex = entry.originalIndex;
     if (entry.tag) {
       element.classList.add(entry.tag)
     }
     element.querySelector('.slide-info').value = DataFactory.getEntryInfoString(entry);
   },
 
-  render: function (entry, mode) {
+  render: function (entry, mode, currentSideIndex) {
     const lRoles = DataFactory.LINE_ROLE;
     const element = this.getElement();
     const readingLine = entry.lines.find(l => l.role == DataFactory.LINE_ROLE.reading);
@@ -32,24 +33,26 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     const sides = lines.map(line => 
       Application.protoElements.ProtoSlideSideElement.render(line)
     );
-    let upperSide = null;
-    switch (mode) {
-      case 'expression':
-        upperSide = sides.find(side => side.dataset.role == lRoles.expression)
-        break;
-      case 'reverse':
-        upperSide = sides.find(side => side.dataset.role == lRoles.meaning)
-        break;
-      case 'examples':
-        const examples = sides.filter(side => side.dataset.role == lRoles.example);
-        upperSide = examples.length ? shuffleArray(examples)[0] : null;
-        //TODO: make examples go in a row
-        break;
-      case 'random':
-        upperSide = shuffleArray(sides)[0];
-      case 'original':
-      default:
-        upperSide = sides[0];
+    let upperSide = currentSideIndex ? sides.find(s => s.dataset.index == currentSideIndex) : null;
+    if (!upperSide) {
+      switch (mode) {
+        case 'expression':
+          upperSide = sides.find(side => side.dataset.role == lRoles.expression)
+          break;
+        case 'reverse':
+          upperSide = sides.find(side => side.dataset.role == lRoles.meaning)
+          break;
+        case 'examples':
+          const examples = sides.filter(side => side.dataset.role == lRoles.example);
+          upperSide = examples.length ? shuffleArray(examples)[0] : null;
+          //TODO: make examples go in a row
+          break;
+        case 'random':
+          upperSide = shuffleArray(sides)[0];
+        case 'original':
+        default:
+          upperSide = sides[0];
+      }
     }
     if (!upperSide) {
       upperSide = sides[0];

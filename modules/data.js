@@ -168,6 +168,7 @@ export const DataFactory = {
     let currentUpperSection = null;
     let currentSection = null;
     //breaking for entries
+    let entriesCounter = 0;
     text.split('\n\n').forEach(entry => {
       //building structure
       if (entry.indexOf('~~') > -1) {
@@ -212,7 +213,9 @@ export const DataFactory = {
       }
       //handling true entries
       if (DataFactory.entryFilter(entry)) {
-        const resEntry = {};
+        const resEntry = {
+          originalIndex : entriesCounter++
+        };
         if (currentSection) {
           resEntry.section = currentSection
         } else if (currentUpperSection) {

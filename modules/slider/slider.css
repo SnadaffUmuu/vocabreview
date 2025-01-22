@@ -9,6 +9,9 @@
 #sliderActions {
   flex: 0 0 40px;
   font-size: 18px;
+  padding-top: 10px;
+  padding-left:10px;
+  box-sizing: border-box;
 }
 
 #randomSlidesOrder {
@@ -19,7 +22,7 @@
 }
 
 #cardMode {
-  height:20px;
+  height: 20px;
 }
 
 /*TODO: fix*/
@@ -63,8 +66,8 @@
 
 #currentSlideIndex {
   position: absolute;
-  top:5px;
-  right:10px;
-  color:#4242fc;
+  top: 5px;
+  right: 10px;
+  color: #4242fc;
   z-index: 400;
 }
