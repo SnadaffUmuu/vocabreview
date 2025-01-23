@@ -503,7 +503,7 @@ export const TableView = function () {
       }
       return
     }
-    this.data.entries = Application.data.currentEntries;
+    this.data.entries = structuredClone(Application.data.currentEntries);
     this.renderTable();
     this.setRenderedEvents(this.tableEl);
     Application.views.PreloaderView.hidePreloader();

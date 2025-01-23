@@ -11,13 +11,13 @@ import { TableView } from "./table/table.js";
 import { PreloaderView } from "./preloader/preloader.js";
 import { SlideSide } from "./slide/slide-side.js";
 import { Slide } from "./slide/slide.js";
+import { BoardView } from "./board/board.js";
 
 const APPLICATION_TYPE = {
   CARDS: 'SLIDER',
   TABLE: 'TABLE',
   DATA: 'DATA',
   BOARD: 'BOARD',
-  QUIZBOARD: 'QUIZBOARD'
 }
 
 export const Application = {
@@ -45,6 +45,7 @@ export const Application = {
       SliderView: await View.create(Slider),
       TableView: await View.create(TableView),
       DataView: await View.create(DataView),
+      BoardView: await View.create(BoardView),
     };
   },
   
@@ -252,11 +253,10 @@ const Router = {
         this.applicationType = APPLICATION_TYPE.DATA;
         this.currentView = Application.views.DataView;
         break;
-      case 'board':
-        this.applicationType = APPLICATION_TYPE.BOARD;
+        case 'board':
+          this.applicationType = APPLICATION_TYPE.BOARD;
+          this.currentView = Application.views.BoardView;
         break;
-      case 'quizboard':
-        this.applicationType = APPLICATION_TYPE.QUIZBOARD;
     }
   },
 
@@ -267,7 +267,7 @@ const Router = {
   },
   
   switchView : function() {
-    this.currentView.remove();
+    this.currentView && this.currentView.remove();
     this.defineCurrentView(Application.state.appType ? Application.state.appType : '');
     this.showCurrentView();
   },
@@ -292,13 +292,11 @@ const Router = {
   },
 
   showCurrentView : function () {
-    const startTime = performance.now();
-
+    if (!this.currentView || !this.currentView.show) {
+      console.log('current view is not found');
+      return;
+    }
     this.currentView.show();
-
-    const duration = performance.now() - startTime;
-    console.log(`showCurrentView took ${duration}ms`);
-
   },
 
   renderCurrentView : function (resetAll) {

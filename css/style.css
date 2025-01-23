@@ -1,4 +1,3 @@
-
 @import url("../modules/menu/menu.css");
 @import url("../modules/slider/slider.css");
 @import url("../modules/slide/slide.css");
@@ -7,6 +6,7 @@
 @import url("../modules/table/table.css");
 @import url("../modules/data-view/data-view.css");
 @import url("../modules/preloader/preloader.css");
+@import url("../modules/board/board.css");
 
 /*@import url("theme.css")*/
 
@@ -59,4 +59,8 @@ body {
 
 .appView {
   flex: 1 0 auto;
+}
+
+select {
+  height: 25px;
 }
