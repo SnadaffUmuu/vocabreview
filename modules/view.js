@@ -70,22 +70,37 @@ View.prototype = {
 
   setRenderedEvents(targetEl) {
     const target = targetEl ? targetEl : this.element;
-    for (let event in this.renderedEvents) {
-      target.addEventListener(event, (e) => {
-        const entry = this.renderedEvents[event];
-        for (let selector in entry) {
-          if (e.target.matches && e.target.matches(selector)) {
-            if (entry[selector].indexOf('.') < 0) {
-              this[entry[selector]].bind(this).call(this, e);
-            } else {
-              const parts = entry[selector].split('.');
-              if (this.namespaces[parts[0]] && this.namespaces[parts[0]][parts[1]]) {
-                this.namespaces[parts[0]][parts[1]].bind(this).call(this, e)
-              }
+
+    const handler = function (e, event) {
+      const entry = this.renderedEvents[event];
+      for (let selector in entry) {
+        const pp = entry[selector].split(' ');
+        const skipSelectorCheck = pp.length > 1 && pp[1] == 'true';
+        const method = skipSelectorCheck ? pp[0] : entry[selector];
+        if (skipSelectorCheck || e.target.matches && e.target.matches(selector)) {
+          if (method.indexOf('.') < 0) {
+            this[method].bind(this).call(this, e);
+          } else {
+            const parts = method.split('.');
+            if (this.namespaces[parts[0]] && this.namespaces[parts[0]][parts[1]]) {
+              this.namespaces[parts[0]][parts[1]].bind(this).call(this, e)
             }
           }
         }
-      })
+      }
+    };
+    for (let event in this.renderedEvents) {
+      if (target.length) {
+        target.forEach(el => {
+          el.addEventListener(event, (e) => {
+            handler.bind(this).call(this, e, event);
+          })
+        })
+      } else {
+        target.addEventListener(event, (e) => {
+          handler.bind(this).call(this, e, event);
+        })
+      }
     }
   },
 
@@ -127,13 +142,11 @@ View.prototype = {
       this.data = {};
     }
     this.getContainer().appendChild(this.element);
-    console.log('show view', this._class.name)
     this.checkContainer();
   },
 
   hide() {
     this.getContainer().removeChild(this.element);
-    console.log('hide view ', this._class.name);
     this.checkContainer();
   },
 

@@ -1,12 +1,15 @@
 <div id="boardView" class="appView">
   <div id="boardActions">
     <button id="resetBoard">Reset</button>
+    <label for="studyMode" style="margin-left:10px;"><input type="checkbox" id="studyMode"></label>
   </div>
   <div id="boardContainer">
-    <div id="boardSourceCards"></div>
-    <div id="boardColsContainer">
-      <div id="boardGoodCol"></div>
-      <div id="boardFailedCol"></div>
+    <div id="boardSourceCards" class="itemDroppableContainer"></div>
+    <div id="boardColsContainerOuter">
+      <div id="boardColsContainer">
+        <div id="boardGoodCol" class="itemDroppableContainer"></div>
+        <div id="boardFailedCol" class="itemDroppableContainer"></div>
+      </div>
     </div>
   </div>
 </div>

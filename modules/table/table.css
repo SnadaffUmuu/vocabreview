@@ -156,9 +156,11 @@
   opacity:0.5;
 }
 
+/*
 .cellContentDraggable, .draggableContainer {
-  /*touch-action: none;*/
+  touch-action: none;
 }
+*/
 
 #table .placeholder {
   border: 2px dashed #666;

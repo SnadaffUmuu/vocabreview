@@ -2,6 +2,8 @@ import { View } from "../view.js";
 import {
   speak,
   UserActionHandlers,
+  getDragAfterElement,
+  createPlaceholder,
 } from "../utils.js";
 import { Application } from "../app.js";
 import { DataFactory } from "../data.js";
@@ -17,48 +19,112 @@ export const BoardView = function () {
   },
 
   this.renderedEvents = {
+    /*
     click: {
     },
+    */
     contextmenu: {
-      'tbody': 'UserActionHandlers.preventDefault',
+      '#boardSourceCards' : 'UserActionHandlers.preventDefault',
+      '#boardGoodCol' : 'UserActionHandlers.preventDefault',
+      '#boardFailedCol' : 'UserActionHandlers.preventDefault',
     },
     dragstart: {
-    },
-    dragenter: {
-    },
-    dragleave: {
-    },
-    dragover: {
+      '.boardItem' : 'itemDragStart'
     },
     dragend: {
+      '.boardItem' : 'itemDragEnd'
     },
-    drop: {
+    dragover: {
+      '#boardSourceCards' : 'setDragOver true',
+      '#boardGoodCol' : 'setDragOver true',
+      '#boardFailedCol' : 'setDragOver true',
     },
     touchstart: {
+      '.boardItem' : 'setTouchStart',
     },
     touchmove: {
+      '.boardItem' : 'setTouchMove',
     },
     touchend: {
+      '.boardItem' : 'setTouchEnd',
     },
   };
 
-  this.initSourceWall = function () {
-    const wall = new Freewall('#' + this.sourceCardsContainer.id);
-    this.sourcesWall = wall;
-    wall.reset({
-      draggable: true,
-      selector: '.boardItem',
-      animate: true,
-      onResize: function() {
-        wall.refresh();
-      },
-      onBlockMove: function() {
-        console.log(this);
+  this.setTouchStart = function (e) {
+    this.touchTimeout = setTimeout(() => {
+      this.draggable = true;
+      e.target.classList.add("dragging");
+    }, this.longtouchTimeout);
+  },
+
+  this.setTouchMove = function (e) {
+    console.log('touchmove')
+    const item = e.target;
+    if (!this.draggable) {
+      e.stopPropagation();
+      clearTimeout(this.touchTimeout)
+    } else {
+      this.draggedItem = item;
+      if (!this.placeholder) {
+        this.placeholder = createPlaceholder(item.querySelector('[current]'));
       }
-    });
-    wall.fitWidth();
-    $(window).trigger("resize");
-  };
+      const touch = e.touches[0];
+      item.style.left = `${touch.clientX + 10}px`;
+      item.style.top = `${touch.clientY + 10}px`;
+      const elFromPoint = document
+        .elementFromPoint(touch.clientX, touch.clientY);
+      this.potentialContainer = elFromPoint.closest('.itemDroppableContainer');
+      if (this.potentialContainer && this.placeholder) {
+        const afterElement = getDragAfterElement(
+          this.potentialContainer,
+          touch.clientY,
+          touch.clientX
+        );
+        if (afterElement) {
+          this.potentialContainer.insertBefore(this.placeholder, afterElement);
+        } else {
+          this.potentialContainer.appendChild(this.placeholder);
+        }
+      }
+      e.preventDefault();
+    }    
+  },
+
+  this.setTouchEnd = function (e) {
+    clearTimeout(this.touchTimeout);
+    this.draggable = false;
+    e.target.classList.remove("dragging");
+    if (this.draggedItem && this.placeholder && this.placeholder.parentNode) {
+      this.placeholder.parentNode.insertBefore(this.draggedItem, this.placeholder);
+
+      this.placeholder.remove();
+      this.draggedItem.style.left = "";
+      this.draggedItem.style.top = "";
+    }
+    this.draggedItem = null;
+    this.placeholder = null;    
+  },
+
+  this.itemDragStart = function (e) {
+    console.log('dragstart', e.currentTarget, e.target)
+    e.target.classList.add('dragging')
+  },
+  
+  this.itemDragEnd = function (e) {
+    console.log('dragend', e.currentTarget, e.target)
+    e.target.classList.remove('dragging')
+  },
+
+  this.setDragOver = function (e) {
+    e.preventDefault();
+    const afterElement = getDragAfterElement(this.sourceCardsContainer, e.clientX, e.clientY);
+    const draggable = document.querySelector('.dragging');
+    if (afterElement == null) {
+      e.currentTarget.appendChild(draggable);
+    } else {
+      this.sourceCardsContainer.insertBefore(draggable, afterElement);
+    }    
+  },
 
   this.handleStateChange = function (newState, prop, value) {
   };  
@@ -93,16 +159,15 @@ export const BoardView = function () {
               ${l.text}
             </div>`;
         }).join('');
-        return `<div class="boardItem">${handleTemplate}
+        return `<div class="boardItem" draggable="true">${handleTemplate}
           ${linesHtml}
         </div>`;
       }
     );
-    items.forEach(itemHtml => {
+    items.forEach((itemHtml, i) => {
       container.insertAdjacentHTML('beforeend', itemHtml);
     });
     this.sourceItems = Array.from(container.querySelectorAll('.boardItem'));
-    //this.initSourceWall();
   };  
 
   this.reset = function (resetAll) {
@@ -124,7 +189,14 @@ export const BoardView = function () {
     }
     this.data.entries = Application.data.currentEntries;
     this.renderBoard();
-    //this.setRenderedEvents(this.tableEl);
+    if (!this.renderedEventSet) {
+      this.setRenderedEvents([
+        this.sourceCardsContainer,
+        this.goodCol,
+        this.failedCol
+      ]);
+      this.renderedEventSet = true;
+    }
     Application.views.PreloaderView.hidePreloader();
   }  
 

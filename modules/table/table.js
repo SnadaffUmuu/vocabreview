@@ -2,6 +2,8 @@ import { View } from "../view.js";
 import {
   speak,
   UserActionHandlers,
+  getDragAfterElement,
+  createPlaceholder,
 } from "../utils.js";
 import { Application } from "../app.js";
 import { DataFactory } from "../data.js";
@@ -288,7 +290,7 @@ export const TableView = function () {
     } else {
       this.draggedCellContent = item;
       if (!this.placeholder) {
-        this.createPlaceholder();
+        this.placeholder = createPlaceholder();
       }
       const touch = e.touches[0];
       item.style.left = `${touch.clientX + 10}px`;
@@ -297,9 +299,10 @@ export const TableView = function () {
         .elementFromPoint(touch.clientX, touch.clientY);
       this.potentialContainer = elFromPoint.tagName == 'TD' ? elFromPoint : elFromPoint.closest('td');
       if (this.potentialContainer && this.placeholder) {
-        const afterElement = this.getDragAfterElement(
+        const afterElement = getDragAfterElement(
           this.potentialContainer,
-          touch.clientY
+          touch.clientY,
+          touch.clientX
         );
         if (afterElement) {
           this.potentialContainer.insertBefore(this.placeholder, afterElement);
@@ -342,7 +345,7 @@ export const TableView = function () {
       this.draggedCellContent = el;
       this.draggedRow = el.closest('tr');
       if (!this.placeholder) {
-        this.createPlaceholder();
+        this.placeholder = createPlaceholder();
       }
       const touch = e.touches[0];
       el.style.left = `${touch.clientX + 10}px`;
@@ -441,14 +444,7 @@ export const TableView = function () {
     }
   };
 
-  this.createPlaceholder = function () {
-    if (!this.placeholder) {
-      this.placeholder = document.createElement("div");
-      this.placeholder.classList.add("placeholder");
-      this.placeholder.textContent = "Drop here";
-    }
-  };
-
+  /*
   this.getDragAfterElement = function (container, y) {
     const draggableElements = [
       ...container.querySelectorAll(".cellContentDraggable:not(.dragging)")
@@ -467,6 +463,7 @@ export const TableView = function () {
       { offset: Number.NEGATIVE_INFINITY }
     ).element;
   };
+  */
 
   this.setCellEventsAndStuff = function (cell, i) {
     const item = cell.querySelector('.cellContentDraggable');

@@ -11,6 +11,77 @@
   pageLevelSection: /\[(.*)\]((.*))?/u,
 }
 
+export function createPlaceholder (el) {
+    const placeholder = document.createElement("div");
+    placeholder.classList.add("placeholder");
+    if (el) {
+      placeholder.innerHTML = el.innerHTML;
+    } else {
+      placeholder.textContent = "Drop here";
+    }
+    return placeholder;
+};
+
+export function getDragAfterElement(container, x, y) {
+  const draggableElements = [
+    ...container.querySelectorAll("[draggable]:not(.dragging)")
+  ];
+  return draggableElements.reduce(
+    (closest, child, index) => {
+      const box = child.getBoundingClientRect();
+      const nextBox = draggableElements[index + 1] && draggableElements[index + 1].getBoundingClientRect();
+      const inRow = y - box.bottom <= 0 && y - box.top >= 0; // check if this is in the same row
+      const offset = x - (box.left + box.width / 2);
+      if (inRow) {
+        if (offset < 0 && offset > closest.offset) {
+          return {
+            offset: offset,
+            element: child
+          };
+        } else {
+          if ( // handle row ends, 
+            nextBox && // there is a box after this one. 
+            y - nextBox.top <= 0 && // the next is in a new row
+            closest.offset === Number.NEGATIVE_INFINITY // we didn't find a fit in the current row.
+          ) {
+            return {
+              offset: 0,
+              element: draggableElements[index + 1]
+            };
+          }
+          return closest;
+        }
+      } else {
+        return closest;
+      }
+    }, {
+      offset: Number.NEGATIVE_INFINITY
+    }
+  ).element;
+}
+
+
+/*
+export function getDragAfterElement (container, y) {
+  const draggableElements = [
+    ...container.querySelectorAll(".cellContentDraggable:not(.dragging)")
+  ];
+
+  return draggableElements.reduce(
+    (closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    },
+    { offset: Number.NEGATIVE_INFINITY }
+  ).element;  
+}
+*/
+
 export function speak(text) {
   const utterThis = new SpeechSynthesisUtterance(text);
   utterThis.lang = DeviceUtils.isAndroid() ? "ja_JP" : "ja-JP";
