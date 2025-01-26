@@ -39,7 +39,7 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
         case 'expression':
           upperSide = sides.find(side => side.dataset.role == lRoles.expression)
           break;
-        case 'reverse':
+        case 'meaning':
           upperSide = sides.find(side => side.dataset.role == lRoles.meaning)
           break;
         case 'examples':

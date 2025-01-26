@@ -116,7 +116,7 @@ export const Slider = function () {
   }
 
   this.renderSlider = () => {
-    const mode = this.state.mode ? this.state.mode : 'random';
+    const mode = this.state.mode ? this.state.mode : 'original';
     const container = this.element.querySelector('.js-slider');
     const entries = this.data.shuffledEntries || this.data.entries;
     const slides = entries.map((e, i) => {
@@ -155,6 +155,14 @@ export const Slider = function () {
     }
   };
 
+  this.handleStateChange = function (newState, prop, value) {
+    if (prop == 'mode') {
+      delete this.state.sideIndexes;
+    } else if (prop == 'order') {
+      //this.render();
+    }
+  };
+
   this.reset = function (resetAll) {
     this.data = {};
     if (this.slider) {
@@ -167,18 +175,7 @@ export const Slider = function () {
       this.state.sideIndexes && delete this.state.sideIndexes;
       this.isRandomEl.checked = false;
     }
-  };
-
-  this.handleStateChange = function (newState, prop, value) {
-    if (prop == 'mode') {
-      console.log('Slider mode changed: re-render');
-      delete this.state.sideIndexes;
-      //this.render();
-    } else if (prop == 'order') {
-      console.log('Slides order set to random');
-      //this.render();
-    }
-  };
+  };  
 
   this.render = async function (resetAll) {
     this.reset(resetAll);

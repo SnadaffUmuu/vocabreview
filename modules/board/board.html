@@ -1,14 +1,22 @@
 <div id="boardView" class="appView">
   <div id="boardActions">
     <button id="resetBoard">Reset</button>
-    <label for="studyMode" style="margin-left:10px;"><input type="checkbox" id="studyMode"></label>
+    <label for="studyMode">Study mode: <input type="checkbox" id="studyMode"></label>
+    Mode: 
+    <select id="cardMode">
+      <option value="original">original</option>
+      <option value="expression">expression</option>
+      <option value="meaning">meaning</option>
+      <option value="examples">examples</option>
+      <option value="random">random</option>
+    </select>
   </div>
   <div id="boardContainer">
     <div id="boardSourceCards" class="itemDroppableContainer"></div>
     <div id="boardColsContainerOuter">
       <div id="boardColsContainer">
-        <div id="boardGoodCol" class="itemDroppableContainer"></div>
-        <div id="boardFailedCol" class="itemDroppableContainer"></div>
+        <div id="boardGoodCol" data-result="1" class="itemDroppableContainer"></div>
+        <div id="boardFailedCol" data-result="0" class="itemDroppableContainer"></div>
       </div>
     </div>
   </div>
