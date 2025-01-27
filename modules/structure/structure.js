@@ -106,8 +106,6 @@ export const StructureView = function () {
 
   this.render = function () {
 
-    const startTime = performance.now();
-
     this.reset();
     if (!Application.data.currentEntries?.length) {
       return;
@@ -132,9 +130,6 @@ export const StructureView = function () {
       })
     });
     //this.checkAndSetMinimum(treeCheckboxes);
-
-    const duration = performance.now() - startTime;
-    console.log(`renderStructureView took ${duration}ms`);    
   }
 
   this.show = function () {

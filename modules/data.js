@@ -589,12 +589,3 @@ export const DataFactory = {
     return Application.data.allEntries.filter(entry => entries.includes(entry.section))
   }
 }
-
-/*
-line 0 non japanese:
-console.log(App.data.allEntries.filter(en => DF.isNonJapanese(en.lines[0].text)).map(en => en.lines.map(l => l.text).join(' - ')).join('\n'))
-
-line 0 starts with tilda
-console.log(App.data.allEntries.filter(en => DF.isJapaneseOnly(en.lines[0].text) && en.lines[0].text.startsWith('〜')).map(en => en.lines.map(l => l.text).join(' - ')).join('\n'))
-
-*/

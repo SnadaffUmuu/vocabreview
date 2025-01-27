@@ -300,12 +300,7 @@ const Router = {
   },
 
   renderCurrentView : function (resetAll) {
-
-    const startTime = performance.now();
     this.currentView.render(resetAll)
-
-    const duration = performance.now() - startTime;
-    console.log(`renderCurrentView took ${duration}ms`);
   },
 
   resetCurrentView : function() {

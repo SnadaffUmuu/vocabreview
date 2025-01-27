@@ -65,16 +65,12 @@ export function speak(text) {
   utterThis.lang = DeviceUtils.isAndroid() ? "ja_JP" : "ja-JP";
   setTimeout(() => {
     window.speechSynthesis.speak(utterThis);
-    console.log('speak', text)
   }, 0);
 
   let r = setInterval(() => {
-   console.log('!', speechSynthesis.speaking);
     if (!speechSynthesis.speaking) {
-      console.log('no speaking, clear interval', r);
       clearInterval(r);
     } else {
-      console.log('was speaking, but stoped, resuming');
       speechSynthesis.resume();
   }
 }, 14000);
@@ -153,7 +149,7 @@ export const UserActionHandlers = {
   preventDefault : (e) => {
     e.preventDefault();
   },
-
+/*
   handleSingleClick : () => {
     console.log('Single click or tap');
   },
@@ -165,6 +161,7 @@ export const UserActionHandlers = {
   handleLongTouch : () => {
     console.log('Long touch');
   },
+*/
 } 
 
 export function isOverflow(el, maxWidth, maxHeight) {

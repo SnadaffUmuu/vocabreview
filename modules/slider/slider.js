@@ -12,6 +12,7 @@ export const Slider = function () {
     'change #randomSlidesOrder' : 'setSlidesOrder',
     'click #resetSlider' : 'resetSlider',
   },
+  
   this.renderedEvents = {
     click : {
       '.slide-inner' : 'rotateSlide',
@@ -44,7 +45,6 @@ export const Slider = function () {
   }
 
   this.rotateSlide = function (e, mode) {
-    console.log('rotate slide', e.target);
     e.stopPropagation();
     e.preventDefault();
     if (e.target.classList.contains('js-slide-inner')) {

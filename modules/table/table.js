@@ -145,19 +145,13 @@ export const TableView = function () {
         const lineOfRole = lines.find(l => l.role == role);
         row.push(lineOfRole ? lineOfRole.originalIndex : null);
       });
-      console.log('row', row);
       console.log('extra lines', lines.filter(l => !row.includes(l.originalIndex)).map(l => l.originalIndex));
       lines.filter(l => !row.includes(l.originalIndex)).forEach(l => row.push(l.originalIndex));
       model.push(row);
     });
     
-    console.log(model);
-    console.log(model.map(r => r.length));
-    
     this.columnsCount = Math.max(...model.map(r => r.length));
 
-    console.log(this.columnsCount);
-    
     const resHTML = '<table id="table"><thead><tr><th draggable="false" data-index="0"></th>'
       + (Array.from({ length: this.columnsCount }).map((_, i) =>
         '<th draggable="true" data-index="' + (i + 1) + '"><div class="drag">↔️</div><div class="toggle" toggle</div></th>').join(''))
@@ -492,7 +486,6 @@ export const TableView = function () {
   };
 
   this.render = function () {
-    const startTime = performance.now();
     this.reset();
     if (!Application.data.currentEntries?.length) {
       if (Application.views.PreloaderView.isShown()) {
@@ -504,20 +497,14 @@ export const TableView = function () {
     this.renderTable();
     this.setRenderedEvents(this.tableEl);
     Application.views.PreloaderView.hidePreloader();
-
-    const duration = performance.now() - startTime;
-    console.log(`table render took ${duration}ms`);    
   }
 
   this.show = function () {
-    const startTime = performance.now();
     View.prototype.show.call(this);
     this.tableContainer = this.element.querySelector('#tableContainer');
     this.actionsContainer = this.element.querySelector('#tableActions');
     this.columnHideModeEl = this.element.querySelector('#hideMode');
     this.render();
-    const duration = performance.now() - startTime;
-    console.log(`table show took ${duration}ms`);      
   }
 }
 
