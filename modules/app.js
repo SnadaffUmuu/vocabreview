@@ -23,24 +23,20 @@ const APPLICATION_TYPE = {
 export const Application = {
   views: null,
   protoElements: null,
-  rawData: null,
+  currentRawData: null,
   defaultState: {
     nightMode: false,
-    appType : 'slider',
-    views : {},
+    appType: 'slider',
+    views: {},
   },
+  currentSource: null,
   initialState: null,
   initialData: {},
-  data: {
-    allEntries: [],
-    currentEntries: [],
-    excludedEntries: [],
-    excludedLines: []
-  },
+  data: {},
 
   initViews: async function () {
     this.views = {
-      PreloaderView : await View.create(PreloaderView),
+      PreloaderView: await View.create(PreloaderView),
       MenuView: await View.create(MenuView),
       SliderView: await View.create(Slider),
       TableView: await View.create(TableView),
@@ -48,11 +44,11 @@ export const Application = {
       BoardView: await View.create(BoardView),
     };
   },
-  
-  initProtoElements: async function() {
+
+  initProtoElements: async function () {
     this.protoElements = {
-      ProtoSlideSideElement : await Element.create(SlideSide),
-      ProtoSlideElement : await Element.create(Slide),
+      ProtoSlideSideElement: await Element.create(SlideSide),
+      ProtoSlideElement: await Element.create(Slide),
     }
   },
 
@@ -62,20 +58,41 @@ export const Application = {
       this.initialState = this.defaultState;
       this.saveToLocalStorage('review-state', this.initialState);
     } else {
-      this.initialState = this.loadFromLocalStorage('review-state', this.defaultState);
+      this.initialState = initialState;
     }
-    this.state = new Proxy(Application.initialState, {
+    const self = this;
+    this.state = new Proxy(self.initialState, {
       set(target, property, value) {
         target[property] = value;
-        Application.saveToLocalStorage('review-state', target);
-        if ('source' == property) {
-         const { excludedEntries, excludedLines, structure, allEntries } = DataFactory.parse(Application.rawData);
-         Object.assign(Application.data, { 
-           excludedEntries, 
-           excludedLines, 
-           structure, 
-           allEntries,
-         });
+        self.saveToLocalStorage('review-state', target);
+        if ('currentSource' == property) {
+          let currData = self.initialData[value];
+          if (!currData) {
+            const {
+              excludedEntries,
+              excludedLines,
+              structure,
+              allEntries
+            } = DataFactory.parse(self.currentRawData);
+
+            currData = {
+              excludedEntries,
+              excludedLines,
+              structure,
+              allEntries
+            }
+            self.initialData[value] = currData;
+          }
+
+          if (!self.data[value]) { //no proxy for this source key
+            self.data[value] = new Proxy(
+              self.initialData[value],
+              self.getSourceDataProxy(self, value)
+            )
+          } 
+          //chage property to trigger trap
+          Object.assign(self.data[value], self.initialData[value]);
+
         } else if ('appType' == property) {
           Router.switchView();
         }
@@ -90,60 +107,55 @@ export const Application = {
           return false;
         }
         delete target[property];
-        if ('source' == property) {
-          Application.saveToLocalStorage('review-state', Application.defaultState);
-          delete Application.data.allEntries;
+        if ('currentSource' == property) {
+          self.saveToLocalStorage('review-state', self.defaultState);
+          for (let source in self.data) {
+            delete self.data[source].allEntries;
+          }
         }
         return true;
       }
     });
   },
 
-  initData: function () {
-    Object.assign(
-      this.initialData, 
-      this.loadFromLocalStorage('review-data', {})
-    );
-
-    this.data.excludedLines = this.initialData.excludedLines;
-    this.data.excludedEntries = this.initialData.excludedEntries;
-    this.data.allEntries = this.initialData.allEntries;
-    this.data.currentEntries = this.initialData.currentEntries;
-    this.data.structure = this.initialData.structure;
-
-    if (this.data.allEntries?.length > 100 && !this.data.currentEntries?.length) {
-      //filtering the latest section only
-      const firstNode = this.data.structure[0].children ? this.data.structure[0].children[0].id : this.data.structure[0].id;
-      this.data.currentEntries = this.data.allEntries.filter(entry => entry.section == firstNode);
-      Application.saveToLocalStorage('review-data', this.data);
-    }
-
-    this.data = new Proxy(Application.initialData, {
+  getSourceDataProxy: function (self, source) {
+    return {
       set(target, property, value) {
         target[property] = value;
         if ('allEntries' == property) {
-          if (Application.initialData.currentEntries) {
-            delete Application.initialData.currentEntries;
+
+          if (self.initialData[source].currentEntries) {
+            delete self.initialData[source].currentEntries;
           }
-          Application.saveToLocalStorage('review-data', target);
-          if (value.length > 100 && !Application.initialData.currentEntries?.length) {
-            const firstNode = Application.data.structure[0].children ? Application.data.structure[0].children[0].id : Application.data.structure[0].id;
-            Application.initialData.currentEntries = value.filter(entry => entry.section == firstNode);
-            Application.saveToLocalStorage('review-data', Application.data);
+
+          self.saveToLocalStorage('review-data', self.initialData);
+
+          if (value.length > 100
+            && !self.initialData[source].currentEntries?.length) {
+
+            const firstNode = self.data[source].structure[0].children ?
+              self.data[source].structure[0].children[0].id
+              : self.data[source].structure[0].id;
+
+            self.initialData[source].currentEntries = value.filter(entry =>
+              entry.section == firstNode);
+
+            self.saveToLocalStorage('review-data', self.initialData);
           }
           Router.renderMenuView();
           Router.renderCurrentView(true);
+
         } else if ('currentEntries' == property) {
-          Application.saveToLocalStorage('review-data', target);
-          Application.views.InfobarView.render();
+          self.saveToLocalStorage('review-data', self.initialData);
+          self.views.InfobarView.render();
           Router.renderCurrentView(true);
         }
         return true;
       },
       get(target, property) {
         if (property == 'currentEntries') {
-          return target.currentEntries?.length ? 
-          target.currentEntries : target.allEntries
+          return target.currentEntries?.length ?
+            target.currentEntries : target.allEntries
         } else {
           return target[property]
         }
@@ -156,29 +168,57 @@ export const Application = {
         delete target[property];
         if ('allEntries' == property) {
           localStorage.removeItem('review-data');
-          if (Application.initialData.currentEntries) {
-            delete Application.data.currentEntries;
+          if (self.initialData[source]?.currentEntries) {
+            delete self.initialData[source].currentEntries;
           }
           Router.resetViews();
-        } 
-        return true
+        }
+        return true;
       }
-    });
+    }
   },
 
-  setViewState : function (instance) {
+  initData: function () {
+    const self = this;
+    Object.assign(
+      this.initialData,
+      this.loadFromLocalStorage('review-data', {})
+    );
+    for (let source in this.initialData) {
+      if (this.initialData[source].allEntries?.length > 100
+        && !this.initialData[source].currentEntries?.length) {
+        //filtering the latest section only
+        const firstNode = this.initialData[source].structure[0].children ?
+          this.initialData[source].structure[0].children[0].id : this.initialData[source].structure[0].id;
+        this.initialData[source].currentEntries = this.initialData[source].allEntries
+          .filter(entry => entry.section == firstNode);
+      }
+    }
+
+    this.saveToLocalStorage('review-data', this.initialData);
+
+    for (let source in this.initialData) {
+      const currentSource = source;
+      this.data[currentSource] = new Proxy(
+        self.initialData[currentSource],
+        this.getSourceDataProxy(self, source)
+      );
+    }
+  },
+
+  setViewState: function (instance) {
     const stateViews = this.state.views || {};
     stateViews[instance._class.name] = instance.initialState;
     this.state.views = stateViews;
   },
 
-  getViewState : function(instance) {
+  getViewState: function (instance) {
     if (!this.state.views) return null;
     return this.state.views[instance._class.name] || null;
   },
 
-  getFilteredEntries : function () {
-    return (Application.initialData.currentEntries?.length ? Application.initialData.currentEntries : [])
+  getFilteredEntries: function () {
+    return this.initialData[this.state.currentSource]?.currentEntries || []
   },
 
   saveToLocalStorage: function (key, data) {
@@ -190,7 +230,15 @@ export const Application = {
     return saved ? JSON.parse(saved) : defaultValue;
   },
 
-  changeSource: function (name) {
+  changeSource : function (name) {
+    if (!this.data[name]) {
+      this.loadAndSetCurrentSource(name);
+    } else {
+      Application.state.currentSource = name;
+    }
+  },
+
+  loadAndSetCurrentSource: function (name) {
     if ('' == name) {
       this.reset();
     }
@@ -199,36 +247,41 @@ export const Application = {
     request.open('GET', './vocab/' + name + '.txt?n=' + now, true);
     request.onload = function () {
       if (request.responseText) {
-        Application.rawData = request.responseText;
-        Application.state.source = name;
+        Application.currentRawData = request.responseText;
+        Application.state.currentSource = name;
       }
     }.bind(this);
     request.send();
   },
 
-  reset : function() {
+  reset: function () {
     //TODO: reset other data too
-    if (this.state.source) {
-      delete this.state.source
+    if (this.state.currentSource) {
+      delete this.state.currentSource
     }
     if (this.state.views) {
       delete this.state.views
     }
   },
 
-  filter : function(data) {
+  filter: function (data) {
     if (!data || !data.length) {
-      this.data.currentEntries = [];
+      this.getCurrentSourceData().currentEntries = [];
       return;
     }
-    const res = DataFactory.filter(data);
-    this.data.currentEntries = res;
+    const res = this.getCurrentSourceData().allEntries.filter(entry =>
+      data.includes(entry.section));
+    this.getCurrentSourceData().currentEntries = res; //TODO: "this" won't work?
   },
 
-  switchView : function(name) {
+  switchView: function (name) {
     if (name) {
-      Application.state.appType = name;
+      this.state.appType = name;
     }
+  },
+
+  getCurrentSourceData: function () {
+    return this.data[this.state.currentSource]
   },
 
 };
@@ -236,9 +289,9 @@ export const Application = {
 const Router = {
 
   applicationType: null,
-  currentView : null,
+  currentView: null,
 
-  defineCurrentView : function (type) {
+  defineCurrentView: function (type) {
     switch (type) {
       case '':
       case 'slider':
@@ -253,9 +306,9 @@ const Router = {
         this.applicationType = APPLICATION_TYPE.DATA;
         this.currentView = Application.views.DataView;
         break;
-        case 'board':
-          this.applicationType = APPLICATION_TYPE.BOARD;
-          this.currentView = Application.views.BoardView;
+      case 'board':
+        this.applicationType = APPLICATION_TYPE.BOARD;
+        this.currentView = Application.views.BoardView;
         break;
     }
   },
@@ -265,8 +318,8 @@ const Router = {
     this.showMenuView();
     this.showCurrentView();
   },
-  
-  switchView : function() {
+
+  switchView: function () {
     this.currentView && this.currentView.remove();
     this.defineCurrentView(Application.state.appType ? Application.state.appType : '');
     this.showCurrentView();
@@ -284,14 +337,14 @@ const Router = {
     Application.views.StructureView.render();
     Application.views.InfobarView.render();
   },
-  
-  resetMenuView : function () {
+
+  resetMenuView: function () {
     Application.views.MenuView.reset();
     Application.views.StructureView.reset();
     Application.views.InfobarView.reset();
   },
 
-  showCurrentView : function () {
+  showCurrentView: function () {
     if (!this.currentView || !this.currentView.show) {
       console.log('current view is not found');
       return;
@@ -299,15 +352,15 @@ const Router = {
     this.currentView.show();
   },
 
-  renderCurrentView : function (resetAll) {
+  renderCurrentView: function (resetAll) {
     this.currentView.render(resetAll)
   },
 
-  resetCurrentView : function() {
+  resetCurrentView: function () {
     this.currentView.reset()
   },
 
-  resetViews : function() {
+  resetViews: function () {
     this.resetMenuView();
     this.currentView.reset();
     Application.views.MenuView.toggleMenu();

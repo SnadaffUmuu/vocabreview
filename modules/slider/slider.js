@@ -179,13 +179,13 @@ export const Slider = function () {
 
   this.render = async function (resetAll) {
     this.reset(resetAll);
-    if (!Application.data.currentEntries?.length) {
+    if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       if (Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();
       }
       return
     }
-    this.data.entries = structuredClone(Application.data.currentEntries);
+    this.data.entries = structuredClone(Application.getCurrentSourceData().currentEntries);
     if (this.state.order) {
       this.data.shuffledEntries = this.state.order.map(i => this.data.entries[i]);
       this.isRandomEl.checked = true;

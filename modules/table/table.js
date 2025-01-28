@@ -487,13 +487,14 @@ export const TableView = function () {
 
   this.render = function () {
     this.reset();
-    if (!Application.data.currentEntries?.length) {
+    if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       if (Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();
       }
       return
     }
-    this.data.entries = structuredClone(Application.data.currentEntries);
+    this.data.entries = structuredClone(
+      Application.getCurrentSourceData().currentEntries);
     this.renderTable();
     this.setRenderedEvents(this.tableEl);
     Application.views.PreloaderView.hidePreloader();

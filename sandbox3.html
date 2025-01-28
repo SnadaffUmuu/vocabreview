@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review Sanbox</title>
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+  <script>
+    const App = {
+
+      initialData: {},
+      /*
+      initialData: {
+        source1: {
+          currEnt: [1, 2, 3],
+          allEnt: [1, 2, 3],
+        },
+        source2: {
+          currEnt: [1, 2, 3],
+          allEnt: [1, 2, 3],
+        }
+      },
+          */
+      data: {},
+
+      setData: function () {
+        for (let source in this.initialData) {
+          this.data[source] = {
+            currEnt: this.initialData[source]?.currEnt || [],
+            allEnt: this.initialData[source]?.allEnt || [],
+          }
+        }
+
+        const self = this;
+
+        for (let source in this.initialData) {
+          const currentSource = source;
+          this.data[currentSource] = new Proxy(self.initialData[currentSource], {
+            set(target, property, value) {
+              target[property] = value;
+              return true;
+            },
+            get(target, property) {
+              return target[property]
+            },
+            deleteProperty(target, property) {
+              console.log(self.initialData[currentSource]);
+              delete target[property];
+              return true;
+            }
+          })
+        }
+      },
+
+    }
+    App.setData();
+  </script>
+</head>
+
+<body>
+
+  <script>
+  </script>
+</body>
+
+</html>

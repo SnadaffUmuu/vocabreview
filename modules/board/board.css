@@ -12,6 +12,18 @@
   align-items: center;
 }
 
+[for="studyMode"] {
+  position: fixed;
+  top:48px;
+  right:10px;
+  background: var(--bg);
+}
+
+#studyMode {
+  width: 20px;
+  height: 20px;
+}
+
 #boardContainer {
   flex: 1 0 auto;
   display: flex;
@@ -19,14 +31,22 @@
   font-size:17px;
 }
 
-#boardSourceCards {
-  padding:10px;
+#boardSourceCardsOuter {
   flex: 0 0 auto;
+  display: flex;
+  flex-flow:row nowrap;
+  overflow: auto;
+  max-height: 25vh;
+}
+
+#boardSourceCards {
+  flex: 1 0 calc(100vw - 40px);
+  padding:10px;
   display: flex;
   flex-flow:row wrap;
   justify-content: flex-start;
   align-items: center;
-  gap: 10px 20px;
+  gap: 10px;
 }
 
 #boardColsContainerOuter {
@@ -46,22 +66,22 @@
 }
 
 #boardGoodCol,
-#boardFailedCol {
-  flex: 1 0 80vw;
+#boardFailedCol,
+#boardLearnCol {
+  flex: 1 0 70vw;
   min-height: 300px;
   padding: 10px;
   display: flex;
-  flex-flow:column wrap;
-  justify-content: flex-start;
+  flex-flow:row wrap;
   border-radius: 10px;
-  gap: 10px 20px;
+  gap: 10px;
   border-width: 2px;
   border-style: dashed;
+  align-content: flex-start;
 }
 
 #boardGoodCol {
-  align-items: flex-end;
-  align-content: flex-end;
+  justify-content: flex-start;
   border-color:rgb(146 204 179);
 }
 
@@ -70,13 +90,22 @@
 }
 
 #boardFailedCol {
-  align-content: flex-start;
-  align-items: flex-start;
+  justify-content: flex-end;
   border-color:rgb(219 146 146);
 }
 
 .night #boardFailedCol {
   border-color:rgb(159 0 0);
+}
+
+#boardLearnCol {
+  flex: 1 0 40vw;
+  justify-content: center;
+  border-color:rgb(146, 180, 219);
+}
+
+.night #boardLearnCol {
+  border-color:rgb(85, 126, 160);
 }
 
 .boardItem,
@@ -106,6 +135,7 @@
 .boardItem.dragging {
   cursor: grabbing;
   opacity: 0.7;
+  z-index: 1000;
 }
 
 .night .boardItem {
@@ -122,10 +152,6 @@
   line-height: 140%;
 }
 
-#boardView:not(:has(#studyMode:checked)) .itemLine {
-  margin-right: 0;
-}
-
 .boardItem .itemLine[data-current] {
   display: -webkit-box;
 }
@@ -134,11 +160,9 @@
   display:block;
 }
 
-/*
 .boardItem .itemLine[compact] {
   font-size:15px;
 }
-*/
 
 .boardItem .itemActions {
   flex-flow: row nowrap;
@@ -157,12 +181,6 @@
   cursor: pointer;
 }
 
-.boardItem .lineCounter {
-}
-
-.boardItem .expandLine {
-}
-
 .boardItem .rotateCard {
   font-size:17px;
 }
@@ -176,6 +194,10 @@
   text-align: right;
   flex: 1 0 auto;
   height:25px;
+}
+
+.boardItem:not(:has([data-current="true"][data-reading])) .reading {
+  visibility: hidden;
 }
 
 .boardItem:not(:has([data-current="true"][data-reading])) .speakLine,

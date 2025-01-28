@@ -27,8 +27,12 @@ export const DataView = function () {
   }
   
   this.getData = function () {
-    return structuredClone(this.element.querySelector('#filtered').checked 
-    && Application.data.currentEntries?.length ? Application.data.currentEntries : Application.data.allEntries);
+    return structuredClone(
+      this.element.querySelector('#filtered').checked 
+        && Application.getCurrentSourceData()?.currentEntries?.length ? 
+          Application.getCurrentSourceData().currentEntries 
+            : Application.getCurrentSourceData().allEntries
+    );
   },
 
   this.reset = function () {
@@ -42,7 +46,7 @@ export const DataView = function () {
     if (Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();
       }
-    if (!Application.data.allEntries?.length) {
+    if (!Application.getCurrentSourceData()?.allEntries?.length) {
       return
     }
     this.editor = ace.edit("input");

@@ -28,13 +28,13 @@ export const InfobarView = function () {
 
   this.render = function () {
     this.reset();
-    if (Application.state?.source) {
-      this.setSource(Application.state.source)
+    if (Application.state?.currentSource) {
+      this.setSource(Application.state.currentSource)
     }
-    if (!Application.data.currentEntries?.length) {
+    if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       return
     }
-    this.setCount(Application.data.currentEntries.length);
+    this.setCount(Application.getCurrentSourceData().currentEntries.length);
   }
 
   this.show = function () {

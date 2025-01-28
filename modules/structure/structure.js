@@ -1,7 +1,6 @@
 
 import { View } from "../view.js";
 import { Application } from "../app.js"
-import { DataFactory } from "../data.js"
 
 export const StructureView = function () {
   this.toggleEl = null;
@@ -85,7 +84,7 @@ export const StructureView = function () {
     <label for="${value}">${name}</label>
     `
   }
-
+/*
   this.checkAndSetMinimum = function(checkboxes) {
     const minLevel = checkboxes.filter(el => !el.closest('li').querySelector('ul'));
     if (!this.data.filteredEntries.length) {
@@ -96,7 +95,7 @@ export const StructureView = function () {
       }, 0)
     }
   }
-
+*/
   this.reset = function () {
     if (this.treeEl) {
       this.treeEl.querySelector('ul').innerHTML = '';
@@ -107,11 +106,11 @@ export const StructureView = function () {
   this.render = function () {
 
     this.reset();
-    if (!Application.data.currentEntries?.length) {
+    if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       return;
     }
     this.data.filteredEntries = Application.getFilteredEntries();
-    const resItems = Application.data.structure.reduce((resItems, entry) => {
+    const resItems = Application.getCurrentSourceData().structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
         ${this.getCheckboxHtml(entry.id)}&nbsp;
@@ -129,7 +128,6 @@ export const StructureView = function () {
         this.toggleTreeCheckboxes(e)
       })
     });
-    //this.checkAndSetMinimum(treeCheckboxes);
   }
 
   this.show = function () {

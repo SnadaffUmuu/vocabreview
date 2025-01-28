@@ -40,13 +40,13 @@ export const MenuView = function () {
 
   this.reloadCurrentSource = function() {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
-      Application.changeSource(Application.state.source)
+      Application.loadAndSetCurrentSource(Application.state.currentSource)
     });
   }
 
   this.renderSelectOptions = function () {
     const options = DataFactory.vocabFilesIndex.map(s => `
-      <option ${Application.state.source && Application.state.source == s ? 'selected' : ''} value="${s}">${s}</option>`).join('');
+      <option ${Application.state.currentSource && Application.state.currentSource == s ? 'selected' : ''} value="${s}">${s}</option>`).join('');
     this.sourcesSelect.insertAdjacentHTML('beforeend', options);
   }
 
@@ -64,8 +64,8 @@ export const MenuView = function () {
 
   this.render = function() {
     this.reset();
-    if (Application.state.source) {
-      setSelectOption(this.sourcesSelect, Application.state.source);
+    if (Application.state.currentSource) {
+      setSelectOption(this.sourcesSelect, Application.state.currentSource);
     }
     if(Application.state.appType) {
       const current = this.viewSelect.querySelector(`option[value=${Application.state.appType}]`);

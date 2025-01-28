@@ -584,8 +584,4 @@ export const DataFactory = {
     }
     return res;
   },
-
-  filter: (entries) => {
-    return Application.data.allEntries.filter(entry => entries.includes(entry.section))
-  }
 }

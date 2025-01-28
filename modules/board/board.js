@@ -37,6 +37,7 @@ export const BoardView = function () {
       '#boardSourceCards': 'UserActionHandlers.preventDefault',
       '#boardGoodCol': 'UserActionHandlers.preventDefault',
       '#boardFailedCol': 'UserActionHandlers.preventDefault',
+      '#boardLearnCol': 'UserActionHandlers.preventDefault',
     },
     dragstart: {
       '.boardItem': 'itemDragStart'
@@ -48,6 +49,7 @@ export const BoardView = function () {
       '#boardSourceCards': 'setDragOver true',
       '#boardGoodCol': 'setDragOver true',
       '#boardFailedCol': 'setDragOver true',
+      '#boardLearnCol': 'setDragOver true',
     },
     touchstart: {
       '.boardItem': 'setTouchStart true',
@@ -83,7 +85,6 @@ export const BoardView = function () {
   };
 
   this.removeItem = function (e) {
-    if (!this.isStudyMode()) return;
     const item = this.getDragItem(e.target);
     this.state.removedItems.push(parseInt(item.dataset.originalIndex));
     this.state.removedItems = this.state.removedItems;
@@ -184,28 +185,33 @@ export const BoardView = function () {
     });
   };
 
-  this.setItemInCol = function (e) {
-    const item = this.getDragItem(e.target);
-    if (!item) return;
-    const container = item.closest('.itemDroppableContainer');
-    if (container?.dataset?.result) {
-      this.state.itemsInCols[item.dataset.originalIndex] = container.dataset.result;
-    } else {
-      delete this.state.itemsInCols[item.dataset.originalIndex];
+  this.setItemInCol = function (e, touch) {
+    if (touch) {
+      const elFromPoint = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (Application.views.MenuView.element.contains(elFromPoint)) {
+        this.removeItem(e);
+      } else {
+        const item = this.getDragItem(e.target);
+        if (!item) return;
+        const container = item.closest('.itemDroppableContainer');
+        if (container?.dataset?.result) {
+          this.state.itemsInCols[item.dataset.originalIndex] = container.dataset.result;
+        } else {
+          delete this.state.itemsInCols[item.dataset.originalIndex];
+        }
+        this.state.itemsInCols = this.state.itemsInCols;
+      }
     }
-    this.state.itemsInCols = this.state.itemsInCols;
   };
 
   this.setReviewFailed = function (e) {
     const badItems = this.failedCol.querySelectorAll('.boardItem');
     if (!badItems.length) return;
-    this.goodCol.querySelectorAll('.boardItem').forEach(item => {
+    [...this.goodCol.querySelectorAll('.boardItem')].forEach(item => {
       this.state.removedItems.push(parseInt(item.dataset.originalIndex));
       delete this.state.itemsInCols[item.dataset.originalIndex];
-      //item.remove();
     });
     badItems.forEach(item => {
-      //this.sourceCardsContainer.appendChild(this.failedCol.removeChild(item));
       delete this.state.itemsInCols[item.dataset.originalIndex];
     });
     this.state.removedItems = this.state.removedItems;
@@ -236,9 +242,10 @@ export const BoardView = function () {
         this.placeholder = createPlaceholder(this.draggedItem.querySelector('[data-current]'));
       }
       const touch = e.touches[0];
-      this.draggedItem.style.position = 'absolute';
-      this.draggedItem.style.left = `${touch.clientX - 20}px`;
-      this.draggedItem.style.top = `${touch.clientY - 20}px`;
+      this.lastMove = touch;
+      this.draggedItem.style.position = 'fixed';
+      this.draggedItem.style.left = `${touch.clientX}px`;
+      this.draggedItem.style.top = `${touch.clientY}px`;
       const elFromPoint = document.elementFromPoint(touch.clientX, touch.clientY);
       this.potentialContainer = elFromPoint.closest('.itemDroppableContainer');
       if (this.potentialContainer && this.placeholder) {
@@ -282,7 +289,7 @@ export const BoardView = function () {
     this.draggedItem && this.draggedItem.classList.remove("dragging");
     if (this.draggedItem && this.placeholder && this.placeholder.parentNode) {
       this.placeholder.parentNode.insertBefore(this.draggedItem, this.placeholder);
-      this.setItemInCol(e);
+      this.setItemInCol(e, this.lastMove);
 
       this.placeholder.remove();
       this.draggedItem.style.left = "";
@@ -292,6 +299,7 @@ export const BoardView = function () {
     this.draggedItem = null;
     this.placeholder = null;
     this.scrollInterval = null;
+    this.lastMove = null;
   },
 
   this.itemDragStart = function (e) {
@@ -430,6 +438,7 @@ export const BoardView = function () {
     this.sourceCardsContainer.innerHTML = '';
     this.goodCol.innerHTML = '';
     this.failedCol.innerHTML = '';
+    this.learnCol.innerHTML = '';
     if (resetAll) {
       this.state.removedItems = [];
       this.state.itemsInCols = {};
@@ -440,13 +449,15 @@ export const BoardView = function () {
 
   this.render = function (resetAll) {
     this.reset(resetAll);
-    if (!Application.data.currentEntries?.length) {
+    if (!Application.getCurrentSourceData()?.currentEntries.length) {
       if (Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();
       }
       return
     }
-    this.data.entries = structuredClone(Application.data.currentEntries);
+    this.data.entries = structuredClone(
+      Application.getCurrentSourceData().currentEntries
+    );
 
     if (this.state.mode) {
       Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
@@ -469,8 +480,12 @@ export const BoardView = function () {
       this.setRenderedEvents([
         this.sourceCardsContainer,
         this.goodCol,
-        this.failedCol
+        this.failedCol,
+        this.learnCol
       ]);
+      Application.views.MenuView.element.addEventListener('touchend', (e) => {
+        console.log('infobar');
+      })
       this.renderedEventSet = true;
     }
     Application.views.PreloaderView.hidePreloader();
@@ -481,9 +496,11 @@ export const BoardView = function () {
     this.sourceCardsContainer = this.element.querySelector('#boardSourceCards');
     this.goodCol = this.element.querySelector('#boardGoodCol');
     this.failedCol = this.element.querySelector('#boardFailedCol');
+    this.learnCol = this.element.querySelector('#boardLearnCol');
     this.cols = {
       '1': this.goodCol,
-      '0': this.failedCol
+      '0': this.failedCol,
+      '2': this.learnCol,
     }
     this.studyModeEl = this.element.querySelector('#studyMode');
     this.cardModeEl = this.element.querySelector('#cardMode');
