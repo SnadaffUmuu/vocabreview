@@ -109,7 +109,7 @@ export const StructureView = function () {
     if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       return;
     }
-    this.data.filteredEntries = Application.getFilteredEntries();
+    this.data.filteredEntries = structuredClone(Application.getCurrentSourceData().currentEntries);
     const resItems = Application.getCurrentSourceData().structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">

@@ -84,7 +84,8 @@ export const Application = {
             self.initialData[value] = currData;
           }
 
-          if (!self.data[value]) { //no proxy for this source key
+          //no proxy is set for this source key, so setting proxy:
+          if (!self.data[value]) { 
             self.data[value] = new Proxy(
               self.initialData[value],
               self.getSourceDataProxy(self, value)
@@ -124,21 +125,19 @@ export const Application = {
         target[property] = value;
         if ('allEntries' == property) {
 
-          if (self.initialData[source].currentEntries) {
+          if (self.initialData[source]?.currentEntries) {
             delete self.initialData[source].currentEntries;
           }
 
           self.saveToLocalStorage('review-data', self.initialData);
 
-          if (value.length > 100
-            && !self.initialData[source].currentEntries?.length) {
-
+          if (value.length > 100) {
             const firstNode = self.data[source].structure[0].children ?
               self.data[source].structure[0].children[0].id
               : self.data[source].structure[0].id;
 
             self.initialData[source].currentEntries = value.filter(entry =>
-              entry.section == firstNode);
+              entry.section == firstNode).map(entry => entry.originalIndex);
 
             self.saveToLocalStorage('review-data', self.initialData);
           }
@@ -155,7 +154,8 @@ export const Application = {
       get(target, property) {
         if (property == 'currentEntries') {
           return target.currentEntries?.length ?
-            target.currentEntries : target.allEntries
+            self.initialData[source].allEntries.filter(entry => 
+              self.initialData[source]?.currentEntries.includes(entry.originalIndex)) : []
         } else {
           return target[property]
         }
@@ -217,10 +217,6 @@ export const Application = {
     return this.state.views[instance._class.name] || null;
   },
 
-  getFilteredEntries: function () {
-    return this.initialData[this.state.currentSource]?.currentEntries || []
-  },
-
   saveToLocalStorage: function (key, data) {
     localStorage.setItem(key, JSON.stringify(data))
   },
@@ -230,11 +226,11 @@ export const Application = {
     return saved ? JSON.parse(saved) : defaultValue;
   },
 
-  changeSource : function (name) {
-    if (!this.data[name]) {
-      this.loadAndSetCurrentSource(name);
+  changeSource : function (sourceName) {
+    if (!this.data[sourceName]) {
+      this.loadAndSetCurrentSource(sourceName);
     } else {
-      Application.state.currentSource = name;
+      Application.state.currentSource = sourceName;
     }
   },
 
@@ -255,7 +251,6 @@ export const Application = {
   },
 
   reset: function () {
-    //TODO: reset other data too
     if (this.state.currentSource) {
       delete this.state.currentSource
     }
@@ -270,8 +265,8 @@ export const Application = {
       return;
     }
     const res = this.getCurrentSourceData().allEntries.filter(entry =>
-      data.includes(entry.section));
-    this.getCurrentSourceData().currentEntries = res; //TODO: "this" won't work?
+      data.includes(entry.section)).map(entry => entry.originalIndex);
+    this.getCurrentSourceData().currentEntries = res;
   },
 
   switchView: function (name) {
