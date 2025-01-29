@@ -8,7 +8,7 @@ export const StructureView = function () {
   this.resetTreeEl = null;
   this.events = {
     'click #structureTrigger': 'toggleTree',
-    'click #resetTree': 'resetTreeFilters',
+    'click #toggleAll': 'toggleAll',
     'click #filterCollection': 'filterCollection',
   };
   this.trueCheckboxesSelector = '.treeCheckbox';
@@ -51,13 +51,10 @@ export const StructureView = function () {
     })
   }
 
-  this.resetTreeFilters = function () {
-    Application.views.PreloaderView.showPreloaderAndRun(() => {
-      Array.from(
-        this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
-      ).forEach(ch => ch.checked = false)
-      Application.filter(null)
-    });
+  this.toggleAll = function (e) {
+    Array.from(
+      this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]')
+    ).forEach(ch => ch.checked = e.target.checked)
   }
 
   this.filterCollection = function () {
@@ -74,7 +71,7 @@ export const StructureView = function () {
   }
 
   this.getCheckboxHtml = function (value) {
-    const isChecked = this.data.filteredEntries.find(e => e.section == value);
+    const isChecked = !this.nonChecked && this.data.filteredEntries.find(e => e.section == value);
     return `<input class="treeCheckbox" ${isChecked ? 'checked' : ''} type="checkbox" value="${value}">`
   }
 
@@ -84,18 +81,7 @@ export const StructureView = function () {
     <label for="${value}">${name}</label>
     `
   }
-/*
-  this.checkAndSetMinimum = function(checkboxes) {
-    const minLevel = checkboxes.filter(el => !el.closest('li').querySelector('ul'));
-    if (!this.data.filteredEntries.length) {
-      minLevel[0].checked = true;
-      setTimeout(() => {
-        this.filterCollection();
-        this.checkFilteredCheckboxes(checkboxes);
-      }, 0)
-    }
-  }
-*/
+
   this.reset = function () {
     if (this.treeEl) {
       this.treeEl.querySelector('ul').innerHTML = '';
@@ -110,6 +96,8 @@ export const StructureView = function () {
       return;
     }
     this.data.filteredEntries = structuredClone(Application.getCurrentSourceData().currentEntries);
+    this.nonChecked = this.data.filteredEntries.length 
+      == Application.getCurrentSourceData().allEntries.length;
     const resItems = Application.getCurrentSourceData().structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
@@ -134,7 +122,7 @@ export const StructureView = function () {
     View.prototype.show.call(this);
     this.toggleEl = document.getElementById('structureTrigger');
     this.treeEl = document.getElementById('structureTree');
-    this.resetTreeEl = document.getElementById('resetTree');
+    this.toggleAll = document.getElementById('toggleAll');
     this.render();
   }
 };

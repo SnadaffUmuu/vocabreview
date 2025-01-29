@@ -140,6 +140,8 @@ export const Application = {
               entry.section == firstNode).map(entry => entry.originalIndex);
 
             self.saveToLocalStorage('review-data', self.initialData);
+          } else {
+            self.initialData[source].currentEntries = value.map(entry => entry.originalIndex);
           }
           Router.renderMenuView();
           Router.renderCurrentView(true);
@@ -185,13 +187,18 @@ export const Application = {
       this.loadFromLocalStorage('review-data', {})
     );
     for (let source in this.initialData) {
-      if (this.initialData[source].allEntries?.length > 100
-        && !this.initialData[source].currentEntries?.length) {
+      const thisSource = source;
+      if (this.initialData[thisSource].allEntries?.length > 100
+        && !this.initialData[thisSource].currentEntries?.length) {
         //filtering the latest section only
-        const firstNode = this.initialData[source].structure[0].children ?
-          this.initialData[source].structure[0].children[0].id : this.initialData[source].structure[0].id;
-        this.initialData[source].currentEntries = this.initialData[source].allEntries
-          .filter(entry => entry.section == firstNode);
+        const firstNode = this.initialData[thisSource].structure[0].children ?
+          this.initialData[thisSource].structure[0].children[0].id 
+            : this.initialData[thisSource].structure[0].id;
+        this.initialData[thisSource].currentEntries = this.initialData[thisSource].allEntries
+          .filter(entry => entry.section == firstNode).map(entry => entry.originalIndex);
+      } else if (!this.initialData[thisSource].currentEntries?.length) {
+        this.initialData[thisSource].currentEntries = this.initialData[thisSource]
+          .allEntries.map(entry => entry.originalIndex);
       }
     }
 

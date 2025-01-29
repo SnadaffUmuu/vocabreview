@@ -2,9 +2,9 @@
   position: fixed;
   top:0;
   left:70px;
-  width: calc(100vw - 75px);
+  right:5px;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
   font-size:18px;
   min-height: 38px;
   align-items: stretch;
@@ -38,4 +38,6 @@
   text-align: center;
   color:var(--appheader-title-color);
   align-self: center;
+  overflow:hidden;
+  white-space:nowrap;
 }

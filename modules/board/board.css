@@ -116,6 +116,7 @@
   min-height: 29px;
   max-width: calc(100vw - 20px);
   position: relative;
+  border:1px solid transparent;
 }
 
 #boardView .placeholder {
@@ -142,6 +143,10 @@
   background: #320008;
 }
 
+.boardItem:has([lapsed]) {
+  border-color:rgb(159 0 0 / 66%);
+}
+
 .boardItem .itemLine {
   display: none;
   overflow: hidden;
@@ -162,6 +167,14 @@
 
 .boardItem .itemLine[compact] {
   font-size:15px;
+}
+
+.boardItem .itemLine[lapsed] {
+  color:rgb(75, 0, 124);
+}
+
+.night .boardItem .itemLine[lapsed] {
+  color:white;
 }
 
 .boardItem .itemActions {

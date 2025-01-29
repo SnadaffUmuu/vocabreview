@@ -62,7 +62,6 @@ View.prototype = {
       if (spaceIdx != -1) {
         [...this.element.querySelectorAll(k.substring(spaceIdx + 1))].forEach(el =>
           el.addEventListener(k.substring(0, spaceIdx), this[this.events[k]].bind(this)))
-          
       } else {
         this.element.addEventListener(k, this[this.events[k]].bind(this));
       }
