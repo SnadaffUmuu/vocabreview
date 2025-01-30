@@ -153,9 +153,14 @@
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   margin-right:15px;
-  min-height:25px;
+  min-height:23px;
   line-height: 140%;
 }
+
+/* .boardItem.menuExpanded .itemLine {
+  overflow: unset;
+  -webkit-line-clamp: unset;
+} */
 
 .boardItem .itemLine[data-current] {
   display: -webkit-box;
@@ -192,6 +197,13 @@
 .boardItem .itemAction,
 .boardItem .lineCounter {
   cursor: pointer;
+}
+
+.boardItem > .lineCounter {
+  position: absolute;
+  right:2px;
+  top:1px;
+  font-size:10px;
 }
 
 .boardItem .rotateCard {

@@ -72,8 +72,19 @@ export const BoardView = function () {
   };
 
   this.collapseAllItems = function (e) {
-    if (!e.target.classList.contains('itemDroppableContainer')) return;
+    if (!e.target.classList.contains('itemDroppableContainer')
+      && (!e.target.id || !e.target.id == 'studyMode')) return;
     [...this.element.querySelectorAll('.menuExpanded')].forEach(item => {
+      item.querySelectorAll('.itemLine').forEach(line => {
+        if (!line.dataset.current 
+          && line.dataset.originalIndex == item.dataset.upperLineIndex) {
+            line.dataset.current = true;
+        } else if (line.dataset.current
+          && line.dataset.originalIndex != item.dataset.upperLineIndex) {
+            delete line.dataset.current
+        }
+      })
+      item.classList.remove('lineExpanded');
       item.classList.remove('menuExpanded');
       item.style.top = 'unset';
       item.parentNode.querySelector('.expandPlaceholder')?.remove();
@@ -115,6 +126,7 @@ export const BoardView = function () {
       `;
       container.insertBefore(expandPlaceholder, item);
     } else {
+      item.classList.remove('lineExpanded')
       item.classList.remove('menuExpanded');
       item.style.top = 'unset';
       expandPlaceholder.remove();
@@ -279,8 +291,13 @@ export const BoardView = function () {
 //TODO: не сохраняются айтемы в центральной колонке
 //TODO: простой переход в стади мод
   this.fixLapses = function (e) {
+    [...this.goodCol.querySelectorAll('.boardItem:not([lapsed])')].forEach(item => {
+      this.state.removedItems.push(parseInt(item.dataset.originalIndex));
+      delete this.state.itemsInCols[item.dataset.originalIndex];
+    });
     const lapsedItems = this.goodCol.querySelectorAll('.boardItem:has([lapsed])');
     if (!lapsedItems.length) return;
+    //remove from state lapses
     let stateLapses = {};
     if (this.state.lapses && this.state.lapses[Application.state.currentSource]) {
       stateLapses = this.state.lapses[Application.state.currentSource];
@@ -295,13 +312,17 @@ export const BoardView = function () {
           if (!lapsedSidesInState.length) {
             delete stateLapses[index];
           }
+          this.state.removedItems.push(parseInt(item.dataset.originalIndex));
+          delete this.state.itemsInCols[item.dataset.originalIndex];
         }
       } 
     });
     const target = this.state.lapses || {};
     this.state.lapses = Object.assign(target, {
       [Application.state.currentSource] : stateLapses
-    });
+    });    
+    this.state.itemsInCols = this.state.itemsInCols;
+    this.state.removedItems = this.state.removedItems;
     this.render();
   };
 
@@ -412,19 +433,25 @@ export const BoardView = function () {
   }
 
   this.renderLine = function (l, currentLineIndex, lapsedLines) {
+    /*
     if (l.role && l.role == DataFactory.LINE_ROLE.reading) {
       return;
     }
-
+    */
     const dataset = {
       'original-index': l.originalIndex
     };
     if (currentLineIndex != null && l.originalIndex == currentLineIndex) {
       dataset.current = true;
     }
+    /*
     if (l.reading) {
       dataset.reading = l.reading;
     } else if (l.speakable) {
+      dataset.reading = l.text;
+    }
+    */
+    if (l.speakable) {
       dataset.reading = l.text;
     }
 
@@ -467,7 +494,8 @@ export const BoardView = function () {
       this.state.lineIndexes[entry.originalIndex] : null;
     let currentIndex = currentLineIndex;
     const reading = lines.find(line => line.role == lRoles.reading);
-    const others = lines.filter(line => line.role !== lRoles.reading);
+    //const others = lines.filter(line => line.role !== lRoles.reading);
+    const others = lines;
     if (currentIndex == null) {
       switch (mode) {
         case lRoles.expression:
@@ -484,8 +512,11 @@ export const BoardView = function () {
           currentIndex = shuffleArray(others)[0].originalIndex;
         case 'original':
         default:
-          currentIndex = others[0].originalIndex;
+          currentIndex = others[0].originalIndex || lines[0].originalIndex;
       }
+    }
+    if (currentIndex == null) {
+      currentIndex = lines[0].originalIndex;
     }
     const entryActions = `
     <div class="itemActions">
@@ -501,7 +532,8 @@ export const BoardView = function () {
       lapsedLines = stateLapses[entry.originalIndex];
     }
     return `
-      <div class="boardItem" draggable="true"  data-original-index="${entry.originalIndex}">
+      <div class="boardItem" draggable="true" data-upper-line-index="${currentIndex}" data-original-index="${entry.originalIndex}">
+        <div class="lineCounter">${entry.lines.length}</div>
         ${others.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines)).join('')}
         ${entryActions}
       </div>
