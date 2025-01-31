@@ -12,6 +12,7 @@ import { PreloaderView } from "./preloader/preloader.js";
 import { SlideSide } from "./slide/slide-side.js";
 import { Slide } from "./slide/slide.js";
 import { BoardView } from "./board/board.js";
+import { setDeep } from "./utils.js";
 
 const APPLICATION_TYPE = {
   CARDS: 'SLIDER',
@@ -30,7 +31,9 @@ export const Application = {
     views: {},
   },
   currentSource: null,
-  initialState: null,
+  initialState: {
+    selfUpdate: false,
+  },
   initialData: {},
   data: {},
 
@@ -64,6 +67,7 @@ export const Application = {
     this.state = new Proxy(self.initialState, {
       set(target, property, value) {
         target[property] = value;
+        console.log(`App state: Set triggered for ${property}:`, value);
         self.saveToLocalStorage('review-state', target);
         if ('currentSource' == property) {
           let currData = self.initialData[value];
@@ -84,14 +88,12 @@ export const Application = {
             self.initialData[value] = currData;
           }
 
-          //no proxy is set for this source key, so setting proxy:
-          if (!self.data[value]) { 
+          if (!self.data[value]) {
             self.data[value] = new Proxy(
               self.initialData[value],
               self.getSourceDataProxy(self, value)
             )
-          } 
-          //chage property to trigger trap
+          }
           Object.assign(self.data[value], self.initialData[value]);
 
         } else if ('appType' == property) {
@@ -144,19 +146,21 @@ export const Application = {
             self.initialData[source].currentEntries = value.map(entry => entry.originalIndex);
           }
           Router.renderMenuView();
-          Router.renderCurrentView(true);
+          //Router.renderCurrentView(true);
+          Router.renderCurrentView();
 
         } else if ('currentEntries' == property) {
           self.saveToLocalStorage('review-data', self.initialData);
           self.views.InfobarView.render();
-          Router.renderCurrentView(true);
+          //Router.renderCurrentView(true);
+          Router.renderCurrentView();
         }
         return true;
       },
       get(target, property) {
         if (property == 'currentEntries') {
           return target.currentEntries?.length ?
-            self.initialData[source].allEntries.filter(entry => 
+            self.initialData[source].allEntries.filter(entry =>
               self.initialData[source]?.currentEntries.includes(entry.originalIndex)) : []
         } else {
           return target[property]
@@ -170,9 +174,10 @@ export const Application = {
         delete target[property];
         if ('allEntries' == property) {
           localStorage.removeItem('review-data');
-          if (self.initialData[source]?.currentEntries) {
-            delete self.initialData[source].currentEntries;
-          }
+          delete self.initialData[source]?.currentEntries;
+          delete self.initialData[source]?.structure;
+          delete self.initialData[source]?.excludedEntries;
+          delete self.initialData[source]?.excludedLines;
           Router.resetViews();
         }
         return true;
@@ -188,17 +193,23 @@ export const Application = {
     );
     for (let source in this.initialData) {
       const thisSource = source;
-      if (this.initialData[thisSource].allEntries?.length > 100
-        && !this.initialData[thisSource].currentEntries?.length) {
-        //filtering the latest section only
-        const firstNode = this.initialData[thisSource].structure[0].children ?
-          this.initialData[thisSource].structure[0].children[0].id 
+
+      if (this.initialData[thisSource].allEntries) {
+        if (this.initialData[thisSource].allEntries?.length > 100
+          && !this.initialData[thisSource].currentEntries?.length) {
+
+          //filtering the latest section only
+          const firstNode = this.initialData[thisSource].structure[0].children ?
+            this.initialData[thisSource].structure[0].children[0].id
             : this.initialData[thisSource].structure[0].id;
-        this.initialData[thisSource].currentEntries = this.initialData[thisSource].allEntries
-          .filter(entry => entry.section == firstNode).map(entry => entry.originalIndex);
-      } else if (!this.initialData[thisSource].currentEntries?.length) {
-        this.initialData[thisSource].currentEntries = this.initialData[thisSource]
-          .allEntries.map(entry => entry.originalIndex);
+          this.initialData[thisSource].currentEntries = this.initialData[thisSource].allEntries
+            .filter(entry => entry.section == firstNode).map(entry => entry.originalIndex);
+
+        } else if (!this.initialData[thisSource].currentEntries?.length) {
+
+          this.initialData[thisSource].currentEntries = this.initialData[thisSource]
+            .allEntries.map(entry => entry.originalIndex);
+        }
       }
     }
 
@@ -214,14 +225,15 @@ export const Application = {
   },
 
   setViewState: function (instance) {
-    const stateViews = this.state.views || {};
-    stateViews[instance._class.name] = instance.initialState;
-    this.state.views = stateViews;
+    setDeep(
+      this.state,
+      ['views', this.state.currentSource, instance._class.name],
+      instance.initialState
+    );
   },
 
   getViewState: function (instance) {
-    if (!this.state.views) return null;
-    return this.state.views[instance._class.name] || null;
+    return this.state.views[this.state.currentSource]?.[instance._class.name] ?? null
   },
 
   saveToLocalStorage: function (key, data) {
@@ -233,7 +245,7 @@ export const Application = {
     return saved ? JSON.parse(saved) : defaultValue;
   },
 
-  changeSource : function (sourceName) {
+  changeSource: function (sourceName) {
     if (!this.data[sourceName]) {
       this.loadAndSetCurrentSource(sourceName);
     } else {
@@ -258,12 +270,8 @@ export const Application = {
   },
 
   reset: function () {
-    if (this.state.currentSource) {
-      delete this.state.currentSource
-    }
-    if (this.state.views) {
-      delete this.state.views
-    }
+    this.state.currentSource && delete this.state.currentSource
+    this.state.views = {}
   },
 
   filter: function (data) {

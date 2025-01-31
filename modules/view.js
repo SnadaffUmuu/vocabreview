@@ -105,12 +105,15 @@ View.prototype = {
   },
 
   initState() {
-    const initialState = Application.getViewState(this) || {};
+    const initialState = Application.getViewState(this) || {
+      selfUpdate : false,
+    };
     this.initialState = initialState;
     const instance = this;
     this.state = new Proxy(initialState, {
       set(target, property, value) {
         target[property] = value;
+        console.log(`View state: Set triggered for ${property}:`, value);
         Application.setViewState(instance);
         if (instance.handleStateChange) {
           instance.handleStateChange(target, property, value);
@@ -196,18 +199,6 @@ View.prototype = {
   },
 
   init: async function () {
-    /*
-    if (!View.prototype.templateHtmls[this._class.name]
-      || !View.prototype.templateHtmls[this._class.name]._templateHtmlPromise) {
-      View.prototype.templateHtmls[this._class.name] = {};
-      View.prototype.templateHtmls[this._class.name]._templateHtmlPromise = (async () => {
-        const response = await fetch(this.templatePath);
-        View.prototype.templateHtmls[this._class.name].templateHtml = await response.text();
-        return View.prototype.templateHtmls[this._class.name].templateHtml;
-      })()
-    }
-    await View.prototype.templateHtmls[this._class.name]._templateHtmlPromise;
-    */
     await this.initViewTemplateHtml();
 
     if (this.templatePath == null) {

@@ -169,12 +169,14 @@ export const Slider = function () {
       this.slider.destroy();
     }
     this.sliderOuter.innerHTML = this.keensliderContainerTemplate.outerHTML;
+    /*
     if (resetAll) {
       this.state.order && delete this.state.order;
       this.state.currentIndex && delete this.state.currentIndex;
       this.state.sideIndexes && delete this.state.sideIndexes;
       this.isRandomEl.checked = false;
     }
+    */
   };  
 
   this.render = async function (resetAll) {

@@ -12,54 +12,30 @@
     }
   </style>
   <script>
-    const App = {
-
-      initialData: {},
-      /*
-      initialData: {
-        source1: {
-          currEnt: [1, 2, 3],
-          allEnt: [1, 2, 3],
-        },
-        source2: {
-          currEnt: [1, 2, 3],
-          allEnt: [1, 2, 3],
+    function setDeep(obj, path, value) {
+      path.reduce((acc, key, index) => {
+        if (index === path.length - 1) {
+          acc[key] = value; // Финальное присваивание
+        } else {
+          // Даже если узел уже объект, мы его явно заменяем, чтобы сработал Proxy
+          acc[key] = { ...acc[key] };
         }
-      },
-          */
-      data: {},
-
-      setData: function () {
-        for (let source in this.initialData) {
-          this.data[source] = {
-            currEnt: this.initialData[source]?.currEnt || [],
-            allEnt: this.initialData[source]?.allEnt || [],
-          }
-        }
-
-        const self = this;
-
-        for (let source in this.initialData) {
-          const currentSource = source;
-          this.data[currentSource] = new Proxy(self.initialData[currentSource], {
-            set(target, property, value) {
-              target[property] = value;
-              return true;
-            },
-            get(target, property) {
-              return target[property]
-            },
-            deleteProperty(target, property) {
-              console.log(self.initialData[currentSource]);
-              delete target[property];
-              return true;
-            }
-          })
-        }
-      },
-
+        return acc[key];
+      }, obj);
     }
-    App.setData();
+    const state = new Proxy({}, {
+      set(target, prop, value) {
+        console.log(`Set triggered for ${prop}:`, value);
+        target[prop] = value;
+        //localStorage.setItem('setdeep', JSON.stringify(target));
+        return true;
+      }
+    });
+
+    setDeep(state, ['views', 'Source1', 'SliderView'], { currentIndex: 2 });
+    localStorage.setItem('setdeep', JSON.stringify(state));
+
+    console.log(state.views.Source1.SliderView.currentIndex); // 2
   </script>
 </head>
 

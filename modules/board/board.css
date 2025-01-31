@@ -144,6 +144,10 @@
 }
 
 .boardItem:has([lapsed]) {
+  border-color:rgb(159 0 0 / 26%);
+}
+
+.night .boardItem:has([lapsed]) {
   border-color:rgb(159 0 0 / 66%);
 }
 
@@ -175,11 +179,11 @@
 }
 
 .boardItem .itemLine[lapsed] {
-  color:rgb(75, 0, 124);
+  color:rgb(90, 30, 78);
 }
 
 .night .boardItem .itemLine[lapsed] {
-  color:white;
+  color:rgba(255, 255, 255, 0.798);
 }
 
 .boardItem .itemActions {

@@ -177,9 +177,10 @@ export const BoardView = function () {
     if (current && current.dataset) {
       delete current.dataset.current;
     }
-    this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
+    //this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
   };
 
+  /*
   this.setCurrentLineIndex = function (itemIndex, lineIndex) {
     if (this.state.lineIndexes[itemIndex]) {
       this.state.lineIndexes[itemIndex] = lineIndex;
@@ -188,11 +189,12 @@ export const BoardView = function () {
       this.state.lineIndexes = Object.assign({ [itemIndex]: lineIndex }, this.state.lineIndexes)
     }
   }
+  */
 
   this.setMode = function (e) {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       this.state.mode = e.target.value;
-      this.state.lineIndexes && delete this.state.lineIndexes;
+      //this.state.lineIndexes && delete this.state.lineIndexes;
       this.state.itemsInCols = {};
       this.render();
     });
@@ -212,23 +214,10 @@ export const BoardView = function () {
         } else {
           delete this.state.itemsInCols[item.dataset.originalIndex];
         }
-        this.state.itemsInCols = this.state.itemsInCols;
+        this.state.selfUpdate = !this.state.selfUpdate
       }
     }
   };
-/*
-  state : {
-    lapses : {
-      'source' : {
-        12 : [1, 2],
-        2 : [2]
-      },
-      'source2' : {
-
-      }
-    }
-  }
-*/  
 
   this.setLapses = function (e) {
     const badItems = this.failedCol.querySelectorAll('.boardItem');
@@ -237,59 +226,23 @@ export const BoardView = function () {
       this.state.removedItems.push(parseInt(item.dataset.originalIndex));
       delete this.state.itemsInCols[item.dataset.originalIndex];
     });
-    let stateLapses = {};
-    if (this.state.lapses && this.state.lapses[Application.state.currentSource]) {
-      stateLapses = this.state.lapses[Application.state.currentSource];
-    }
     badItems.forEach(item => {
       const index = parseInt(item.dataset.originalIndex);
       const lapsedSideOfItem = parseInt(item.querySelector('[data-current]').dataset.originalIndex);
-      if (index in stateLapses) {
-        const lapsedSidesInState = stateLapses[index];
+      if (index in this.state.lapses) {
+        const lapsedSidesInState = this.state.lapses[index];
         if (!lapsedSidesInState.includes(lapsedSideOfItem)) {
           lapsedSidesInState.push(lapsedSideOfItem);
         }
       } else {
-        stateLapses[index] = [lapsedSideOfItem];
+        this.state.lapses[index] = [lapsedSideOfItem];
       }
       delete this.state.itemsInCols[item.dataset.originalIndex];
     });
-    const target = this.state.lapses || {};
-    this.state.lapses = Object.assign(target, {
-      [Application.state.currentSource] : stateLapses
-    });
-    this.state.removedItems = this.state.removedItems;
-    this.state.itemsInCols = this.state.itemsInCols;
+    this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
   };
 
-/*
-сет
-  - из зеленой колонки все удаляются (выучили), признак колонки тоже стирается в статусе
-  - из красной колонки в статус лапсы сорса записываются индексы и верхнии линии,
-    стирается признак колонки (пойдут наверх при рисовке)
-  - запись в хранилище, перерисовка. 
-  - при перерисовке все лапсы рисуются наверху и помечены стилями через атрибуты lapsed 
-    у всех линий, где ошибся
-
-фикс
-  - фиксятся лишь те лапснутые, что в зеленой колонке
-  - все нелапснутые остаются на месте 
-  - у лапснутых стираем из статуса индексы линий или все объекты (если одна линия),
-    ориентируемся ТОЛЬКО на верхнюю
-  - при перерисовке меняется только дизайн
-*/
-/*
-  lapses : {
-    'source' : {
-      12 : [1, 2],
-      2 : [2]
-    }
-  }
-*/
-//TODO: при фильтрации лапсы в хранилище стираются
-//TODO: не сохраняются айтемы в центральной колонке
-//TODO: простой переход в стади мод
   this.fixLapses = function (e) {
     [...this.goodCol.querySelectorAll('.boardItem:not([lapsed])')].forEach(item => {
       this.state.removedItems.push(parseInt(item.dataset.originalIndex));
@@ -297,32 +250,22 @@ export const BoardView = function () {
     });
     const lapsedItems = this.goodCol.querySelectorAll('.boardItem:has([lapsed])');
     if (!lapsedItems.length) return;
-    //remove from state lapses
-    let stateLapses = {};
-    if (this.state.lapses && this.state.lapses[Application.state.currentSource]) {
-      stateLapses = this.state.lapses[Application.state.currentSource];
-    }
     [...lapsedItems].forEach(item => {
       const index = item.dataset.originalIndex;
       const lapsedSideOfItem = parseInt(item.querySelector('[data-current]').dataset.originalIndex);
-      if (index in stateLapses) {
-        let lapsedSidesInState = stateLapses[index];
+      if (index in this.state.lapses) {
+        let lapsedSidesInState = this.state.lapses[index];
         if (lapsedSidesInState.includes(lapsedSideOfItem)) {
           lapsedSidesInState = lapsedSidesInState.filter(o => o != lapsedSideOfItem);
           if (!lapsedSidesInState.length) {
-            delete stateLapses[index];
+            delete this.state.lapses[index];
           }
           this.state.removedItems.push(parseInt(item.dataset.originalIndex));
           delete this.state.itemsInCols[item.dataset.originalIndex];
         }
       } 
     });
-    const target = this.state.lapses || {};
-    this.state.lapses = Object.assign(target, {
-      [Application.state.currentSource] : stateLapses
-    });    
-    this.state.itemsInCols = this.state.itemsInCols;
-    this.state.removedItems = this.state.removedItems;
+    this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
   };
 
@@ -490,8 +433,8 @@ export const BoardView = function () {
   this.renderItem = function (entry, mode, stateLapses) {
     const lines = entry.lines;
     const lRoles = DataFactory.LINE_ROLE;
-    const currentLineIndex = this.state.lineIndexes && this.state.lineIndexes[entry.originalIndex] ?
-      this.state.lineIndexes[entry.originalIndex] : null;
+    //const currentLineIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
+    const currentLineIndex = null;
     let currentIndex = currentLineIndex;
     const reading = lines.find(line => line.role == lRoles.reading);
     //const others = lines.filter(line => line.role !== lRoles.reading);
@@ -512,7 +455,7 @@ export const BoardView = function () {
           currentIndex = shuffleArray(others)[0].originalIndex;
         case 'original':
         default:
-          currentIndex = others[0].originalIndex || lines[0].originalIndex;
+          currentIndex = others[0].originalIndex ?? lines[0].originalIndex;
       }
     }
     if (currentIndex == null) {
@@ -521,7 +464,7 @@ export const BoardView = function () {
     const entryActions = `
     <div class="itemActions">
       <div class="itemAction removeItem">✖</div>
-      <div class="lineCounter">${entry.lines.length}</div>
+      <!-- <div class="lineCounter">${entry.lines.length}</div> -->
       <div class="itemAction expandLine">⇕</div>
       <div class="itemAction speakLine">▶</div>
       <div class="itemAction reading">${reading ? reading.text : ''}</div>
@@ -544,7 +487,7 @@ export const BoardView = function () {
     const entries = this.data.entries;
     const mode = this.state.mode || 'original';
     const removedItems = this.state.removedItems || [];
-    const stateLapses = this.state.lapses[Application.state.currentSource];
+    const stateLapses = this.state.lapses;
     entries.filter(en => !removedItems.includes(en.originalIndex)).forEach(entry => {
       const html = this.renderItem(entry, mode, stateLapses);
       const stContainer = this.state.itemsInCols[entry.originalIndex] ? this.state.itemsInCols[entry.originalIndex] : null;
@@ -552,12 +495,13 @@ export const BoardView = function () {
       container.insertAdjacentHTML('beforeend', html);
     });
   };
-
+  /*
   this.handleStateChange = function (newState, prop, value) {
     if (prop == 'mode') {
-      delete this.state.lineIndexes;
+      this.state.lineIndexes = [];
     }
   };
+  */
 
   this.reset = function (resetAll) {
     this.data = {};
@@ -568,11 +512,8 @@ export const BoardView = function () {
     if (resetAll) {
       this.state.removedItems = [];
       this.state.itemsInCols = {};
-      if (this.state.lapses && this.state.lapses[Application.state.currentSource]) {
-        this.state.lapses[Application.state.currentSource] = {}
-      }
       this.state.lapses = {};
-      this.state.lineIndexes && delete this.state.lineIndexes;
+      //this.state.lineIndexes = []
       this.studyModeEl.checked = false;
     }
   };
@@ -594,21 +535,10 @@ export const BoardView = function () {
         op.selected = op.value == this.state.mode;
       })
     }
-    if (!this.state.lineIndexes) {
-      this.state.lineIndexes = [];
-    }
-    if (!this.state.itemsInCols) {
-      this.state.itemsInCols = {};
-    }
-    if (!this.state.removedItems) {
-      this.state.removedItems = [];
-    }
-    if (!this.state.lapses || !this.state.lapses[Application.state.currentSource]) {
-      this.state.lapses = {
-        [Application.state.currentSource] : {}
-      };
-    }
-
+    //this.state.lineIndexes ??= [];
+    this.state.itemsInCols ??= {};
+    this.state.removedItems ??= [];
+    this.state.lapses ??= {};
     this.renderBoard();
 
     if (!this.renderedEventSet) {

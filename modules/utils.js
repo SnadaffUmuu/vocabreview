@@ -11,6 +11,21 @@
   pageLevelSection: /\[(.*)\]((.*))?/u,
 }
 
+export function setDeep(obj, path, value) {
+  path.reduce((acc, key, index) => {
+    if (index === path.length - 1) {
+      acc[key] = value; 
+    } else {
+      //acc[key] = { ...acc[key] };
+      if (!(key in acc)) {
+        acc[key] = {};
+      }
+    } 
+    return acc[key];
+  }, obj);
+  obj.selfUpdate = !obj.selfUpdate; 
+}
+
 export function createPlaceholder (el) {
     const placeholder = document.createElement("div");
     placeholder.classList.add("placeholder");
