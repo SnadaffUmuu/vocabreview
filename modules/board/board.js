@@ -75,6 +75,7 @@ export const BoardView = function () {
     if (!e.target.classList.contains('itemDroppableContainer')
       && (!e.target.id || !e.target.id == 'studyMode')) return;
     [...this.element.querySelectorAll('.menuExpanded')].forEach(item => {
+      /*
       item.querySelectorAll('.itemLine').forEach(line => {
         if (!line.dataset.current 
           && line.dataset.originalIndex == item.dataset.upperLineIndex) {
@@ -84,6 +85,7 @@ export const BoardView = function () {
             delete line.dataset.current
         }
       })
+      */
       item.classList.remove('lineExpanded');
       item.classList.remove('menuExpanded');
       item.style.top = 'unset';
@@ -177,33 +179,31 @@ export const BoardView = function () {
     if (current && current.dataset) {
       delete current.dataset.current;
     }
-    //this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
+    this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
   };
 
-  /*
   this.setCurrentLineIndex = function (itemIndex, lineIndex) {
     if (this.state.lineIndexes[itemIndex]) {
       this.state.lineIndexes[itemIndex] = lineIndex;
-      this.state.lineIndexes = this.state.lineIndexes;
+      this.state.selfUpdate = !this.state.selfUpdate;
     } else {
       this.state.lineIndexes = Object.assign({ [itemIndex]: lineIndex }, this.state.lineIndexes)
     }
   }
-  */
 
   this.setMode = function (e) {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       this.state.mode = e.target.value;
-      //this.state.lineIndexes && delete this.state.lineIndexes;
-      this.state.itemsInCols = {};
+      delete this.state.lineIndexes;
+      //this.state.itemsInCols = {};
       this.render();
     });
   };
 
-  this.setItemInCol = function (e, touch) {
-    if (touch) {
-      const elFromPoint = document.elementFromPoint(touch.clientX, touch.clientY);
-      if (Application.views.MenuView.element.contains(elFromPoint)) {
+  this.setItemInCol = function (e, elementFromPoint) {
+    if (elementFromPoint) {
+      //const elFromPoint = document.elementFromPoint(x, y);
+      if (Application.views.MenuView.element.contains(elementFromPoint)) {
         this.removeItem(e);
       } else {
         const item = this.getDragItem(e.target);
@@ -221,7 +221,7 @@ export const BoardView = function () {
 
   this.setLapses = function (e) {
     const badItems = this.failedCol.querySelectorAll('.boardItem');
-    if (!badItems.length) return;
+    //if (!badItems.length) return;
     [...this.goodCol.querySelectorAll('.boardItem')].forEach(item => {
       this.state.removedItems.push(parseInt(item.dataset.originalIndex));
       delete this.state.itemsInCols[item.dataset.originalIndex];
@@ -244,23 +244,25 @@ export const BoardView = function () {
   };
 
   this.fixLapses = function (e) {
-    [...this.goodCol.querySelectorAll('.boardItem:not([lapsed])')].forEach(item => {
+    [...this.goodCol.querySelectorAll('.boardItem:not(:has([lapsed]))')].forEach(item => {
       this.state.removedItems.push(parseInt(item.dataset.originalIndex));
       delete this.state.itemsInCols[item.dataset.originalIndex];
     });
     const lapsedItems = this.goodCol.querySelectorAll('.boardItem:has([lapsed])');
     if (!lapsedItems.length) return;
     [...lapsedItems].forEach(item => {
-      const index = item.dataset.originalIndex;
+      const itemIndex = item.dataset.originalIndex;
       const lapsedSideOfItem = parseInt(item.querySelector('[data-current]').dataset.originalIndex);
-      if (index in this.state.lapses) {
-        let lapsedSidesInState = this.state.lapses[index];
+      if (itemIndex in this.state.lapses) {
+        let lapsedSidesInState = this.state.lapses[itemIndex];
         if (lapsedSidesInState.includes(lapsedSideOfItem)) {
           lapsedSidesInState = lapsedSidesInState.filter(o => o != lapsedSideOfItem);
           if (!lapsedSidesInState.length) {
-            delete this.state.lapses[index];
+            delete this.state.lapses[itemIndex];
+            this.state.removedItems.push(parseInt(item.dataset.originalIndex));
+          } else {
+            this.state.lapses[itemIndex] = lapsedSidesInState;
           }
-          this.state.removedItems.push(parseInt(item.dataset.originalIndex));
           delete this.state.itemsInCols[item.dataset.originalIndex];
         }
       } 
@@ -339,7 +341,7 @@ export const BoardView = function () {
     this.draggedItem && this.draggedItem.classList.remove("dragging");
     if (this.draggedItem && this.placeholder && this.placeholder.parentNode) {
       this.placeholder.parentNode.insertBefore(this.draggedItem, this.placeholder);
-      this.setItemInCol(e, this.lastMove);
+      this.setItemInCol(e, document.elementFromPoint(this.lastMove.clientX, this.lastMove.clientY));
 
       this.placeholder.remove();
       this.draggedItem.style.left = "";
@@ -360,7 +362,7 @@ export const BoardView = function () {
   this.itemDragEnd = function (e) {
     if (this.isStudyMode()) return;
     e.target.classList.remove('dragging');
-    this.setItemInCol(e);
+    this.setItemInCol(e, document.elementFromPoint(e.clientX, e.clientY));
   }
 
   this.setDragOver = function (e) {
@@ -433,8 +435,8 @@ export const BoardView = function () {
   this.renderItem = function (entry, mode, stateLapses) {
     const lines = entry.lines;
     const lRoles = DataFactory.LINE_ROLE;
-    //const currentLineIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
-    const currentLineIndex = null;
+    const currentLineIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
+    //const currentLineIndex = null;
     let currentIndex = currentLineIndex;
     const reading = lines.find(line => line.role == lRoles.reading);
     //const others = lines.filter(line => line.role !== lRoles.reading);
@@ -495,13 +497,12 @@ export const BoardView = function () {
       container.insertAdjacentHTML('beforeend', html);
     });
   };
-  /*
+
   this.handleStateChange = function (newState, prop, value) {
     if (prop == 'mode') {
       this.state.lineIndexes = [];
     }
   };
-  */
 
   this.reset = function (resetAll) {
     this.data = {};
@@ -513,7 +514,7 @@ export const BoardView = function () {
       this.state.removedItems = [];
       this.state.itemsInCols = {};
       this.state.lapses = {};
-      //this.state.lineIndexes = []
+      this.state.lineIndexes = {};
       this.studyModeEl.checked = false;
     }
   };
@@ -535,7 +536,7 @@ export const BoardView = function () {
         op.selected = op.value == this.state.mode;
       })
     }
-    //this.state.lineIndexes ??= [];
+    this.state.lineIndexes ??= {};
     this.state.itemsInCols ??= {};
     this.state.removedItems ??= [];
     this.state.lapses ??= {};
