@@ -29,16 +29,16 @@
 #addColumn {
   padding:5px 7px;
   border-radius: 5px;
-  border:1px solid gray;
+  border:1px solid var(--tableAddColBorder);
   cursor: pointer;
 }
 
 #addColumn:hover {
-  border-color: red
+  border-color: var(--tableAddColBorderHover);
 }
 
 #addColumn:active {
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--tableAddColBorderActive);
 }
 
 #table {
@@ -55,7 +55,7 @@
 }
 
 #table td, #table th {
-  border:1px solid gray;
+  border:1px solid var(--tableCellBorder);
 }
 
 #table th > div,
@@ -110,7 +110,7 @@
 
 #table td.over,
 #table td.over > div {
-  background: rgba(154, 255, 154, 0.5);
+  background: var(--tableDragOverCellBg)
 }
 
 #table td.hidden .cellContentDraggable {
@@ -127,7 +127,7 @@
 #table td .cellContentDraggable.dragging,
 #table td .rowDrag.dragging {
   opacity: 0.8;
-  background-color: rgba(135, 207, 235, 0.63) !important;
+  background-color: var(--tableDraggingBg) !important;
   cursor: grabbing;
   height: 50px !important;
   width:100px !important;
@@ -163,8 +163,8 @@
 */
 
 #table .placeholder {
-  border: 2px dashed #666;
-  background-color: #f0f0f0;
+  border: 2px dashed var(--tablePlaceholderBorder);
+  background-color: var(--tablePlaceholderBg);
   opacity: 0.5;
   padding:10px;
 }
@@ -214,10 +214,10 @@
   position: fixed;
   padding:10px;
   z-index: 1000;
-  background:#c5c5c5;
+  background:var(--tableInfoPopupBg);
   width:250px;
   font-size:14px;
-  color:#00005a;
+  color:var(--tableInfoPopupTextColor);
 }
 
 .info-popup .close {
@@ -225,7 +225,7 @@
   height:8px;
   top:2px;
   right:2px;
-  background: gray;
+  background: var(--tableInfoPopupCloseElBg);
   cursor: pointer;
   position: absolute;
 }
@@ -242,39 +242,39 @@
 }
 
 #table [data-review-level="100"]::after {
-  color: #ffffcb;
+  color: var(--tableRevewLevelTextColor);
   opacity: 1;
 }
 
 #table [data-review-level="200"]::after {
-  color: #ffffcb;
+  color: var(--tableRevewLevelTextColor);
   opacity: 1;
   content: '••'
 }
 
 #table [data-review-level="300"]::after {
-  color: #ffffcb;
+  color: var(--tableRevewLevelTextColor);
   opacity: 1;
   content: '•••'
 }
 
 #table [data-review-level="1"]::after {
   opacity: 1;
-  color:whitesmoke;
+  color:var(--tableRevewLevelTextColor1);
 }
 
 #table [data-review-level="2"]::after {
   opacity: 1;
-  color:whitesmoke;
+  color:var(--tableRevewLevelTextColor1);
 }
 
 #table [data-review-level="3"]::after {
   opacity: 1;
-  color:whitesmoke;
+  color:var(--tableRevewLevelTextColor1);
 }
 
 #table [data-is-reading] {
-  box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 0.158) inset;
-  -webkit-box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 0.158) inset;
+  box-shadow: 0px 0px 5px 2px var(--tableReadableCellShadow) inset;
+  -webkit-box-shadow: 0px 0px 5px 2px var(--tableReadableCellShadow) inset;
   color: var(--text-color-reading) !important;
 }

@@ -8,7 +8,7 @@
 #menuContainer:has(#menu.isOpened) {
   right:0;
   bottom:0;
-  background: rgba(85, 74, 123, 0.24);
+  background: var(--menuOpenedBg)
 }
 
 #menuTrigger {
@@ -29,9 +29,9 @@
   overflow:scroll;
   transform: translateX(-100%);
   padding:50px 5px 5px;
-  background: #8a2134;
+  background: var(--menuBg);
   font-size:13px;
-  color:#ffffff;
+  color:var(--menuTextColor);
 }
 
 #menu.isOpened {

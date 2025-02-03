@@ -82,30 +82,18 @@
 
 #boardGoodCol {
   justify-content: flex-start;
-  border-color:rgb(146 204 179);
-}
-
-.night #boardGoodCol {
-  border-color:rgb(0 119 109);
+  border-color: var(--boardGoodColBorder)
 }
 
 #boardFailedCol {
   justify-content: flex-end;
-  border-color:rgb(219 146 146);
-}
-
-.night #boardFailedCol {
-  border-color:rgb(159 0 0);
+  border-color:var(--boardFailedColBorder);
 }
 
 #boardLearnCol {
   flex: 1 0 40vw;
   justify-content: center;
-  border-color:rgb(146, 180, 219);
-}
-
-.night #boardLearnCol {
-  border-color:rgb(85, 126, 160);
+  border-color:var(--boardLearnColBorder);
 }
 
 .boardItem,
@@ -120,7 +108,7 @@
 }
 
 #boardView .placeholder {
-  background: rgba(130, 200, 205, 0.3);
+  background: var(--boardItemPlaceholder);
   opacity: 0.7;
   font-size:15px;
   overflow: hidden;
@@ -130,7 +118,7 @@
 }
 
 .boardItem {
-  background: #fbf2f2;
+  background: var(--boardItem);
 }
 
 .boardItem.dragging {
@@ -139,16 +127,8 @@
   z-index: 1000;
 }
 
-.night .boardItem {
-  background: #320008;
-}
-
 .boardItem:has([lapsed]) {
-  border-color:rgb(159 0 0 / 26%);
-}
-
-.night .boardItem:has([lapsed]) {
-  border-color:rgb(159 0 0 / 66%);
+  border-color:var(--boardItemLapsedBorder);
 }
 
 .boardItem .itemLine {
@@ -179,11 +159,7 @@
 }
 
 .boardItem .itemLine[lapsed] {
-  color:rgb(90, 30, 78);
-}
-
-.night .boardItem .itemLine[lapsed] {
-  color:rgba(255, 255, 255, 0.798);
+  color:var(--boardItemLapsedLineTextColor);
 }
 
 .boardItem .itemActions {
@@ -215,7 +191,7 @@
 }
 
 .boardItem .removeItem {
-  color:red;
+  color:var(--boardRemoveItemTextColor);
   font-weight: bold;
 }
 
@@ -252,12 +228,8 @@
   left:10px;
   right:20px;
   z-index:1000;
-  border: 1px solid#a6cecf;
+  border: 1px solid var(--boardItemMenuExpandedBorder);
   padding:7px 10px 3px;
-}
-
-.night .boardItem.menuExpanded {
-  border: 1px solid#6b526d;
 }
 
 body:has(.menuExpanded) {

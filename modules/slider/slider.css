@@ -68,6 +68,6 @@
   position: absolute;
   top: 5px;
   right: 10px;
-  color: #4242fc;
+  color: var(--currentSlideIndexTextColor);
   z-index: 400;
 }

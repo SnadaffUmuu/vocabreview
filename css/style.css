@@ -21,7 +21,42 @@
   --preloader-color: #2525c2;
   --preloader-bg: #9899c244;
 
-  
+  --menuOpenedBg: rgba(85, 74, 123, 0.24);
+  --menuBg: #8a2134;
+  --menuTextColor: white;
+
+  --boardGoodColBorder: #92ccb3;
+  --boardFailedColBorder: #db9292;
+  --boardLearnColBorder: #92b4db;
+  --boardItemPlaceholder: rgba(130, 200, 205, 0.3);
+  --boardItem:#fbf2f2;
+  --boardItemLapsedBorder:rgba(159, 0, 0, 0.26);
+  --boardItemLapsedLineTextColor:rgb(90, 30, 78);
+  --boardRemoveItemTextColor:#e6004d;
+  --boardItemMenuExpandedBorder: #a6cecf;
+
+  --slideInfoBg: #dadada;
+  --slideInfoColor: var(--text-color);
+  --slideTagGrammarBg: #dcfeff;
+  --slideTagOnomatBg: #f1f0e6;
+  --slideTagTermShadow: #b1a9aa;
+  --slideReadableTextBorder: rgba(56, 119, 255, 0.514);
+  --currentSlideIndexTextColor: #4242fc;
+
+  --tableAddColBorder: gray;
+  --tableAddColBorderHover: #e6004d;
+  --tableAddColBorderActive: rgba(255, 255, 255, 0.5);
+  --tableCellBorder: gray;
+  --tableReadableCellShadow: rgba(255, 0, 0, 0.158);
+  --tableDragOverCellBg: rgba(154, 255, 154, 0.5);
+  --tableDraggingBg: rgba(135, 207, 235, 0.63);
+  --tablePlaceholderBorder: #666;
+  --tablePlaceholderBg: #f0f0f0;
+  --tableInfoPopupBg:#c5c5c5;
+  --tableInfoPopupTextColor:#00005a;
+  --tableInfoPopupCloseElBg:gray;
+  --tableRevewLevelTextColor:#ffffcb;
+  --tableRevewLevelTextColor1:whitesmoke;
 }
 
 body.night {
@@ -32,6 +67,20 @@ body.night {
   --icon-speakable-bg: #712e52;
   --icon-expand-border: #6b526d;
   --appheader-title-color: #daa7e5;
+
+  --boardGoodColBorder: #00776d;
+  --boardFailedColBorder: #9f0000;
+  --boardLearnCol: #557ea0;
+  --boardItem:#320008;
+  --boardItemLapsedBorder:rgb(159 0 0 / 66%);
+  --boardItemLapsedLineTextColor:rgba(255, 255, 255, 0.798);
+  --boardItemMenuExpandedBorder: #6b526d;
+
+  --slideInfoBg: #555;
+  --slideInfoColor: #000;
+  --slideTagGrammarBg: #005266;
+  --slideTagOnomatBg: #5a5100;
+  --slideTagTermShadow: #a1001e;
 }
 
 body {
@@ -41,10 +90,6 @@ body {
   font-size: 30px;
   background: var(--bg);
   font-family: sans-serif;
-}
-
-.night {
-  background: var(--bg);
   color: var(--text-color);
 }
 
