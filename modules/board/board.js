@@ -185,10 +185,10 @@ export const BoardView = function () {
   this.setCurrentLineIndex = function (itemIndex, lineIndex) {
     if (this.state.lineIndexes[itemIndex]) {
       this.state.lineIndexes[itemIndex] = lineIndex;
-      this.state.selfUpdate = !this.state.selfUpdate;
     } else {
       this.state.lineIndexes = Object.assign({ [itemIndex]: lineIndex }, this.state.lineIndexes)
     }
+    this.state.selfUpdate = !this.state.selfUpdate;
   }
 
   this.setMode = function (e) {
