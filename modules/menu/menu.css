@@ -21,7 +21,7 @@
 
 #menu {
   z-index: 300;
-  max-width: 70%;
+  width: 80vw;
   transition: transform 0.5s;
   position: fixed;
   top:0;

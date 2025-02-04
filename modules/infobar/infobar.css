@@ -2,7 +2,7 @@
   position: fixed;
   top:0;
   left:70px;
-  right:5px;
+  width: calc(100vw - 70px);
   display: flex;
   flex-flow: row nowrap;
   font-size:18px;

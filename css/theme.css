@@ -1,32 +1,22 @@
-:root[data-theme="light"] {
-  --text: #022150;
-  --bg: #eee7e7;
-  --primary: #3c4c5d;
-  --secondary: #9795bb;
-  --accent: #625686;
+:root {
 
-  --linearPrimarySecondary: linear-gradient(#3c4c5d, #9795bb);
-  --linearPrimaryAccent: linear-gradient(#3c4c5d, #625686);
-  --linearSecondaryAccent: linear-gradient(#9795bb, #625686);
-  --radialPrimarySecondary: radial-gradient(#3c4c5d, #9795bb);
-  --radialPrimaryAccent: radial-gradient(#3c4c5d, #625686);
-  --radialSecondaryAccent: radial-gradient(#9795bb, #625686);
+  --color1: #F3F2F4;
+  --color2: #720842;
+  --color3: #C6D8DE;
+  --color4: #75919C;
+  --color5: #521320;
+  --color6: #220E24;
 
+  --bg: var(--color1);
+  --text-color: var(--color2);
 
+  --button-secondary: var(--color3);
 }
 
-:root[data-theme="dark"] {
-  --text: #c7c9cc;
-  --bg: #210202;
-  --primary: #a3b3c4;
-  --secondary: #46446b;
-  --accent: #8478a9;
+body.night {
 
-  --linearPrimarySecondary: linear-gradient(#a2b2c3, #46446a);
-  --linearPrimaryAccent: linear-gradient(#a2b2c3, #8579a9);
-  --linearSecondaryAccent: linear-gradient(#46446a, #8579a9);
-  --radialPrimarySecondary: radial-gradient(#a2b2c3, #46446a);
-  --radialPrimaryAccent: radial-gradient(#a2b2c3, #8579a9);
-  --radialSecondaryAccent: radial-gradient(#46446a, #8579a9);
+  --bg: var(--color6);
+  --text-color: var(--color4);
 
+  --button-secondary: var(--color5);
 }

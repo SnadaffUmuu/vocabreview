@@ -7,19 +7,21 @@
 @import url("../modules/data-view/data-view.css");
 @import url("../modules/preloader/preloader.css");
 @import url("../modules/board/board.css");
-
-/*@import url("theme.css")*/
+/* @import url("./theme.css"); */
 
 :root {
 
   --bg: #f1e6e8;
-  --text-color: #022150;
+  --text-color: #141f76;
   --table-text-color-speakable: #2525c2;
   --table-text-color-reading: #2525c293;
-  --icon-speakable-bg: #ffffde;
+  --icon-speakable-bg: #dcd6f5;
   --appheader-title-text-color: #1e20c0;
   --preloader-color: #2525c2;
   --preloader-bg: #9899c244;
+
+  --button-primary: #fbf2f2;
+  --button-secondary: #c4bfca;
 
   --menuOpenedBg: rgba(85, 74, 123, 0.24);
   --menuBg: #8a2134;
@@ -29,19 +31,20 @@
   --boardFailedColBorder: #db9292;
   --boardLearnColBorder: #92b4db;
   --boardItemPlaceholder: rgba(130, 200, 205, 0.3);
-  --boardItem:#fbf2f2;
+  --boardItem:var(--button-primary);
   --boardItemLapsedBorder:rgba(159, 0, 0, 0.26);
   --boardItemLapsedLineTextColor:rgb(90, 30, 78);
   --boardRemoveItemTextColor:#e6004d;
   --boardItemMenuExpandedBorder: #a6cecf;
 
-  --slideInfoBg: #dadada;
+  --slideInfoBg: #c4bfca;
   --slideInfoColor: var(--text-color);
   --slideTagGrammarBg: #dcfeff;
   --slideTagOnomatBg: #f1f0e6;
   --slideTagTermShadow: #b1a9aa;
   --slideReadableTextBorder: rgba(56, 119, 255, 0.514);
-  --currentSlideIndexTextColor: #4242fc;
+  --slideSpeakableLineBg: #c4bfca;
+  --currentSlideIndexTextColor: var(--text-color);
 
   --tableAddColBorder: gray;
   --tableAddColBorderHover: #e6004d;
@@ -57,6 +60,8 @@
   --tableInfoPopupCloseElBg:gray;
   --tableRevewLevelTextColor:#ffffcb;
   --tableRevewLevelTextColor1:whitesmoke;
+
+  --input-bg:#dfd8e7;
 }
 
 body.night {
@@ -65,21 +70,28 @@ body.night {
   --table-text-color-speakable: #f7d4ff;
   --table-text-color-reading: #f7d4ff6e;
   --icon-speakable-bg: #712e52;
-  --appheader-title-text-color: #daa7e5;
+  --appheader-title-text-color: var(--text-color);
+
+  --button-primary:#320008;
+  --button-secondary:#7b848e;
 
   --boardGoodColBorder: #00776d;
   --boardFailedColBorder: #9f0000;
   --boardLearnCol: #557ea0;
-  --boardItem:#320008;
+  --boardItem:var(--button-primary);
   --boardItemLapsedBorder:rgb(159 0 0 / 66%);
   --boardItemLapsedLineTextColor:rgba(255, 255, 255, 0.798);
   --boardItemMenuExpandedBorder: #6b526d;
+  --currentSlideIndexTextColor: var(--text-color);
 
-  --slideInfoBg: #555;
-  --slideInfoColor: #000;
+  --slideInfoBg: #3b0000;
+  --slideInfoColor: var(--text-color);
   --slideTagGrammarBg: #005266;
   --slideTagOnomatBg: #5a5100;
   --slideTagTermShadow: #a1001e;
+  --slideSpeakableLineBg: #3b0000;
+
+  --input-bg:#aebdcc;
 }
 
 body {
@@ -107,7 +119,8 @@ body {
 
 select {
   height: 23px;
-  border: 0;
+  box-sizing: border-box;
+  background:var(--input-bg);
 }
 
 input[type="checkbox"] {
@@ -115,4 +128,18 @@ input[type="checkbox"] {
   width: 23px;
   height:23px;
   vertical-align: middle;
+  
+}
+
+.night input[type="checkbox"] {
+  filter: sepia(50%) brightness(70%) hue-rotate(170deg) saturate(70%) contrast(100%);
+  accent-color:var(--input-bg);
+}
+
+button {
+  height:25px;
+  border:0;
+  border-radius: 5px;
+  padding: 3px 10px;
+  background:var(--button-secondary);
 }
