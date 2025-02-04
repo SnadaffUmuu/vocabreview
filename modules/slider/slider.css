@@ -7,22 +7,23 @@
 }
 
 #sliderActions {
-  flex: 0 0 40px;
-  font-size: 18px;
-  padding-top: 10px;
-  padding-left:10px;
+  flex: 0 0 auto;
+  font-size: 13px;
+  padding:5px;
   box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0 5px;
+  justify-content: space-evenly;
 }
 
 #randomSlidesOrder {
-  width: 20px;
-  height: 20px;
-  margin: 0;
   vertical-align: bottom;
 }
 
-#cardMode {
-  height: 20px;
+#currentSlideIndex {
+  color: var(--currentSlideIndexTextColor);
+  font-size:20px;
 }
 
 /*TODO: fix*/
@@ -62,12 +63,4 @@
 
 .keen-slider:not([data-keen-slider-disabled])[data-keen-slider-v] {
   flex-wrap: wrap
-}
-
-#currentSlideIndex {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  color: var(--currentSlideIndexTextColor);
-  z-index: 400;
 }

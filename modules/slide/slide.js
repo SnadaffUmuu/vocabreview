@@ -60,7 +60,7 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     upperSide.classList.add('current');
     shuffleArray(sides).forEach(o => sidesContainer.appendChild(o));
     if (readingLine) {
-      element.insertAdjacentHTML('afterBegin', `
+      element.insertAdjacentHTML('beforeend', `
         <div class="slideReading">
           ${readingLine.text}
         </div>`);

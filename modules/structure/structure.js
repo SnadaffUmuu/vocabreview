@@ -7,7 +7,6 @@ export const StructureView = function () {
   this.treeEl = null;
   this.resetTreeEl = null;
   this.events = {
-    'click #structureTrigger': 'toggleTree',
     'click #toggleAll': 'toggleAll',
     'click #filterCollection': 'filterCollection',
   };
@@ -66,10 +65,6 @@ export const StructureView = function () {
     });
   }
 
-  this.toggleTree = function () {
-    this.treeEl.style.display = this.treeEl.style.display == 'none' ? '' : 'none'
-  }
-
   this.getCheckboxHtml = function (value) {
     const isChecked = !this.nonChecked && this.data.filteredEntries.find(e => e.section == value);
     return `<input class="treeCheckbox" ${isChecked ? 'checked' : ''} type="checkbox" value="${value}">`
@@ -120,7 +115,6 @@ export const StructureView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
-    this.toggleEl = document.getElementById('structureTrigger');
     this.treeEl = document.getElementById('structureTree');
     this.toggleAll = document.getElementById('toggleAll');
     this.render();

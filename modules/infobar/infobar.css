@@ -36,7 +36,7 @@
 #currentSource {
   flex: 1 1 auto;
   text-align: center;
-  color:var(--appheader-title-color);
+  color:var(--appheader-title-text-color);
   align-self: center;
   overflow:hidden;
   white-space:nowrap;

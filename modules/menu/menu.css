@@ -26,7 +26,7 @@
   position: fixed;
   top:0;
   bottom:0;
-  overflow:scroll;
+  overflow:auto;
   transform: translateX(-100%);
   padding:50px 5px 5px;
   background: var(--menuBg);
@@ -38,11 +38,7 @@
   transform: translateX(0%);
 }
 
-#vocabSources {
-  margin-right: 10px;
-}
-
-#dataActions {
+#globalActions {
   position: absolute;
   right: 5px;
   left:65px;
@@ -50,4 +46,10 @@
   display: flex;
   flex-flow:row wrap;
   justify-content: space-evenly;
+}
+
+#dataActions {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 5px;
 }

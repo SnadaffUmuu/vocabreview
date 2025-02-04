@@ -2,10 +2,11 @@
   display: flex;
   align-items: stretch;
   justify-content: center;
+  flex-flow: column nowrap;
 }
 
 .slide-info {
-  position: absolute;
+  /* position: absolute; */
   top: 5px;
   left:10px;
   right:40px;
@@ -16,6 +17,7 @@
   border:0;
   padding:10px;
   box-sizing: border-box;
+  flex: 0 1 auto;
 }
 
 #sides-count {
@@ -33,11 +35,14 @@
 }
 
 .slideReading {
-  position: absolute;
-  bottom: 40px;
-  right:10px;
   font-size: 15px;
   padding:10px;
+  position: relative;
+  flex: 0 0 40px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .slideReading::after {
@@ -46,7 +51,6 @@
   top:0;left:0;right:0;bottom:0;
   background: var(--icon-speakable-bg);
   cursor:pointer;
-  border-radius: 10px;
 }
 
 .slideReading.revealed::after {

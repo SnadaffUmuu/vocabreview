@@ -1,3 +1,8 @@
+#structureActions {
+  padding-top:5px;
+  
+}
+
 #structure ul {
   padding:0 0 10px 10px;
   list-style-type: none;
@@ -9,9 +14,7 @@
 }
 
 .treeCheckbox {
-  margin:0;
   display:inline-block;
-  vertical-align: middle;
   height:20px;
   width:20px;
 }
