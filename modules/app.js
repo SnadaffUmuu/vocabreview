@@ -1,9 +1,8 @@
+import { View } from "./view.js";
+import { Router } from "./router.js";
 import { MenuView } from "./menu/menu.js";
 import { Slider } from "./slider/slider.js";
 import { DataView } from "./data-view/data-view.js";
-import { StructureView } from "./structure/structure.js";
-import { InfobarView } from "./infobar/infobar.js";
-import { View } from "./view.js";
 import { Element } from "./element.js";
 import { DataFactory } from "./data.js"
 import { DataTests } from "./data-view/data-tests.js"
@@ -13,13 +12,6 @@ import { SlideSide } from "./slide/slide-side.js";
 import { Slide } from "./slide/slide.js";
 import { BoardView } from "./board/board.js";
 import { setDeep } from "./utils.js";
-
-const APPLICATION_TYPE = {
-  CARDS: 'SLIDER',
-  TABLE: 'TABLE',
-  DATA: 'DATA',
-  BOARD: 'BOARD',
-}
 
 export const Application = {
   views: null,
@@ -91,7 +83,7 @@ export const Application = {
           if (!self.data[value]) {
             self.data[value] = new Proxy(
               self.initialData[value],
-              self.getSourceDataProxy(self, value)
+              self.getSourceDataProxy(self)
             )
           }
           Object.assign(self.data[value], self.initialData[value]);
@@ -105,15 +97,13 @@ export const Application = {
         return target[property]
       },
       deleteProperty(target, property) {
-        if (!(property in target)) {
-          console.log(`property not found: ${property}`);
-          return false;
-        }
-        delete target[property];
-        if ('currentSource' == property) {
-          self.saveToLocalStorage('review-state', self.defaultState);
-          for (let source in self.data) {
-            delete self.data[source].allEntries;
+        if (target[property]) {
+          delete target[property];
+          if ('currentSource' == property) {
+            self.saveToLocalStorage('review-state', self.defaultState);
+            for (let source in self.data) {
+              delete self.data[source]?.allEntries;
+            }
           }
         }
         return true;
@@ -121,30 +111,33 @@ export const Application = {
     });
   },
 
-  getSourceDataProxy: function (self, source) {
+  getSourceDataProxy: function (self) {
     return {
       set(target, property, value) {
         target[property] = value;
         if ('allEntries' == property) {
 
+          /*
           if (self.initialData[source]?.currentEntries) {
-            delete self.initialData[source].currentEntries;
+            delete self.initialData[source]?.currentEntries;
           }
+          */
 
           self.saveToLocalStorage('review-data', self.initialData);
 
           if (value.length > 100) {
-            const firstNode = self.data[source].structure[0].children ?
-              self.data[source].structure[0].children[0].id
-              : self.data[source].structure[0].id;
+            const firstNode = target.structure[0].children ?
+              target.structure[0].children[0].id
+              : target.structure[0].id;
 
-            self.initialData[source].currentEntries = value.filter(entry =>
+            target.currentEntries = value.filter(entry =>
               entry.section == firstNode).map(entry => entry.originalIndex);
 
-            self.saveToLocalStorage('review-data', self.initialData);
           } else {
-            self.initialData[source].currentEntries = value.map(entry => entry.originalIndex);
+            target.currentEntries = value.map(entry => entry.originalIndex);
           }
+          self.initialData[self.state.currentSource] = target;
+          self.saveToLocalStorage('review-data', self.initialData);
           Router.renderMenuView();
           //Router.renderCurrentView(true);
           Router.renderCurrentView();
@@ -160,25 +153,24 @@ export const Application = {
       get(target, property) {
         if (property == 'currentEntries') {
           return target.currentEntries?.length ?
-            self.initialData[source].allEntries.filter(entry =>
-              self.initialData[source]?.currentEntries.includes(entry.originalIndex)) : []
+            target.allEntries.filter(entry =>
+              target.currentEntries.includes(entry.originalIndex)) : []
         } else {
           return target[property]
         }
       },
       deleteProperty(target, property) {
-        if (!(property in target)) {
-          console.log(`property not found: ${property}`);
-          return false;
-        }
-        delete target[property];
-        if ('allEntries' == property) {
-          localStorage.removeItem('review-data');
-          delete self.initialData[source]?.currentEntries;
-          delete self.initialData[source]?.structure;
-          delete self.initialData[source]?.excludedEntries;
-          delete self.initialData[source]?.excludedLines;
-          Router.resetViews();
+        if (target[property]) {
+          delete target[property];
+          if ('allEntries' == property) {
+            localStorage.removeItem('review-data');
+            delete target.currentEntries;
+            delete target.structure;
+            delete target.excludedEntries;
+            delete target.excludedLines;
+            Router.resetViews();
+          }
+          self.initialData[self.state.currentSource] = target;
         }
         return true;
       }
@@ -219,7 +211,7 @@ export const Application = {
       const currentSource = source;
       this.data[currentSource] = new Proxy(
         self.initialData[currentSource],
-        this.getSourceDataProxy(self, source)
+        this.getSourceDataProxy(self)
       );
     }
   },
@@ -246,7 +238,7 @@ export const Application = {
   },
 
   changeSource: function (sourceName) {
-    if (!this.data[sourceName]) {
+    if (!this.initialData[sourceName]?.allEntries) {
       this.loadAndSetCurrentSource(sourceName);
     } else {
       Application.state.currentSource = sourceName;
@@ -262,15 +254,16 @@ export const Application = {
     request.open('GET', './vocab/' + name + '.txt?n=' + now, true);
     request.onload = function () {
       if (request.responseText) {
-        Application.currentRawData = request.responseText;
-        Application.state.currentSource = name;
+        this.currentRawData = request.responseText;
+        delete this.initialData[name];
+        this.state.currentSource = name;
       }
     }.bind(this);
     request.send();
   },
 
   reset: function () {
-    this.state.currentSource && delete this.state.currentSource
+    delete this.state.currentSource
     this.state.views = {}
   },
 
@@ -293,88 +286,6 @@ export const Application = {
   getCurrentSourceData: function () {
     return this.data[this.state.currentSource]
   },
-
-};
-
-const Router = {
-
-  applicationType: null,
-  currentView: null,
-
-  defineCurrentView: function (type) {
-    switch (type) {
-      case '':
-      case 'slider':
-        this.applicationType = APPLICATION_TYPE.SLIDER;
-        this.currentView = Application.views.SliderView;
-        break;
-      case 'table':
-        this.applicationType = APPLICATION_TYPE.TABLE;
-        this.currentView = Application.views.TableView;
-        break;
-      case 'data':
-        this.applicationType = APPLICATION_TYPE.DATA;
-        this.currentView = Application.views.DataView;
-        break;
-      case 'board':
-        this.applicationType = APPLICATION_TYPE.BOARD;
-        this.currentView = Application.views.BoardView;
-        break;
-    }
-  },
-
-  start: function () {
-    this.defineCurrentView(Application.state.appType ? Application.state.appType : '');
-    this.showMenuView();
-    this.showCurrentView();
-  },
-
-  switchView: function () {
-    this.currentView && this.currentView.remove();
-    this.defineCurrentView(Application.state.appType ? Application.state.appType : '');
-    this.showCurrentView();
-  },
-
-  showMenuView: async function () {
-    Application.views.MenuView.show();
-    Application.views.StructureView = await View.create(StructureView);
-    Application.views.StructureView.show();
-    Application.views.InfobarView = await View.create(InfobarView);
-    Application.views.InfobarView.show();
-  },
-
-  renderMenuView: function () {
-    Application.views.StructureView.render();
-    Application.views.InfobarView.render();
-  },
-
-  resetMenuView: function () {
-    Application.views.MenuView.reset();
-    Application.views.StructureView.reset();
-    Application.views.InfobarView.reset();
-  },
-
-  showCurrentView: function () {
-    if (!this.currentView || !this.currentView.show) {
-      console.log('current view is not found');
-      return;
-    }
-    this.currentView.show();
-  },
-
-  renderCurrentView: function (resetAll) {
-    this.currentView.render(resetAll)
-  },
-
-  resetCurrentView: function () {
-    this.currentView.reset()
-  },
-
-  resetViews: function () {
-    this.resetMenuView();
-    this.currentView.reset();
-    Application.views.MenuView.toggleMenu();
-  }
 
 };
 

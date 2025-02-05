@@ -19,9 +19,11 @@ SlideSide.prototype = Object.assign(Object.create(Element.prototype), {
     if (line.speakable) {
       element.dataset.reading = line.text;
     }
+    /*
     if (line.reading) {
       element.dataset.reading = line.reading;
     }
+    */
     if (line.role) {
       element.dataset.role = line.role;
     }

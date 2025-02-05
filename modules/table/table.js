@@ -145,7 +145,7 @@ export const TableView = function () {
         const lineOfRole = lines.find(l => l.role == role);
         row.push(lineOfRole ? lineOfRole.originalIndex : null);
       });
-      console.log('extra lines', lines.filter(l => !row.includes(l.originalIndex)).map(l => l.originalIndex));
+      //console.log('extra lines', lines.filter(l => !row.includes(l.originalIndex)).map(l => l.originalIndex));
       lines.filter(l => !row.includes(l.originalIndex)).forEach(l => row.push(l.originalIndex));
       model.push(row);
     });

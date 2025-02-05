@@ -29,7 +29,7 @@ export const BoardView = function () {
     click: {
       '.boardItem:not(.menuExpanded)': 'toggleItemMenu',
       '.boardItem.menuExpanded .itemLine': 'rotateCard',
-      '.boardItem .reading': 'speakLine',
+      '.boardItem .reading': 'speakReading',
       '.itemActions .speakLine': 'speakLine',
       '.expandLine': 'toggleExpandLine',
       '.removeItem': 'removeItem',
@@ -143,6 +143,11 @@ export const BoardView = function () {
     if (!line || !line.dataset?.reading) return;
     console.log('speaking');
     speak(line.dataset.reading);
+  }
+
+  this.speakReading = function (e) {
+    e.stopPropagation();
+    speak(e.target.innerText)
   }
 
   this.getDragItem = function (target) {
@@ -265,7 +270,7 @@ export const BoardView = function () {
           }
           delete this.state.itemsInCols[item.dataset.originalIndex];
         }
-      } 
+      }
     });
     this.state.selfUpdate = !this.state.selfUpdate;
     this.render();

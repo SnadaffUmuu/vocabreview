@@ -169,8 +169,9 @@ export const DataFactory = {
     let currentSection = null;
     //breaking for entries
     let entriesCounter = 0;
-    text.split('\n\n').forEach(entry => {
+    text.split('\n\n').forEach(entryObj => {
       //building structure
+      const entry = entryObj.trim();
       if (entry.indexOf('~~') > -1) {
         const structureEntry = {
           name: entry.match(new RegExp(regex.upperSectionTitle))[1],
@@ -419,7 +420,7 @@ export const DataFactory = {
     }
     
     let lReading = null;
-    let lReadingTarget = null;
+    //let lReadingTarget = null;
     const firstHiraganaOnlyLine = lines.find(l => 
       DataFactory.isHiraganaOnly(l.text));
       
@@ -434,7 +435,7 @@ export const DataFactory = {
         && !lines[0].text.startsWith('〜')
       ) {
         lReading = firstHiraganaOnlyLine;
-        lReadingTarget = lines.find(l => l.text == shortestString(linesWithKanji));
+        //lReadingTarget = lines.find(l => l.text == shortestString(linesWithKanji));
       } else if (
         //первая начинается с 〜 и она с кандзи, 
         lines[0].text.startsWith('〜')
@@ -442,13 +443,14 @@ export const DataFactory = {
         && firstHiraganaOnlyLine.originalIndex == 1
       ) {
         lReading = firstHiraganaOnlyLine;
-        lReadingTarget = lines[0];
+        //lReadingTarget = lines[0];
       }
     };
     
-    if (lReading && lReadingTarget) {
+    //if (lReading && lReadingTarget) {
+    if (lReading) {
       lReading.role = lRoles.reading
-      lReadingTarget.reading = lReading.text;
+      //lReadingTarget.reading = lReading.text;
     }
 
     const remainingLines = lines.filter(l => !l.role);

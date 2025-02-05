@@ -28,7 +28,7 @@ export const Slider = function () {
   this.speakLine = function (e) {
     e.stopImmediatePropagation();
     e.preventDefault();
-    speak(e.target.dataset.reading)
+    speak(e.target.dataset.reading);
   }
 
   this.read = function (e) {

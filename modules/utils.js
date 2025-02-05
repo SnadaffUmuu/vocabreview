@@ -80,6 +80,7 @@ export function speak(text) {
   utterThis.lang = DeviceUtils.isAndroid() ? "ja_JP" : "ja-JP";
   setTimeout(() => {
     window.speechSynthesis.speak(utterThis);
+    console.log('speak: ', text);
   }, 0);
 
   let r = setInterval(() => {

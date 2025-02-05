@@ -41,8 +41,10 @@
 }
 
 #tableContainer {
+/*
   max-width: 100vw;
   overflow-x: auto;
+*/
 }
 
 #table {

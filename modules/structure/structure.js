@@ -97,7 +97,8 @@ export const StructureView = function () {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
         ${this.getCheckboxHtml(entry.id)}&nbsp;
-        ${this.getListNameHtml(entry.name, entry.id)}${children.length ? '<ul>' + children.join('') + '</ul>' : ''}
+        ${this.getListNameHtml(entry.name, entry.id)}
+        ${children.length ? '<ul>' + children.join('') + '</ul>' : ''}
       </li>`)
       return resItems;
     }, []);

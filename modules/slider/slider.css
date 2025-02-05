@@ -13,12 +13,12 @@
   box-sizing: border-box;
   display: flex;
   flex-flow: row nowrap;
-  gap: 0 5px;
+  gap: 0 3px;
   justify-content: space-evenly;
 }
 
-#randomSlidesOrder {
-  vertical-align: bottom;
+#sliderActions label {
+  white-space: nowrap;
 }
 
 #currentSlideIndex {

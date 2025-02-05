@@ -121,6 +121,7 @@ select {
   height: 23px;
   box-sizing: border-box;
   background:var(--input-bg);
+  border-radius: 5px;
 }
 
 input[type="checkbox"] {
@@ -142,4 +143,5 @@ button {
   border-radius: 5px;
   padding: 3px 10px;
   background:var(--button-secondary);
+  white-space:nowrap;
 }
