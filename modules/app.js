@@ -80,12 +80,12 @@ export const Application = {
             self.initialData[value] = currData;
           }
 
-          if (!self.data[value]) {
+          //if (!self.data[value]) {
             self.data[value] = new Proxy(
               self.initialData[value],
               self.getSourceDataProxy(self)
             )
-          }
+          //}
           Object.assign(self.data[value], self.initialData[value]);
 
         } else if ('appType' == property) {
@@ -103,6 +103,7 @@ export const Application = {
             self.saveToLocalStorage('review-state', self.defaultState);
             for (let source in self.data) {
               delete self.data[source]?.allEntries;
+              delete self.data[source];
             }
           }
         }
@@ -125,7 +126,8 @@ export const Application = {
 
           self.saveToLocalStorage('review-data', self.initialData);
 
-          if (value.length > 100) {
+          if (value.length > 100
+            && !target.currentEntries?.length) {
             const firstNode = target.structure[0].children ?
               target.structure[0].children[0].id
               : target.structure[0].id;
@@ -133,7 +135,7 @@ export const Application = {
             target.currentEntries = value.filter(entry =>
               entry.section == firstNode).map(entry => entry.originalIndex);
 
-          } else {
+          } else if (!target.currentEntries?.length) {
             target.currentEntries = value.map(entry => entry.originalIndex);
           }
           self.initialData[self.state.currentSource] = target;
@@ -170,7 +172,10 @@ export const Application = {
             delete target.excludedLines;
             Router.resetViews();
           }
-          self.initialData[self.state.currentSource] = target;
+          if (self.state.currentSource) {
+            debugger;
+            self.initialData[self.state.currentSource] = target;
+          }
         }
         return true;
       }

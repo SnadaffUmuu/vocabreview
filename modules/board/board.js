@@ -382,7 +382,7 @@ export const BoardView = function () {
     }
   }
 
-  this.renderLine = function (l, currentLineIndex, lapsedLines) {
+  this.renderLine = function (l, currentLineIndex, lapsedLines, entry) {
     /*
     if (l.role && l.role == DataFactory.LINE_ROLE.reading) {
       return;
@@ -403,6 +403,9 @@ export const BoardView = function () {
     */
     if (l.speakable) {
       dataset.reading = l.text;
+    }
+    if (entry.reviewLevel && l.originalIndex == 0) {
+      dataset['review-level'] = entry.reviewLevel
     }
 
     const attrs = {};
@@ -484,7 +487,7 @@ export const BoardView = function () {
     return `
       <div class="boardItem" draggable="true" data-upper-line-index="${currentIndex}" data-original-index="${entry.originalIndex}">
         <div class="lineCounter">${entry.lines.length}</div>
-        ${others.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines)).join('')}
+        ${others.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines, entry)).join('')}
         ${entryActions}
       </div>
     `;
