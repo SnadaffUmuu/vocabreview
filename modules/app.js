@@ -59,7 +59,7 @@ export const Application = {
     this.state = new Proxy(self.initialState, {
       set(target, property, value) {
         target[property] = value;
-        console.log(`App state: Set triggered for ${property}:`, value);
+        //console.log(`App state: Set triggered for ${property}:`, value);
         self.saveToLocalStorage('review-state', target);
         if ('currentSource' == property) {
           let currData = self.initialData[value];

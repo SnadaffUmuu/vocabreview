@@ -9,6 +9,7 @@ import {
 export const DataFactory = {
 
   vocabFilesIndex: [
+    'test',
     'SR_Kona2',
     'SR_autumn',
     'goshogun0',
@@ -68,6 +69,7 @@ export const DataFactory = {
     example: 'example',
     example_translation: 'example_translation',
     info: 'info',
+    unknown: 'unknown',
   },
 
   kanaExcl: [
@@ -105,7 +107,7 @@ export const DataFactory = {
     
     let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
       + (entry.reviewLevel !== undefined ? 'reviewLevel: ' + entry.reviewLevel + lineBreak : '')
-      + entry.entryType + lineBreak
+      //+ entry.entryType + lineBreak
       + (entry.reversed ? 'REVERSED' + lineBreak : '')
       + (entry.info !== undefined ? 'info: ' + entry.info + lineBreak : '')
       + 'lines: ' + entry.lines.length;
@@ -117,7 +119,7 @@ export const DataFactory = {
         + 'speakable:' + line.speakable + ';' + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' isReading' : '')
         + (line.reading ? ' reading:' + line.reading : '') + lineBreak
         + (line.translationLineIndex ? ' translationLineIndex: ' + line.translationLineIndex + lineBreak : '')
-        + line.linetypes.join(', ')
+        //+ line.linetypes.join(', ')
     }).join('');
 
     return entryInfo;
@@ -140,7 +142,8 @@ export const DataFactory = {
       line.text + lineBreak
       + (line.role ? 'role: ' + line.role + lineBreak : '')
       ).join('')
-    + entry.entryType + lineBreak + (insertLastBreak ? lineBreak : '');
+    //+ entry.entryType + lineBreak + (insertLastBreak ? lineBreak : '');
+    + (insertLastBreak ? lineBreak : '');
     
     return entryInfo;
   },
@@ -271,22 +274,20 @@ export const DataFactory = {
           }
         })
 
-        //TODO: если kanaOnly КАТАКАНА, возможно, запись кандзи редкая и не является представительной
-        //учесть порядок следования. индекс как фактор определения типа 
         if (filteredLines.length) {
-          const entryType = DataFactory.guessEntryType(filteredLines, resEntry);
-          resEntry.entryType = entryType;
+          //const entryType = DataFactory.guessEntryType(filteredLines, resEntry);
+          //resEntry.entryType = entryType;
           const resLines = filteredLines.map((l, i) => {
             const isCompact = DataFactory.isNotJapaneseOnly(l);
             const isSpeakable = DataFactory.isJapaneseOnly(l) 
               || DataFactory.isJapaneseWithEigaChars(l);
-            const lineTypes = DataFactory.getLineTypes(l, filteredLines);
+            //const lineTypes = DataFactory.getLineTypes(l, filteredLines);
             const lineObject = {
               text: l,
               originalIndex: i,
               speakable: isSpeakable,
               isCompact: isCompact,
-              linetypes: lineTypes,
+              // linetypes: lineTypes,
             }
             return lineObject
           });
@@ -310,6 +311,7 @@ export const DataFactory = {
     return collection;
   },
 
+  /*
   getJapaneseOnly: (lines) => {
     return lines.filter(l => DataFactory.isJapaneseOnly(l))
   },
@@ -341,6 +343,7 @@ export const DataFactory = {
   getNotJapaneseOnly: (lines) => {
     return lines.filter(l => DataFactory.isNonJapanese(l) || DataFactory.isMixed(l))
   },
+  */
 
   isJapaneseOnly: (l) => {
     return regex.japaneseOnly.test(l)
@@ -388,43 +391,57 @@ export const DataFactory = {
       DataFactory.isNonJapanese(ch)
         && !regex.nonChars.test(ch)
     );
-    return jaChars.length > nonJaChars.length
+    //if (jaChars.length && nonJaChars.length && nonJaChars.length <= 5 && nonJaChars.length > 3) debugger;
+    //return jaChars.length > nonJaChars.length
+    //return nonJaChars.length/l.length*100
+    return jaChars.length && nonJaChars.length <= 3
   },
 
   setLineRoles(entry) {
     const lRoles = DataFactory.LINE_ROLE;
     const lines = entry.lines;
+    const inBracketsRegexp = new RegExp(/^\(.*\)$/);
 
     let lMeaning = null;
     let lExpression = null;
 
     const firstNotJpOnly = lines.find(l => 
       DataFactory.isNotJapaneseOnly(l.text));
+    const firstJpOnlyLine = lines.find(l =>
+      DataFactory.isJapaneseOnly(l.text)
+        || DataFactory.isJapaneseWithEigaChars(l.text)
+      );
 
-    if (firstNotJpOnly) {
+    //первая неяпонская - это meaning
+    if (firstNotJpOnly
+      && !inBracketsRegexp.test(firstNotJpOnly.text)) {
       firstNotJpOnly.role = lRoles.meaning;
-      lMeaning = firstNotJpOnly;
-    } else if (lines[1]) {
+      //lMeaning = firstNotJpOnly;
+    } /*else if (lines[1] && !lines[1].text.startsWith('(')) {
       lines[1].role = lRoles.meaning;
-      lMeaning = lines[1];
-    }
+      //lMeaning = lines[1];
+    }*/
     if (DataFactory.isNotJapaneseOnly(lines[0].text)) {
       lines[1].role = lRoles.expression;
-      lExpression = lines[1];
+      //lExpression = lines[1];
       entry.reversed = true;
       lines[0].role = lRoles.meaning;
-      lMeaning = lines[0];
+      //lMeaning = lines[0];
     } else {
       lines[0].role = lRoles.expression
-      lExpression = lines[0];
+      //lExpression = lines[0];
+      if (firstNotJpOnly
+        && !inBracketsRegexp.test(firstNotJpOnly.text)) {
+        firstNotJpOnly.role = lRoles.meaning;
+      }
     }
-    
+
     let lReading = null;
     //let lReadingTarget = null;
     const firstHiraganaOnlyLine = lines.find(l => 
       DataFactory.isHiraganaOnly(l.text));
       
-    const linesWithKanji = DataFactory.getWithKanji(lines.map(l => l.text));
+    const linesWithKanji = lines.filter(l => DataFactory.isWithKanji(l.text));
 
     if (firstHiraganaOnlyLine
       && linesWithKanji.length > 0
@@ -453,7 +470,15 @@ export const DataFactory = {
       //lReadingTarget.reading = lReading.text;
     }
 
-    const remainingLines = lines.filter(l => !l.role);
+    if (!lines.find(l => l.role == lRoles.meaning)) {
+      const lineStartingWithEquals = lines.find(l => Array.from('=＝').some(ch => l.text.startsWith(ch)));
+      if (lineStartingWithEquals) {
+        lineStartingWithEquals.role = lRoles.meaning;
+        lineStartingWithEquals.theSameAs = true;
+      }
+    }
+
+    let remainingLines = lines.filter(l => !l.role);
 
     remainingLines.forEach(l => {
       const prevLine = lines[l.originalIndex - 1];
@@ -464,7 +489,7 @@ export const DataFactory = {
         l.role = lRoles.info;
       } else if ((DataFactory.isJapaneseOnly(l.text)
         || DataFactory.isJapaneseWithEigaChars(l.text)
-        )) {
+        ) && !Array.from('(=＝').some(ch => l.text.startsWith(ch))) {
           l.role = lRoles.example;
       } else if (prevLine && prevLine.role && prevLine.role == lRoles.example
         && DataFactory.isNotJapaneseOnly(l.text)) {
@@ -472,8 +497,21 @@ export const DataFactory = {
           prevLine.translationLineIndex = l.originalIndex;
       }
     });
+
+    remainingLines = lines.filter(l => !l.role).forEach(l => {
+      if (DataFactory.isJapaneseOnly(l.text) 
+        && inBracketsRegexp.test(l.text)) {
+        l.role = lRoles.alt_reading
+      }
+    });
+
+    //if (lines.find(l => !l.role)) debugger;
+      
+    remainingLines = lines.filter(l => !l.role).forEach(l =>
+      l.role = lRoles.unknown);
   },
 
+  /*
   getLineTypes(l) {
     const lType = DataFactory.LINE_TYPE;
     let types = [];
@@ -486,6 +524,7 @@ export const DataFactory = {
     if (DataFactory.isHiraganaOnly(l)) types.push(lType.HIRAGANA_ONLY);
     return types;
   },
+
 
   guessEntryType(lines, entry) {
     const types = DataFactory.ENTRY_TYPE;
@@ -586,4 +625,5 @@ export const DataFactory = {
     }
     return res;
   },
+  */
 }

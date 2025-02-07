@@ -7,8 +7,8 @@
   <div id="input">
     
 return entries.map(en => 
-  DF.getEntryShortInfoString2(en, true, true)
-).join('<br>')
+  DT.entryFormatters.getEntryShortInfoString2(en, true)
+).join('<br/>')
     
   </div>
   <button id="run">Go</button>

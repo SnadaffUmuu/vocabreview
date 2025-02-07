@@ -29,7 +29,8 @@ export const DataTests = {
         }
         return templ + lineBreak
       }).join('')
-      + `<span style="color:#ccc">${entry.entryType}</span>` + lineBreak;
+      //+ `<span style="color:#ccc">${entry.entryType}</span>` + lineBreak;
+      + lineBreak;
       return entryInfo;
     }
   },
@@ -67,10 +68,12 @@ export const DataTests = {
       return lines.length < num
     },
     
-    nonDefaultOrSimpleAndFirstLineHiragana : function (en) {
-      return en.entryType != DataFactory.ENTRY_TYPE.DEFAULT 
-        && en.entryType != DataFactory.ENTRY_TYPE.SIMPLE 
-        && DataFactory.isHiraganaOnly(en.lines[0].text)
+    firstLineHiragana : function (en) {
+      return DataFactory.isHiraganaOnly(en.lines[0].text)
+    },
+    
+    hasLineStartingWith : function (lines, symbol) {
+      return lines.some(l => l.text.startsWith(symbol));
     }
   },
   
@@ -95,9 +98,9 @@ export const DataTests = {
       ).join('<br>')
     },
     
-    firstLHiraNotDef : function(entries) {
+    firstLineHiragana : function(entries) {
         return entries.filter(en =>
-          DataTests.filters.nonDefaultOrSimpleAndFirstLineHiragana(en)
+          DataTests.filters.firstLineHiragana(en)
           ).map(en => 
             DataTests.entryFormatters.getEntryShortInfoString2(en, true)
           ).join('<br>')
@@ -106,6 +109,14 @@ export const DataTests = {
     hasExamples : function (entries) {
       return entries.filter(en => 
         en.lines.some(l => l.role && l.role == DataFactory.LINE_ROLE.example)
+      ).map(en => 
+        DataTests.entryFormatters.getEntryShortInfoString2(en, true)
+      ).join('<br>')
+    },
+    
+    hasLineStartingWithEqual : function (entries) {
+      return entries.filter(en => DataTests.filters.hasLineStartingWith(en.lines, '=')
+        || DataTests.filters.hasLineStartingWith(en.lines, '＝')
       ).map(en => 
         DataTests.entryFormatters.getEntryShortInfoString2(en, true)
       ).join('<br>')

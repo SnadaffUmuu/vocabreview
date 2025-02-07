@@ -9,8 +9,8 @@ const getEntryShortInfoString2 = (entry, forHtml) => {
       templ = `<span style="text-decoration:underline">${line.text}</span>`
     }
     return templ + lineBreak
-  }).join('')
-  + entry.entryType + lineBreak;
+  }).join('') + lineBreak;
+  //+ entry.entryType + lineBreak;
   return entryInfo;
 }
 
