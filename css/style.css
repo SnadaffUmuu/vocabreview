@@ -62,6 +62,12 @@
   --tableRevewLevelTextColor1:whitesmoke;
 
   --input-bg:#dfd8e7;
+
+  --revLevelTextColor:#0800ff;
+  --revLevelMinorTextColor:#142ce6;
+
+  --tagTextColor: var(--text-color);
+  --paleBorder:#9c9cbb;
 }
 
 body.night {
@@ -92,6 +98,13 @@ body.night {
   --slideSpeakableLineBg: #3b0000;
 
   --input-bg:#aebdcc;
+
+  --revLevelTextColor:#5ad4d7;
+  --revLevelMinorTextColor:#d7e8e9;
+
+  --tagTextColor: white;
+
+  --paleBorder:#765f67;
 }
 
 body {

@@ -188,7 +188,7 @@ export const BoardView = function () {
   };
 
   this.setCurrentLineIndex = function (itemIndex, lineIndex) {
-    if (this.state.lineIndexes[itemIndex]) {
+    if (this.state.lineIndexes[itemIndex] !== undefined) {
       this.state.lineIndexes[itemIndex] = lineIndex;
     } else {
       this.state.lineIndexes = Object.assign({ [itemIndex]: lineIndex }, this.state.lineIndexes)

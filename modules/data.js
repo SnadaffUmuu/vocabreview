@@ -37,6 +37,7 @@ export const DataFactory = {
     pattern: 'pattern',
     term: 'term',
     yojijukugo: 'yojijukugo',
+    suffix: 'suffix',
   },
 
   ENTRY_TYPE: {
@@ -282,14 +283,13 @@ export const DataFactory = {
             const isSpeakable = DataFactory.isJapaneseOnly(l) 
               || DataFactory.isJapaneseWithEigaChars(l);
             //const lineTypes = DataFactory.getLineTypes(l, filteredLines);
-            const lineObject = {
+            return {
               text: l,
               originalIndex: i,
               speakable: isSpeakable,
               isCompact: isCompact,
               // linetypes: lineTypes,
             }
-            return lineObject
           });
           resEntry.lines = resLines;
           DataFactory.setLineRoles(resEntry);

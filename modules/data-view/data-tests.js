@@ -2,35 +2,61 @@ import { DataFactory } from "../data.js"
 
 export const DataTests = {
   
-  revLevels : {
-    100 : 'white',
-    200 : 'cyan',
-    300 : 'yellow',
-  },
+  /*
+  entry data model
+  {
+    originalIndex : 0,
+    section : 9949949494,
+    info : 'info',
+    tag : 'tag',
+    reviewLevel : '100',
+    //reversed : true,
+    lines: [
+      {
+        originalIndex : 1,
+        text : 'line text',
+        role : 'meaning',
+        //theSameAs : true,
+        //translationLineIndex : 2,
+        //speakable : true,
+        //isCompact : false,
+      }
+    ],
+  }
+  */
 
   entryFormatters : {
     getEntryShortInfoString2 : function (entry, forHtml) {
-      const lineBreak = forHtml ? '<br>' : '\n';
-      let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '');
-      entryInfo += entry.lines.map((line, i) => {
-        let templ = `${line.text}`;
+      //const lineBreak = forHtml ? '<br>' : '\n';
+      let entryInfo = (entry.tag ? '<div style="font-size:13px;border-radius:5px;background:var(--button-secondary);color:var(--tagTextColor);width:fit-content;padding:0px 5px 3px;opacity:0.6;">' + entry.tag + '</div>' : '');
+      
+      entryInfo += '<ul style="margin:0;padding-left:15px;list-style:none;">' + entry.lines.map((line, i) => {
+        const compact = line.isCompact ? 'font-size:15px;' : '';
+        let templ = compact ? `<span style="${compact}">${line.text}</span>` : line.text;
         if (line.role && line.role == DataFactory.LINE_ROLE.reading) {
-          templ = `<span style="border-bottom:1px dotted">${line.text}</span>`
-        } else if (i == 0 
-        && entry.reviewLevel) {
+          templ = `<span style="color:var(--table-text-color-reading);">${line.text}</span>`
+        } 
+        if (i == 0 
+          && entry.reviewLevel) {
           const rl = entry.reviewLevel;
-          let style = parseInt(rl) < 100 ?
-          'border: '+ rl +'px solid'
-          : 'font-size:22px;font-weight:bold; color:' + DataTests.revLevels[rl];
-          templ = `<span style="${style}">${line.text}</span>`
+          const commonRules = 'font-size:25px; border-radius:5px; display:inline-block; padding-bottom:3px;';
+          const color = 'color:' + (parseInt(rl) > 100 ? 'var(--revLevelTextColor)' : 'var(--revLevelMinorTextColor)') + ';';
+          const border = 'border-bottom:' + (parseInt(rl < 100 ? rl : rl.substring(0, 1))-1) + 'px solid var(--revLevelTextColor);'
+          let style = commonRules + color + border + compact; 
+          templ = `<span style="${style}">${line.text}</span>`;
         }
         if (line.role) {
-          templ += ' (' + line.role + ')';
+          templ += '<span style="opacity:0.5;font-size:13px;">......' + line.role + '</span>';
         }
-        return templ + lineBreak
-      }).join('')
+        //return templ + lineBreak
+        return '<li>' + templ + '</li>';
+      }).join('') + '</ul>';
+
       //+ `<span style="color:#ccc">${entry.entryType}</span>` + lineBreak;
-      + lineBreak;
+      //+ lineBreak;
+      if(entry.info) {
+        entryInfo += '<div style="font-size:13px;padding:2px 5px 5px;border:1px dotted var(--paleBorder);border-radius:5px;width:fit-content;margin-top:5px;">ⓘ&nbsp;' + entry.info + '</div>';
+      }
       return entryInfo;
     }
   },
@@ -120,6 +146,13 @@ export const DataTests = {
       ).map(en => 
         DataTests.entryFormatters.getEntryShortInfoString2(en, true)
       ).join('<br>')
+    },
+
+    hasInfo : function (entries) {
+      return entries.filter(en =>
+        en.info).map(en => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en, true)
+        ).join('<br>');
     },
   }
   
