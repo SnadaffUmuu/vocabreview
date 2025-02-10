@@ -28,13 +28,13 @@ export const DataTests = {
   entryFormatters : {
     getEntryShortInfoString2 : function (entry, forHtml) {
       //const lineBreak = forHtml ? '<br>' : '\n';
-      let entryInfo = (entry.tag ? '<div style="font-size:13px;border-radius:5px;background:var(--button-secondary);color:var(--tagTextColor);width:fit-content;padding:0px 5px 3px;opacity:0.6;">' + entry.tag + '</div>' : '');
+      let entryInfo = (entry.tag ? '<div class="tag">' + entry.tag + '</div>' : '');
       
-      entryInfo += '<ul style="margin:0;padding-left:15px;list-style:none;">' + entry.lines.map((line, i) => {
+      entryInfo += '<ul style="margin:0;padding-left:0;list-style:none;">' + entry.lines.map((line, i) => {
         const compact = line.isCompact ? 'font-size:15px;' : '';
         let templ = compact ? `<span style="${compact}">${line.text}</span>` : line.text;
         if (line.role && line.role == DataFactory.LINE_ROLE.reading) {
-          templ = `<span style="color:var(--table-text-color-reading);">${line.text}</span>`
+          templ = `<span style="color:var(--table-text-color-reading);font-size:15px;">${line.text}</span>`
         } 
         if (i == 0 
           && entry.reviewLevel) {
@@ -46,7 +46,7 @@ export const DataTests = {
           templ = `<span style="${style}">${line.text}</span>`;
         }
         if (line.role) {
-          templ += '<span style="opacity:0.5;font-size:13px;">......' + line.role + '</span>';
+          templ += '<span style="opacity:0.5;font-size:13px;"> ......' + line.role + '</span>';
         }
         //return templ + lineBreak
         return '<li>' + templ + '</li>';

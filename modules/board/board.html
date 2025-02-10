@@ -8,11 +8,20 @@
       <option value="examples">examples</option>
       <option value="random">random</option>
     </select>
-    <button id="setLapses">Set</button>
-    <button id="fixLapses">Fix</button>
+    <select id="boardActions">
+      <option value="">actions</option>
+      <option value="setLapses">Set</option>
+      <option value="fixLapses">Fix</option>
+      <option value="removeAllBut">All but</option>
+    </select>
+    <!--
+      <button id="setLapses">Set</button>
+      <button id="fixLapses">Fix</button>
+    -->
     <label for="studyMode"><input type="checkbox" id="studyMode" ></label>
   </div>
   <div id="boardContainer">
+    <div id="sourceItemsCounter" class="tag"></div>
     <div id="boardSourceCardsOuter">
       <div id="boardSourceCards" class="itemDroppableContainer"></div>
     </div>

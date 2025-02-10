@@ -19,6 +19,7 @@ export const BoardView = function () {
     'click .itemDroppableContainer': 'collapseAllItems',
     'click #setLapses': 'setLapses',
     'click #fixLapses': 'fixLapses',
+    'change #boardActions' : 'executeFunction',
   };
 
   this.namespaces = {
@@ -27,7 +28,7 @@ export const BoardView = function () {
 
   this.renderedEvents = {
     click: {
-      '.boardItem:not(.menuExpanded)': 'toggleItemMenu',
+      '.tapZone': 'toggleItemMenu',
       '.boardItem.menuExpanded .itemLine': 'rotateCard',
       '.boardItem .reading': 'speakReading',
       '.itemActions .speakLine': 'speakLine',
@@ -70,6 +71,15 @@ export const BoardView = function () {
   this.toggleStudyMode = function (e) {
     this.collapseAllItems(e);
   };
+
+  this.executeFunction = function (e) {
+    if (e.target.value == '') return;
+    this[e.target.value]();
+  },
+
+  this.removeAllBut = function (e) {
+    
+  },
 
   this.collapseAllItems = function (e) {
     if (!e.target.classList.contains('itemDroppableContainer')
@@ -118,6 +128,7 @@ export const BoardView = function () {
       const width = item.offsetWidth;
       const height = item.offsetHeight;
       item.classList.add('menuExpanded');
+      item.classList.add('lineExpanded');
       item.style.top = top + 'px';
       const expandPlaceholder = document.createElement('div');
       expandPlaceholder.classList.add('expandPlaceholder');
@@ -194,7 +205,11 @@ export const BoardView = function () {
       this.state.lineIndexes = Object.assign({ [itemIndex]: lineIndex }, this.state.lineIndexes)
     }
     this.state.selfUpdate = !this.state.selfUpdate;
-  }
+  };
+
+  this.updateSourceItemsCount = function () {
+    this.sourceItemCounter.innerHTML = this.sourceCardsContainer.querySelectorAll('.boardItem').length;
+  };
 
   this.setMode = function (e) {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
@@ -357,6 +372,7 @@ export const BoardView = function () {
     this.placeholder = null;
     this.scrollInterval = null;
     this.lastMove = null;
+    this.updateSourceItemsCount();
   }
 
   this.itemDragStart = function (e) {
@@ -368,6 +384,7 @@ export const BoardView = function () {
     if (this.isStudyMode()) return;
     e.target.classList.remove('dragging');
     this.setItemInCol(e, document.elementFromPoint(e.clientX, e.clientY));
+    this.updateSourceItemsCount();
   }
 
   this.setDragOver = function (e) {
@@ -474,7 +491,6 @@ export const BoardView = function () {
     const entryActions = `
     <div class="itemActions">
       <div class="itemAction removeItem">✖</div>
-      <!-- <div class="lineCounter">${entry.lines.length}</div> -->
       <div class="itemAction expandLine">⇕</div>
       <div class="itemAction speakLine">▶</div>
       <div class="itemAction reading">${reading ? reading.text : ''}</div>
@@ -487,6 +503,7 @@ export const BoardView = function () {
     return `
       <div class="boardItem" draggable="true" data-upper-line-index="${currentIndex}" data-original-index="${entry.originalIndex}">
         <div class="lineCounter">${entry.lines.length}</div>
+        <div class="tapZone"></div>
         ${others.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines, entry)).join('')}
         ${entryActions}
       </div>
@@ -503,6 +520,7 @@ export const BoardView = function () {
       const stContainer = this.state.itemsInCols[entry.originalIndex] ? this.state.itemsInCols[entry.originalIndex] : null;
       const container = stContainer ? this.cols[stContainer] : this.sourceCardsContainer;
       container.insertAdjacentHTML('beforeend', html);
+      this.updateSourceItemsCount();
     });
   };
 
@@ -515,6 +533,7 @@ export const BoardView = function () {
   this.reset = function (resetAll) {
     this.data = {};
     this.sourceCardsContainer.innerHTML = '';
+    this.sourceItemCounter.innerHTML = '';
     this.goodCol.innerHTML = '';
     this.failedCol.innerHTML = '';
     this.learnCol.innerHTML = '';
@@ -575,7 +594,8 @@ export const BoardView = function () {
     }
     this.studyModeEl = this.element.querySelector('#studyMode');
     this.cardModeEl = this.element.querySelector('#cardMode');
-    this.clicked = false;
+    this.sourceItemCounter = this.element.querySelector('#sourceItemsCounter');
+    //this.clicked = false;
     this.render();
   }
 }

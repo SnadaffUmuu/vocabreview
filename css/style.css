@@ -66,7 +66,8 @@
   --revLevelTextColor:#0800ff;
   --revLevelMinorTextColor:#142ce6;
 
-  --tagTextColor: var(--text-color);
+  --tagTextColor: white;
+  --tagBg: #bab1c7;
   --paleBorder:#9c9cbb;
 }
 
@@ -81,9 +82,9 @@ body.night {
   --button-primary:#320008;
   --button-secondary:#7b848e;
 
-  --boardGoodColBorder: #00776d;
+  --boardGoodColBorder: #338d86;
   --boardFailedColBorder: #9f0000;
-  --boardLearnCol: #557ea0;
+  --boardLearnColBorder: #718397;
   --boardItem:var(--button-primary);
   --boardItemLapsedBorder:rgb(159 0 0 / 66%);
   --boardItemLapsedLineTextColor:rgba(255, 255, 255, 0.798);
@@ -102,7 +103,8 @@ body.night {
   --revLevelTextColor:#5ad4d7;
   --revLevelMinorTextColor:#d7e8e9;
 
-  --tagTextColor: white;
+  --tagTextColor: #827f7f;
+  --tagBg: #64203c;
 
   --paleBorder:#765f67;
 }
@@ -157,4 +159,13 @@ button {
   padding: 3px 10px;
   background:var(--button-secondary);
   white-space:nowrap;
+}
+
+.tag {
+  font-size: 12px;
+  border-radius: 5px;
+  background: var(--tagBg);
+  color: var(--tagTextColor);
+  width: fit-content;
+  padding: 1px 4px;
 }

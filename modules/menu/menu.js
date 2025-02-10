@@ -14,6 +14,7 @@ export const MenuView = function () {
     'click #clearLocalStorage' : 'resetApp',
     'click #reloadCurrentSource' : 'reloadCurrentSource',
     'change #viewSelect' : 'switchView',
+    'click #cancelSpeaking' : 'resetSpeech',
   };
 
   this.toggleMenu = function (e) {
@@ -32,6 +33,15 @@ export const MenuView = function () {
       Application.switchView(e.target.value);
     });
   },
+
+  this.resetSpeech = function () {
+    if(window.speechSynthesis.pending) {
+      console.log('speech pending')
+    } else if (window.speechSynthesis.speaking) {
+      console.log('speech speaking')
+    }
+    window.speechSynthesis.cancel();
+  };
 
   this.resetApp = function() {
     Application.reset();

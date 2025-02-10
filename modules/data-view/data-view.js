@@ -38,7 +38,7 @@ export const DataView = function () {
   this.reset = function () {
     this.data = {};
     this.outputEl.innerHTML = '';
-    this.inputEl.innerHTMl = '';
+    //this.inputEl.innerHTMl = '';
   };
 
   this.render = function () {
@@ -49,6 +49,7 @@ export const DataView = function () {
     if (!Application.getCurrentSourceData()?.allEntries?.length) {
       return
     }
+    /*
     this.editor = ace.edit("input");
     this.editor.setTheme("ace/theme/github_dark");
     this.editor.session.setMode("ace/mode/javascript");
@@ -62,15 +63,16 @@ export const DataView = function () {
     });
     this.editor.focus();
     this.editor.navigateFileEnd();
+    */
     this.buildTestsMenu();
   }
 
   this.show = function () {
     View.prototype.show.call(this);
-    this.inputEl = this.element.querySelector('#input');
+    //this.inputEl = this.element.querySelector('#input');
     this.outputEl = this.element.querySelector('#output');
     this.testsEl = this.element.querySelector('#tests');
-    this.runEl = this.element.querySelector('#run');
+    //this.runEl = this.element.querySelector('#run');
     this.render();
   }
 }
