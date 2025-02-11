@@ -120,8 +120,7 @@ export const Slider = function () {
     const container = this.element.querySelector('.js-slider');
     const entries = this.data.shuffledEntries || this.data.entries;
     const slides = entries.map((e, i) => {
-        let currSideIndex = this.state.sideIndexes && this.state.sideIndexes[e.originalIndex] ? 
-        this.state.sideIndexes[e.originalIndex] : null;
+        let currSideIndex = this.state.sideIndexes?.[e.originalIndex] ?? null;
         return Application.protoElements.ProtoSlideElement.render(e, mode, currSideIndex);
       }
     );
@@ -163,24 +162,23 @@ export const Slider = function () {
     }
   };
 
-  this.reset = function (resetAll) {
+  this.handleFilter = function() {
+    this.state.order && delete this.state.order;
+    this.state.currentIndex && delete this.state.currentIndex;
+    this.isRandomEl.checked = false;
+    this.state.sideIndexes && delete this.state.sideIndexes;
+  };
+
+  this.reset = function () {
     this.data = {};
     if (this.slider) {
       this.slider.destroy();
     }
     this.sliderOuter.innerHTML = this.keensliderContainerTemplate.outerHTML;
-    /*
-    if (resetAll) {
-      this.state.order && delete this.state.order;
-      this.state.currentIndex && delete this.state.currentIndex;
-      this.state.sideIndexes && delete this.state.sideIndexes;
-      this.isRandomEl.checked = false;
-    }
-    */
   };  
 
-  this.render = async function (resetAll) {
-    this.reset(resetAll);
+  this.render = async function () {
+    this.reset();
     if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       if (Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();

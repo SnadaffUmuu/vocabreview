@@ -279,6 +279,9 @@ export const Application = {
     }
     const res = this.getCurrentSourceData().allEntries.filter(entry =>
       data.includes(entry.section)).map(entry => entry.originalIndex);
+    if (Router.currentView.handleFilter) {
+      Router.currentView.handleFilter();
+    }
     this.getCurrentSourceData().currentEntries = res;
   },
 

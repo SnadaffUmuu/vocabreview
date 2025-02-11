@@ -49,7 +49,7 @@ export const DataTests = {
           templ += '<span style="opacity:0.5;font-size:13px;"> ......' + line.role + '</span>';
         }
         //return templ + lineBreak
-        return '<li>' + templ + '</li>';
+        return '<li' + (line.role ? ' data-role="' + line.role + '"' : '') + '>' + templ + '</li>';
       }).join('') + '</ul>';
 
       //+ `<span style="color:#ccc">${entry.entryType}</span>` + lineBreak;

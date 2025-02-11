@@ -103,7 +103,7 @@ body.night {
   --revLevelTextColor:#5ad4d7;
   --revLevelMinorTextColor:#d7e8e9;
 
-  --tagTextColor: #827f7f;
+  --tagTextColor: #9a9797;
   --tagBg: #64203c;
 
   --paleBorder:#765f67;
@@ -168,4 +168,12 @@ button {
   color: var(--tagTextColor);
   width: fit-content;
   padding: 1px 4px;
+}
+
+.example:before,
+[data-role="example"]:before,
+[role="example"]:before {
+  content: '✦';
+  font-size: 14px;
+  opacity: 0.6;
 }
