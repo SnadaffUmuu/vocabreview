@@ -10,7 +10,7 @@
 
 #output {
   font-size:17px;
-  padding:10px 5px;
+  padding:25px 5px 10px;
 }
 
 /*
@@ -30,6 +30,7 @@
   flex-flow: row nowrap;
   gap: 10px;
   align-items: stretch;
+  position: relative;
 }
 
 #theTests,
@@ -38,9 +39,22 @@
   min-width: 0;
 }
 
+#resCounter {
+  position: absolute;
+  top:30px;
+  right:5px;
+}
+
 #dataView .dataEntry {
   padding:10px 0;
   border-bottom:1px dashed var(--dataItemBorder);
+  position: relative;
+}
+
+#dataView .dataEntry .reviewLevel {
+  position: absolute;
+  right: 0;
+  top: 5px;
 }
 
 #dataView .dataEntry .linesList {

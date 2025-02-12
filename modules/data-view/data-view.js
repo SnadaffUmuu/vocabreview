@@ -53,7 +53,8 @@ export const DataView = function () {
           this.outputEl.insertAdjacentHTML(
             'beforeend',
             DataTests.entryFormatters.getEntryShortInfoString2(entry, e.target.value))
-        })
+        });
+        this.resultCounter.innerHTML = res.length
       }
     }
   }
@@ -75,7 +76,9 @@ export const DataView = function () {
       ).join('');
     this.testsSelect.addEventListener('change', (e) => {
       if (e.target.value !== '') {
-        this.outputEl.innerHTML = DataTests.tests[e.target.value](this.getData());
+        const res = DataTests.tests[e.target.value](this.getData());
+        this.resultCounter.innerHTML = res.length;
+        this.outputEl.innerHTML = res.join('');
       }
     })
   }
@@ -92,6 +95,7 @@ export const DataView = function () {
   this.reset = function () {
     this.data = {};
     this.outputEl.innerHTML = '';
+    this.resultCounter.innerHTML = '';
     //this.inputEl.innerHTMl = '';
   }
 
@@ -126,9 +130,11 @@ export const DataView = function () {
   this.show = function () {
     View.prototype.show.call(this);
     //this.inputEl = this.element.querySelector('#input');
+    //this.runEl = this.element.querySelector('#run');
     this.outputEl = this.element.querySelector('#output');
     this.testsSelect = this.element.querySelector('#theTests');
-    //this.runEl = this.element.querySelector('#run');
+    this.searchFieldEl = this.element.querySelector('#search');
+    this.resultCounter = this.element.querySelector('#resCounter');
     this.render();
   }
 }

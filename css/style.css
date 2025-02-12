@@ -102,8 +102,8 @@ body.night {
 
   --input-bg:#aebdcc;
 
-  --revLevelTextColor:#5ad4d7;
-  --revLevelMinorTextColor:#d7e8e9;
+  --revLevelTextColor:#E9E9E9;
+  --revLevelMinorTextColor:#B8D8D9;
 
   --tagTextColor: #9a9797;
   --tagBg: #64203c;
@@ -130,6 +130,7 @@ body {
   display: flex;
   flex-flow: column nowrap;
   align-items:stretch;
+  position: relative;
 }
 
 .appView {

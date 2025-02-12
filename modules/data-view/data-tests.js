@@ -27,6 +27,7 @@ export const DataTests = {
 
   entryFormatters : {
     getEntryShortInfoString2 : function (entry, searchQuery) {
+      const rl = entry.reviewLevel;
       let entryInfo = '';
       entryInfo += (entry.tag ? '<div class="tag">' + entry.tag + '</div>' : '');
       entryInfo += '<ul style="margin:0;padding-left:0;list-style:none;">' + entry.lines.map((line, i) => {
@@ -37,11 +38,12 @@ export const DataTests = {
         }
         if (i == 0 
           && entry.reviewLevel) {
-          const rl = entry.reviewLevel;
-          const color = 'color:' + (parseInt(rl) > 100 ? 'var(--revLevelTextColor)' : 'var(--revLevelMinorTextColor)') + ';';
-          const border = 'border-bottom:' + (parseInt(rl < 100 ? rl : rl.substring(0, 1))-1) + 'px solid var(--revLevelTextColor);'
+          const color = 'color:' + (parseInt(rl) >= 100 ? 'var(--revLevelTextColor)' : 'var(--revLevelMinorTextColor)') + ';';
+          const border = 'border-bottom:' 
+            + (parseInt(rl) < 100 ? (parseInt(rl) - 1) : rl.substring(0, 1)) + 'px solid ' 
+            + (parseInt(rl) >= 100 ? 'var(--revLevelTextColor)' : 'var(--revLevelMinorTextColor)') + '; '
           let style = color + border; 
-          templ = `<span class="revLevel" style="${style}">${line.text}</span>`;
+          templ = `<span data-review-level="${rl}" class="revLevel" style="${style}">${line.text}</span>`;
         }
         if (line.role) {
           templ += '<span class="lineRole"> ......' + line.role + '</span>';
@@ -63,7 +65,10 @@ export const DataTests = {
           ${entry.source}: ${entry.breadcrumbs}
         </div>`
       }
-      return `<article class="dataEntry">${entryInfo}</article>`;
+      return `<article class="dataEntry">
+        ${rl ? '<div class="reviewLevel tag">' + rl + '</div>' : ''}
+        ${entryInfo}
+      </article>`;
     }
   },
 
@@ -112,53 +117,53 @@ export const DataTests = {
   tests : {
     all : function(entries) {
       return entries.map(en =>
-        DataTests.entryFormatters.getEntryShortInfoString2(en)
-          ).join('')
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
 
     reversed : function(entries) {
       return entries.filter(en => en.reversed == true).map(en => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en)
-      ).join('')
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
-    
+    /*
     threeLines : function(entries) {
       return entries.filter(en => 
         DataTests.filters.numOfLinesEq(en.lines, 3)
       ).map(en => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en)
-      ).join('')
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
+    },
+    */
+
+    hasReviewLevel : function(entries) {
+      return entries.filter(en =>
+        en.reviewLevel).map(en => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
     firstLineHiragana : function(entries) {
         return entries.filter(en =>
           DataTests.filters.firstLineHiragana(en)
           ).map(en => 
-            DataTests.entryFormatters.getEntryShortInfoString2(en)
-          ).join('')
+            DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
     
     hasExamples : function (entries) {
       return entries.filter(en => 
         en.lines.some(l => l.role && l.role == DataFactory.LINE_ROLE.example)
       ).map(en => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en)
-      ).join('')
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
     
     hasLineStartingWithEqual : function (entries) {
       return entries.filter(en => DataTests.filters.hasLineStartingWith(en.lines, '=')
         || DataTests.filters.hasLineStartingWith(en.lines, '＝')
       ).map(en => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en)
-      ).join('')
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
 
     hasInfo : function (entries) {
       return entries.filter(en =>
         en.info).map(en => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en)
-        ).join('');
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
   }
   
