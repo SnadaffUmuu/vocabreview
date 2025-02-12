@@ -81,10 +81,10 @@ export const Application = {
           }
 
           //if (!self.data[value]) {
-            self.data[value] = new Proxy(
-              self.initialData[value],
-              self.getSourceDataProxy(self)
-            )
+          self.data[value] = new Proxy(
+            self.initialData[value],
+            self.getSourceDataProxy(self)
+          )
           //}
           Object.assign(self.data[value], self.initialData[value]);
 
@@ -265,6 +265,48 @@ export const Application = {
       }
     }.bind(this);
     request.send();
+  },
+
+  loadAllSources: function () {
+    let delay = 0;
+    DataFactory.vocabFilesIndex.forEach((source, i) => {
+      setTimeout(() => {
+        if (!this.data[source] || !this.data[source].allEntries?.length) {
+          const request = new XMLHttpRequest();
+          const now = new Date().getMilliseconds();
+          request.open('GET', './vocab/' + source + '.txt?n=' + now, true);
+          request.onload = function () {
+            if (request.responseText) {
+              const {
+                excludedEntries,
+                excludedLines,
+                structure,
+                allEntries
+              } = DataFactory.parse(request.responseText);
+
+              this.initialData[source] = {
+                excludedEntries,
+                excludedLines,
+                structure,
+                allEntries
+              };
+              
+              this.data[source] = new Proxy(
+                this.initialData[source],
+                this.getSourceDataProxy(this)
+              );
+              if (i == DataFactory.vocabFilesIndex.length - 1) {
+                Application.views.PreloaderView.hidePreloader();
+                this.saveToLocalStorage('review-data', this.initialData);
+              }
+            }
+
+          }.bind(this);
+          request.send();
+        }
+      }, delay);
+      delay = delay + 100;
+    });
   },
 
   reset: function () {

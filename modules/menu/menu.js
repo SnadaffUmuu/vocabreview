@@ -13,6 +13,7 @@ export const MenuView = function () {
     'change #vocabSources': 'changeSource',
     'click #clearLocalStorage' : 'resetApp',
     'click #reloadCurrentSource' : 'reloadCurrentSource',
+    'click #loadAllSources' : 'loadAllSources',
     'change #viewSelect' : 'switchView',
     'click #cancelSpeaking' : 'resetSpeech',
   };
@@ -51,6 +52,12 @@ export const MenuView = function () {
   this.reloadCurrentSource = function() {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       Application.loadAndSetCurrentSource(Application.state.currentSource)
+    });
+  }
+  
+  this.loadAllSources = function() {
+    Application.views.PreloaderView.showPreloaderAndRun(() => {
+      Application.loadAllSources()
     });
   }
 
