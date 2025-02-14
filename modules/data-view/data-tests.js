@@ -26,7 +26,7 @@ export const DataTests = {
   */
 
   entryFormatters : {
-    getEntryShortInfoString2 : function (entry, searchQuery) {
+    getEntryShortInfoString2 : function (entry, searchQuery, i) {
       const rl = entry.reviewLevel;
       let entryInfo = '';
       entryInfo += (entry.tag ? '<div class="tag">' + entry.tag + '</div>' : '');
@@ -60,12 +60,11 @@ export const DataTests = {
       if(entry.info) {
         entryInfo += '<div class="entryInfo">ⓘ&nbsp;' + entry.info + '</div>';
       }
-      if (searchQuery) {
-        entryInfo += `<div class="section">
-          ${entry.source}: ${entry.breadcrumbs}
-        </div>`
-      }
+      entryInfo += `<div class="section">
+        ${searchQuery ? entry.source + ': ' : ''}${entry.breadcrumbs}
+      </div>`
       return `<article class="dataEntry">
+          <div class="entryIndex tag">${i}</div>
         ${rl ? '<div class="reviewLevel tag">' + rl + '</div>' : ''}
         ${entryInfo}
       </article>`;
@@ -116,54 +115,84 @@ export const DataTests = {
   
   tests : {
     all : function(entries) {
-      return entries.map(en =>
-        DataTests.entryFormatters.getEntryShortInfoString2(en))
+      return entries.map((en, i) =>
+        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
     },
 
     reversed : function(entries) {
-      return entries.filter(en => en.reversed == true).map(en => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en))
+      return entries.filter(en => en.reversed == true).map((en, i) => 
+        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
     },
-    /*
-    threeLines : function(entries) {
+
+    numberOfLines : function(entries) {
       return entries.filter(en => 
-        DataTests.filters.numOfLinesEq(en.lines, 3)
-      ).map(en => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en))
+        DataTests.filters.numOfLinesEq(en.lines, 1)
+      ).map((en, i) => 
+        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
     },
-    */
 
     hasReviewLevel : function(entries) {
       return entries.filter(en =>
-        en.reviewLevel).map(en => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en));
+        en.reviewLevel).map((en, i) => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
     },
     
     firstLineHiragana : function(entries) {
         return entries.filter(en =>
           DataTests.filters.firstLineHiragana(en)
-          ).map(en => 
-            DataTests.entryFormatters.getEntryShortInfoString2(en))
+          ).map((en, i) => 
+            DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
     },
     
     hasExamples : function (entries) {
       return entries.filter(en => 
         en.lines.some(l => l.role && l.role == DataFactory.LINE_ROLE.example)
-      ).map(en => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en))
+      ).map((en, i) => 
+        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
     },
     
     hasLineStartingWithEqual : function (entries) {
       return entries.filter(en => DataTests.filters.hasLineStartingWith(en.lines, '=')
         || DataTests.filters.hasLineStartingWith(en.lines, '＝')
-      ).map(en => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en))
+      ).map((en, i) => 
+        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
     },
 
     hasInfo : function (entries) {
       return entries.filter(en =>
-        en.info).map(en => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en));
+        en.info).map((en, i) => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+    },
+    
+    hasTagGrammar : function (entries) {
+      return entries.filter(en =>
+        en.tag == DataFactory.ENTRY_TAG.grammar).map((en, i) => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+    },
+    
+    hasTagOnomo : function (entries) {
+      return entries.filter(en =>
+        en.tag == DataFactory.ENTRY_TAG.onomatopoeia).map((en, i) => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+    },
+    
+    hasTagGeo : function (entries) {
+      return entries.filter(en =>
+        en.tag == DataFactory.ENTRY_TAG.geo).map((en, i) => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+    },
+    
+    hasTagName : function (entries) {
+      return entries.filter(en =>
+        en.tag == DataFactory.ENTRY_TAG.name).map((en, i) => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+    },
+    
+    hasLineInfo : function (entries) {
+      return entries.filter(en => 
+        en.lines.some(l => l.role && l.role == DataFactory.LINE_ROLE.info)
+      ).map((en, i) => 
+        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
     },
   }
   

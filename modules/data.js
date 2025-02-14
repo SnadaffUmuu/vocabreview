@@ -1,8 +1,6 @@
-import { Application } from "./app.js";
 import {
   regex,
   stringToHash,
-  shortestString,
   countCharOccurrencesInString
 } from "./utils.js";
 
@@ -130,22 +128,6 @@ export const DataFactory = {
     const lineBreak = forHtml ? '<br>' : '\n';
     let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
     entryInfo += entry.lines.map(line => line.text + lineBreak).join('') + lineBreak;
-    return entryInfo;
-  },
-
-  getEntryShortInfoString2: (entry, forHtml, insertLastBreak) => {
-    const lineBreak = forHtml ? '<br>' : '\n';
-    
-    let entryInfo = (entry.tag ? 'entryTag: ' + entry.tag + lineBreak : '')
-    + (entry.info !== undefined ? 'info: ' + entry.info + lineBreak : '');
-
-    entryInfo += entry.lines.map(line => 
-      line.text + lineBreak
-      + (line.role ? 'role: ' + line.role + lineBreak : '')
-      ).join('')
-    //+ entry.entryType + lineBreak + (insertLastBreak ? lineBreak : '');
-    + (insertLastBreak ? lineBreak : '');
-    
     return entryInfo;
   },
 
@@ -486,7 +468,14 @@ export const DataFactory = {
         && prevLine.role && prevLine.role !== lRoles.example
         && DataFactory.isNotJapaneseOnly(l.text)) {
         //предыдущая строка имеет роль, а данная - следующая и не японская, т.е. разъяснение
-        l.role = lRoles.info;
+        // l.role = lRoles.info;
+        if (entry.info) {
+          entry.info = entry.info + '\n' + l.text;
+        } else {
+          entry.info = l.text;
+        }
+        lines.splice(lines.indexOf(l), 1);
+        remainingLines.splice(remainingLines.indexOf(l), 1);
       } else if ((DataFactory.isJapaneseOnly(l.text)
         || DataFactory.isJapaneseWithEigaChars(l.text)
         ) && !Array.from('(=＝').some(ch => l.text.startsWith(ch))) {

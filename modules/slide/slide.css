@@ -3,36 +3,53 @@
   align-items: stretch;
   justify-content: center;
   flex-flow: column nowrap;
+  background: var(--bg);
 }
 
-.slide-info {
-  font-size: 12px;
-  height:70px;
+.keen-slider__slide .entry-info {
+  font-size: 15px;
   background: var(--slideInfoBg);
   color: var(--slideInfoColor);
-  border:0;
   padding:10px;
   box-sizing: border-box;
-  flex: 0 1 auto;
-  margin:5px 28px 0 5px;
-  opacity: .7;
+  /* margin:5px 28px 0 5px; */
+  position: absolute;
+  top:5px;
+  right:28px;
+  left:5px;
+  border-radius: 5px;
+  padding: 10px 10px 15px;
+  border: 1px dashed var(--paleBorder);
+  width: fit-content;
 }
 
-#sides-count {
+.keen-slider__slide .entry-info summary::-webkit-details-marker,
+.keen-slider__slide .entry-info summary::marker {
+  content:'';
+  display:none;
+}
+
+.keen-slider__slide .entry-info summary {
+  margin-bottom:5px;
+  font-weight:bold;
+  font-size:17px;
+}
+
+.keen-slider__slide .sides-count {
   position: absolute;
   top: 10px;
   right: 10px;
   font-size:13px;
 }
 
-#current-side {
+.keen-slider__slide .current-side {
   position: absolute;
   top: 30px;
   right: 10px;
   font-size:13px;
 }
 
-.slideReading {
+.keen-slider__slide .slideReading {
   font-size: 15px;
   padding:10px;
   position: relative;
@@ -63,21 +80,104 @@
   align-items: stretch;
 }
 
-.compact {
+.keen-slider__slide .compact {
   font-size: 18px;
   font-family: sans-serif;
 }
 
-.grammar {
-  background: var(--slideTagGrammarBg)
+.keen-slider__slide[data-tag]:after {
+  content: '';
+  position: absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  left:0;
+  z-index: -1;
+  mix-blend-mode: lighten;
 }
 
-.onomat,
-.onomatopoeia {
-  background: var(--slideTagOnomatBg);
+.night .keen-slider__slide[data-tag]:after {
+  mix-blend-mode: multiply;
 }
 
-.term {
+.keen-slider__slide[data-tag="grammar"]:after {
+  background-image: url(../../assets/images/grammar.jpg);
+}
+
+.keen-slider__slide[data-tag="geo"]:after {
+  background-image: url(../../assets/images/geo.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.keen-slider__slide[data-tag="name"]:after {
+  background-image: url(../../assets/images/name.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  mix-blend-mode: soft-light;
+}
+
+.keen-slider__slide[data-tag="term"]:after {
+  background-image: url(../../assets/images/term.webp);
+  background-size: cover;
+  background-repeat: no-repeat;
+  mix-blend-mode: soft-light;
+}
+
+.night .keen-slider__slide[data-tag="term"]:after {
+  mix-blend-mode: darken;
+}
+
+.keen-slider__slide[data-tag="pattern"]:after {
+  background-image: url(../../assets/images/pattern.jpg);
+  background-size: contain;
+  background-repeat: repeat;
+  mix-blend-mode: soft-light;
+}
+
+.night .keen-slider__slide[data-tag="pattern"]:after {
+  mix-blend-mode: darken;
+}
+
+.keen-slider__slide[data-tag="counter"]:after {
+  background-image: url(../../assets/images/counter.jpg);
+  background-size: contain;
+  background-repeat: repeat;
+  mix-blend-mode: soft-light;
+}
+
+.keen-slider__slide[data-tag="counter"]:after {
+  background-image: url(../../assets/images/counter.jpg);
+  background-size: contain;
+  background-repeat: repeat;
+  mix-blend-mode: soft-light;
+}
+
+
+.keen-slider__slide[data-tag="suffix"]:after {
+  background-image: url(../../assets/images/suffix.jpg);
+  background-size: contain;
+  background-repeat: repeat;
+  mix-blend-mode: soft-light;
+}
+
+.keen-slider__slide[data-tag="yojijukugo"]:after {
+  background-image: url(../../assets/images/yojijukugo.jpg);
+  background-size: contain;
+  background-repeat: repeat;
+  mix-blend-mode: screen;
+}
+
+.night .keen-slider__slide[data-tag="yojijukugo"]:after {
+  opacity:0.5
+}
+
+.keen-slider__slide[data-tag="onomat"]:after,
+.keen-slider__slide[data-tag="onomatopoeia"]:after {
+  background-image: url(../../assets/images/onomat.png);
+}
+
+.keen-slider__slide[data-tag="term"] {
   box-shadow: inset 0 0 10px var(--slideTagTermShadow);
 }
 

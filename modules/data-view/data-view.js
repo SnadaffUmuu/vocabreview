@@ -49,10 +49,10 @@ export const DataView = function () {
             res = [...res, ...matchingEntries]
           }
         }
-        res.forEach(entry => {
+        res.forEach((entry, i) => {
           this.outputEl.insertAdjacentHTML(
             'beforeend',
-            DataTests.entryFormatters.getEntryShortInfoString2(entry, e.target.value))
+            DataTests.entryFormatters.getEntryShortInfoString2(entry, e.target.value, i))
         });
         this.resultCounter.innerHTML = res.length
       }
@@ -65,7 +65,12 @@ export const DataView = function () {
 
   this.executeFromEditor = function () {
     const action = new Function('entries', this.editor.getValue());
-    this.outputEl.innerHTML = action(this.getData());
+    const entries = this.getData().map(entry => {
+      entry.source = Application.state.currentSource;
+      entry.breadcrumbs = this.getBreadcrumbs(entry, Application.state.currentSource);
+      return entry
+    });
+    this.outputEl.innerHTML = action(entries);
   }
 
   this.buildTestsMenu = function () {
@@ -76,7 +81,12 @@ export const DataView = function () {
       ).join('');
     this.testsSelect.addEventListener('change', (e) => {
       if (e.target.value !== '') {
-        const res = DataTests.tests[e.target.value](this.getData());
+        const entries = this.getData().map(entry => {
+          entry.source = Application.state.currentSource;
+          entry.breadcrumbs = this.getBreadcrumbs(entry, Application.state.currentSource);
+          return entry
+        });        
+        const res = DataTests.tests[e.target.value](entries);
         this.resultCounter.innerHTML = res.length;
         this.outputEl.innerHTML = res.join('');
       }

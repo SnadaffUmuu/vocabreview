@@ -8,8 +8,8 @@
   <!--
   <div id="input">
     
-return entries.map(en => 
-  DT.entryFormatters.getEntryShortInfoString2(en, true)
+return entries.map((en, i) => 
+  DT.entryFormatters.getEntryShortInfoString2(en, null, i)
 ).join('<br/>')
     
   </div>

@@ -51,7 +51,7 @@ export const Slider = function () {
       const el = e.target;
       const slide = el.classList.contains('slide-inner') ? el : el.closest('.slide-inner');
       const slideOuter = e.target.closest('.js-slide');
-      const currentSideIndexDisplayEl = slideOuter.querySelector('#current-side');
+      const currentSideIndexDisplayEl = slideOuter.querySelector('.current-side');
       if (slide.querySelectorAll('.js-slide-side').length == 1) { 
         console.log('non-rotatiable, only 1 side');
         currentSideIndexDisplayEl.innerHTML = slide.querySelector('.js-slide-side').dataset.index;

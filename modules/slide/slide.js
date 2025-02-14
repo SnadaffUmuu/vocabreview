@@ -13,9 +13,14 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     element.dataset.section = entry.section;
     element.dataset.originalIndex = entry.originalIndex;
     if (entry.tag) {
-      element.classList.add(entry.tag)
+      element.dataset.tag = entry.tag;
+      // element.classList.add('circleBackground');
     }
-    element.querySelector('.slide-info').value = DataFactory.getEntryInfoString(entry);
+    if (entry.info) {
+      const infoEl = element.querySelector('.entry-info');
+      infoEl.insertAdjacentHTML('beforeend', entry.info);
+      infoEl.style.display = '';
+    }
   },
 
   render: function (entry, mode, currentSideIndex) {
@@ -65,8 +70,8 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
           ${readingLine.text}
         </div>`);
     }
-    element.querySelector('#sides-count').innerHTML = sides.length;
-    element.querySelector('#current-side').innerHTML = upperSide.dataset.index;
+    element.querySelector('.sides-count').innerHTML = sides.length;
+    element.querySelector('.current-side').innerHTML = upperSide.dataset.index;
     return element;
   }
 });

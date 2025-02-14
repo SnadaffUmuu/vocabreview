@@ -2023,7 +2023,7 @@ humble language
 
 [74]
 
-ら抜きことば ♦
+ら抜きことば ✔
 dropping the "ra" in the potential form of verbs formed with "-rareru"
 食べれる、見れる、来れる
 ::term
@@ -2031,12 +2031,12 @@ dropping the "ra" in the potential form of verbs formed with "-rareru"
 いわゆる ✔
 так называемый
 
-さ入れ言葉 ♦
+さ入れ言葉 ✔
 sa-added word (i.e. causative forms with an extra 'sa' like 'ikasaseru' for 'iku')
 やらさせていただきます
 ::term
 
-レ足す言葉 ♦
+レ足す言葉 ✔
 adding a superfluous "re" to the potential form of a godan verb
 行けれる、読めれる
 ::term
@@ -2105,13 +2105,13 @@ rather, better, лучше, предпочтительней
 =混ぜる
 смешивать
 
-助手席 ♦
+助手席 ✔
 じょしゅせき
 пассажирское сиденье 
 
 [76]
 
-宛先 ♦
+宛先 ✔
 あてさき
 адрес, место назначения (на конверте и пр.)
 
@@ -2120,7 +2120,7 @@ rather, better, лучше, предпочтительней
 колонка, столбец, графа
 宛先の欄
 
-件名 ♦
+件名 ✔
 けんめい
 title, subject (заголовок письма,обращения)
 
@@ -2185,7 +2185,7 @@ trusted friend, близкий друг
 сносный, удовлетворительный; без особых недостатков, приемлемый, passable
 あの人なら無難です
 
-改行 ♦
+改行 ✔
 かいぎょう
 новый параграф, перенос строки
 文章が思わぬところで改行される

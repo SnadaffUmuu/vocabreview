@@ -125,6 +125,7 @@ export const TableView = function () {
       + ' class="cellContentDraggable ellipsis'
       + (line.speakable ? ' speakable' : '')
       + '"'
+      + (line.role ? ' data-role="' + line.role + '"' : '')
       + (entry.reviewLevel && line.originalIndex == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
        + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' data-is-reading' : '')
        + '>'
@@ -175,7 +176,7 @@ export const TableView = function () {
             `)
           }
         });
-        return resHTML += '<tr><td><div draggable="true" class="rowDrag">↕️</div></td>'
+        return resHTML += '<tr' + (entry.tag ? ' data-tag="' + entry.tag + '"' : '') + '><td><div draggable="true" class="rowDrag">↕️</div></td>'
           + cells.join('')
           + (cells.length == this.columnsCount ? '' : 
             Array.from({length: this.columnsCount - cells.length}).map((_, i) => '<td class="draggableContainer"></td>').join('')
@@ -227,6 +228,10 @@ export const TableView = function () {
     e.target.dataset.expanded = old;
   };
 
+  this.isDragCellMode = function () {
+    return this.dragCells.checked ? true : false;
+  };
+
   this.setColumnHeaderDragStart = function (e) {
     e.dataTransfer.setData('text/plain', e.target.dataset.index);
   };
@@ -247,20 +252,24 @@ export const TableView = function () {
   };
 
   this.setItemDragStart = function (e) {
+    if (!this.isDragCellMode()) return;
     if (e.target.closest('td').classList.contains('hidden')) return;
     this.draggedCellContent = e.target;
     e.dataTransfer.effectAllowed = 'move';
   };
 
   this.toggleDragoverElementHighlight = function (e) {
+    if (!this.isDragCellMode()) return;
     e.target.classList.toggle('over');
   };
 
   this.removeDragoverCellHighlights = function () {
+    if (!this.isDragCellMode()) return;
     this.tableEl.querySelectorAll('td.over').forEach(cell => cell.classList.remove('over'));
   };
 
   this.dropDragItem = function (e) {
+    if (!this.isDragCellMode()) return;
     e.preventDefault();
     if (this.draggedCellContent) {
       e.target.appendChild(this.draggedCellContent);
@@ -269,6 +278,7 @@ export const TableView = function () {
   };
 
   this.setItemTouchStart = function (e) {
+    if (!this.isDragCellMode()) return;
     if (e.target.closest('td').classList.contains('hidden')) return;
     this.touchTimeout = setTimeout(() => {
       this.draggable = true;
@@ -277,6 +287,7 @@ export const TableView = function () {
   };
 
   this.touchDragItem = function (e) {
+    if (!this.isDragCellMode()) return;
     const item = e.target;
     if (!this.draggable) {
       e.stopPropagation();
@@ -309,6 +320,7 @@ export const TableView = function () {
   };
 
   this.touchDropItem = function (e) {
+    if (!this.isDragCellMode()) return;
     clearTimeout(this.touchTimeout);
     this.draggable = false;
     e.target.classList.remove("dragging");
@@ -505,6 +517,7 @@ export const TableView = function () {
     this.tableContainer = this.element.querySelector('#tableContainer');
     this.actionsContainer = this.element.querySelector('#tableActions');
     this.columnHideModeEl = this.element.querySelector('#hideMode');
+    this.dragCells = this.element.querySelector('#dragCells');
     this.render();
   }
 }

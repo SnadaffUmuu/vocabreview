@@ -42,5 +42,5 @@ const numOfLinesLess = (lines, num) => {
 return entries.filter(en => 
   numOfLinesEq(en.lines, 3)
 ).map(en => 
-  getEntryShortInfoString2(en, true)
+  getEntryShortInfoString2(en)
 ).join('<br>')

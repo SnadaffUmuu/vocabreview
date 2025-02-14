@@ -8,21 +8,8 @@
   display:flex;
   flex-flow: row wrap;
   font-size:13px;
-}
-
-#hideModeContainer {
-  display: flex;
-  flex-flow: row nowrap;
-  padding:0 10px;
-  align-items: stretch;
-}
-
-#hideModeContainer > label {
-  align-self: center;
-}
-
-#tableActions [type=checkbox] {
-  margin: 0 0 0 5px;
+  gap: 10px;
+  align-items: center;
 }
 
 #addColumn {
@@ -52,6 +39,42 @@
   font-size:15px;
   margin-bottom:30px;
   height:1px;
+}
+
+#table tbody {
+  background-color: var(--bg);
+}
+
+#table tr[data-tag] {
+}
+
+.night #table tr[data-tag] {
+}
+
+#table tr[data-tag="grammar"] {
+  background-image: url(../../assets/images/grammar.jpg);
+}
+
+#table tr[data-tag="geo"] {
+  background-image: url(../../assets/images/geo.jpg);
+  background-repeat: repeat;
+}
+
+#table tr[data-tag="name"] {
+  background-image: url(../../assets/images/name.jpg);
+  mix-blend-mode: soft-light;
+}
+
+#table tr[data-tag="yojijukugo"] {
+  background-image: linear-gradient(var(--bg), var(--bg)), 
+  url(../../assets/images/yojijukugo.jpg),
+  linear-gradient(var(--bg), var(--bg));
+  background-blend-mode: multiply, screen;
+  background-size: cover;
+  background-repeat: repeat;
+}
+
+#table tr[data-tag="yojijukugo"] {
 }
 
 #table th {
@@ -203,13 +226,13 @@
   opacity:0.2;
 }
 
-.entry-info {
+#table .entry-info {
   font-size:12px;
   padding:5px;
   position:relative;
 }
 
-.entry-info > div {
+#table .entry-info > div {
   box-sizing: border-box;
   min-height: 30px;
   min-width: 150px;

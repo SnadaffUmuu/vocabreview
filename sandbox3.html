@@ -10,37 +10,46 @@
       margin: 0px;
       padding: 0px;
     }
+
+    body {
+      position: relative;
+    }
+    
+    div {
+      background: 
+      radial-gradient(closest-side, #2fa5ff, #fff) 0/ 0.7em 0.7em space, 
+      linear-gradient(90deg, #999, #fff);
+      background-blend-mode: multiply;
+      filter: contrast(20) blur(2px) contrast(5);
+      position: fixed;
+      top:0;
+      left:0;
+      width:100vw;
+      height:100vh;
+    }
+    article {
+      position: fixed;
+      top:0;
+      left:0;
+      width:100vw;
+      height:100vh;
+      background: linear-gradient(90deg, #6d0000, #6d0000);
+      mix-blend-mode: multiply;
+      z-index: 100;
+    }
   </style>
   <script>
-    function setDeep(obj, path, value) {
-      path.reduce((acc, key, index) => {
-        if (index === path.length - 1) {
-          acc[key] = value; // Финальное присваивание
-        } else {
-          // Даже если узел уже объект, мы его явно заменяем, чтобы сработал Proxy
-          acc[key] = { ...acc[key] };
-        }
-        return acc[key];
-      }, obj);
-    }
-    const state = new Proxy({}, {
-      set(target, prop, value) {
-        console.log(`Set triggered for ${prop}:`, value);
-        target[prop] = value;
-        //localStorage.setItem('setdeep', JSON.stringify(target));
-        return true;
-      }
-    });
-
-    setDeep(state, ['views', 'Source1', 'SliderView'], { currentIndex: 2 });
-    localStorage.setItem('setdeep', JSON.stringify(state));
-
-    console.log(state.views.Source1.SliderView.currentIndex); // 2
+    
   </script>
 </head>
 
 <body>
-
+  <div>
+    
+    asdfasdfsadf
+  </div>
+  <article>laksdjf;</article>
+  
   <script>
   </script>
 </body>

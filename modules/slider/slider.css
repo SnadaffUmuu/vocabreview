@@ -9,12 +9,12 @@
 #sliderActions {
   flex: 0 0 auto;
   font-size: 13px;
-  padding:5px;
+  padding:5px 10px;
   box-sizing: border-box;
   display: flex;
   flex-flow: row nowrap;
   gap: 0 3px;
-  justify-content: space-evenly;
+  justify-content: space-between;
 }
 
 #sliderActions label {
