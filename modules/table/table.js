@@ -132,7 +132,10 @@ export const TableView = function () {
        + (line.speakable ? '<span data-reading="'
          + line.text
          + '" class="speakme"></span>' : '')
-        + '<span class="line-text">' + line.text + '</span>'
+        + '<span class="line-text">' 
+          + (line.role == DataFactory.LINE_ROLE.info ? 'ⓘ&nbsp;' : '') 
+          + line.text 
+        + '</span>'
         + '<span class="expand" data-expanded="⋈">✥</span>'
         + '</div>';
   };
@@ -148,6 +151,9 @@ export const TableView = function () {
       });
       //console.log('extra lines', lines.filter(l => !row.includes(l.originalIndex)).map(l => l.originalIndex));
       lines.filter(l => !row.includes(l.originalIndex)).forEach(l => row.push(l.originalIndex));
+      if (entry.info) {
+        row.push(1000)
+      }
       model.push(row);
     });
     
@@ -163,7 +169,16 @@ export const TableView = function () {
         let entryInfo = DataFactory.getEntryInfoString(entry, true);
         let cells = [];
         row.forEach((cell, ii) => {
-          if (cell == null) {
+          if (cell == 1000) {
+            cells.push(`
+            <td class="draggableContainer">
+              <div draggable="true" class="cellContentDraggable ellipsis">
+                <span class="line-text">ⓘ&nbsp;${entry.info}</span>
+                <span class="expand" data-expanded="⋈">✥</span>
+              </div>
+            </td>
+            `)
+          } else if (cell == null) {
             cells.push(`
             <td class="draggableContainer"></td>
             `);

@@ -26,7 +26,7 @@ export const DataTests = {
   */
 
   entryFormatters : {
-    getEntryShortInfoString2 : function (entry, searchQuery, i) {
+    getEntryShortInfoString2 : function (entry, searchQuery) {
       const rl = entry.reviewLevel;
       let entryInfo = '';
       entryInfo += (entry.tag ? '<div class="tag">' + entry.tag + '</div>' : '');
@@ -64,7 +64,6 @@ export const DataTests = {
         ${searchQuery ? entry.source + ': ' : ''}${entry.breadcrumbs}
       </div>`
       return `<article class="dataEntry">
-          <div class="entryIndex tag">${i}</div>
         ${rl ? '<div class="reviewLevel tag">' + rl + '</div>' : ''}
         ${entryInfo}
       </article>`;
@@ -116,83 +115,83 @@ export const DataTests = {
   tests : {
     all : function(entries) {
       return entries.map((en, i) =>
-        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
 
     reversed : function(entries) {
       return entries.filter(en => en.reversed == true).map((en, i) => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
 
     numberOfLines : function(entries) {
       return entries.filter(en => 
         DataTests.filters.numOfLinesEq(en.lines, 1)
       ).map((en, i) => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
 
     hasReviewLevel : function(entries) {
       return entries.filter(en =>
         en.reviewLevel).map((en, i) => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
     firstLineHiragana : function(entries) {
         return entries.filter(en =>
           DataTests.filters.firstLineHiragana(en)
           ).map((en, i) => 
-            DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
+            DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
     
     hasExamples : function (entries) {
       return entries.filter(en => 
         en.lines.some(l => l.role && l.role == DataFactory.LINE_ROLE.example)
       ).map((en, i) => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
     
     hasLineStartingWithEqual : function (entries) {
       return entries.filter(en => DataTests.filters.hasLineStartingWith(en.lines, '=')
         || DataTests.filters.hasLineStartingWith(en.lines, '＝')
       ).map((en, i) => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
 
     hasInfo : function (entries) {
       return entries.filter(en =>
         en.info).map((en, i) => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
     hasTagGrammar : function (entries) {
       return entries.filter(en =>
         en.tag == DataFactory.ENTRY_TAG.grammar).map((en, i) => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
     hasTagOnomo : function (entries) {
       return entries.filter(en =>
         en.tag == DataFactory.ENTRY_TAG.onomatopoeia).map((en, i) => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
     hasTagGeo : function (entries) {
       return entries.filter(en =>
         en.tag == DataFactory.ENTRY_TAG.geo).map((en, i) => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
     hasTagName : function (entries) {
       return entries.filter(en =>
         en.tag == DataFactory.ENTRY_TAG.name).map((en, i) => 
-          DataTests.entryFormatters.getEntryShortInfoString2(en, null, i));
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
     hasLineInfo : function (entries) {
       return entries.filter(en => 
         en.lines.some(l => l.role && l.role == DataFactory.LINE_ROLE.info)
       ).map((en, i) => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en, null, i))
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
   }
   

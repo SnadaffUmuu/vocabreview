@@ -27,13 +27,6 @@
   background: var(--tableAddColBorderActive);
 }
 
-#tableContainer {
-/*
-  max-width: 100vw;
-  overflow-x: auto;
-*/
-}
-
 #table {
   border-collapse: collapse;
   font-size:15px;
@@ -52,26 +45,15 @@
 }
 
 #table tr[data-tag="grammar"] {
-  background-image: url(../../assets/images/grammar.jpg);
 }
 
 #table tr[data-tag="geo"] {
-  background-image: url(../../assets/images/geo.jpg);
-  background-repeat: repeat;
 }
 
 #table tr[data-tag="name"] {
-  background-image: url(../../assets/images/name.jpg);
-  mix-blend-mode: soft-light;
 }
 
 #table tr[data-tag="yojijukugo"] {
-  background-image: linear-gradient(var(--bg), var(--bg)), 
-  url(../../assets/images/yojijukugo.jpg),
-  linear-gradient(var(--bg), var(--bg));
-  background-blend-mode: multiply, screen;
-  background-size: cover;
-  background-repeat: repeat;
 }
 
 #table tr[data-tag="yojijukugo"] {
@@ -129,7 +111,7 @@
 }
 
 #table td .cellContentDraggable.speakable {
-  color: var(--table-text-color-speakable);
+  /* color: var(--table-text-color-speakable); */
   font-size: 17px;
 }
 
@@ -259,47 +241,49 @@
   position: absolute;
 }
 
-#table td .cellContentDraggable[data-review-level] {
-  font-size:20px;
+#table [data-review-level] .line-text {
+  border-radius: 5px;
+  border-bottom-style: solid;
 }
 
-#table [data-review-level]::after {
-  content: '•';
-  opacity: .5;
-  display:inline-block;
-  padding-left:5px;
+#table [data-review-level="100"] .line-text,
+#table [data-review-level="200"] .line-text,
+#table [data-review-level="300"] .line-text {
+  color:var(--revLevelTextColor);
+  border-bottom-color:var(--revLevelTextColor);
+  font-size:21px !important;
 }
 
-#table [data-review-level="100"]::after {
-  color: var(--tableRevewLevelTextColor);
-  opacity: 1;
+#table [data-review-level="1"] .line-text,
+#table [data-review-level="2"] .line-text,
+#table [data-review-level="3"] .line-text {
+  color:var(--revLevelMinorTextColor);
+  border-bottom-color:var(--revLevelMinorTextColor);
+  font-size:19px !important;
 }
 
-#table [data-review-level="200"]::after {
-  color: var(--tableRevewLevelTextColor);
-  opacity: 1;
-  content: '••'
+#table [data-review-level="1"] .line-text {
+  border-bottom-width:0px;
 }
 
-#table [data-review-level="300"]::after {
-  color: var(--tableRevewLevelTextColor);
-  opacity: 1;
-  content: '•••'
+#table [data-review-level="100"] .line-text {
+  border-bottom-width:1px;
 }
 
-#table [data-review-level="1"]::after {
-  opacity: 1;
-  color:var(--tableRevewLevelTextColor1);
+#table [data-review-level="2"] .line-text {
+  border-bottom-width:1px;
 }
 
-#table [data-review-level="2"]::after {
-  opacity: 1;
-  color:var(--tableRevewLevelTextColor1);
+#table [data-review-level="200"] .line-text {
+  border-bottom-width:2px;
 }
 
-#table [data-review-level="3"]::after {
-  opacity: 1;
-  color:var(--tableRevewLevelTextColor1);
+#table [data-review-level="3"] .line-text {
+  border-bottom-width:2px;
+}
+
+#table [data-review-level="300"] .line-text {
+  border-bottom-width:3px;
 }
 
 #table [data-is-reading] {

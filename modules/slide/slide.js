@@ -14,12 +14,15 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     element.dataset.originalIndex = entry.originalIndex;
     if (entry.tag) {
       element.dataset.tag = entry.tag;
-      // element.classList.add('circleBackground');
     }
-    if (entry.info) {
+    const info = entry.info || entry.lines.find(l => l.role == DataFactory.LINE_ROLE.info)?.text
+    if (info) {
       const infoEl = element.querySelector('.entry-info');
-      infoEl.insertAdjacentHTML('beforeend', entry.info);
+      infoEl.insertAdjacentHTML('beforeend', info);
       infoEl.style.display = '';
+    }
+    if (entry.reviewLevel) {
+      element.dataset.reviewLevel = entry.reviewLevel
     }
   },
 
@@ -27,12 +30,10 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     const lRoles = DataFactory.LINE_ROLE;
     const element = this.getElement();
     const readingLine = entry.lines.find(l => l.role == DataFactory.LINE_ROLE.reading);
-    let lines;
+    let lines = entry.lines.filter(l => l.role !== DataFactory.LINE_ROLE.info);
     if (readingLine) {
       lines = entry.lines.filter(l => l.role != DataFactory.LINE_ROLE.reading);
-    } else {
-      lines = entry.lines
-    }
+    } 
     this.setSlideProps(entry, element);
     const sidesContainer = element.querySelector('.js-slide-inner');
     const sides = lines.map(line => 

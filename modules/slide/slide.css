@@ -78,6 +78,8 @@
   flex-flow: column nowrap;
   justify-content: center;
   align-items: stretch;
+  position: relative;
+  z-index: -1;
 }
 
 .keen-slider__slide .compact {
@@ -89,8 +91,6 @@
   content: '';
   position: absolute;
   top:0;
-  bottom:0;
-  right:0;
   left:0;
   z-index: -1;
   mix-blend-mode: lighten;
@@ -101,71 +101,37 @@
 }
 
 .keen-slider__slide[data-tag="grammar"]:after {
-  background-image: url(../../assets/images/grammar.jpg);
 }
 
 .keen-slider__slide[data-tag="geo"]:after {
-  background-image: url(../../assets/images/geo.jpg);
-  background-size: cover;
-  background-repeat: no-repeat;
 }
 
 .keen-slider__slide[data-tag="name"]:after {
-  background-image: url(../../assets/images/name.jpg);
-  background-size: cover;
-  background-repeat: no-repeat;
-  mix-blend-mode: soft-light;
 }
 
 .keen-slider__slide[data-tag="term"]:after {
-  background-image: url(../../assets/images/term.webp);
-  background-size: cover;
-  background-repeat: no-repeat;
-  mix-blend-mode: soft-light;
 }
 
 .night .keen-slider__slide[data-tag="term"]:after {
-  mix-blend-mode: darken;
 }
 
 .keen-slider__slide[data-tag="pattern"]:after {
-  background-image: url(../../assets/images/pattern.jpg);
-  background-size: contain;
-  background-repeat: repeat;
-  mix-blend-mode: soft-light;
 }
 
 .night .keen-slider__slide[data-tag="pattern"]:after {
-  mix-blend-mode: darken;
 }
 
 .keen-slider__slide[data-tag="counter"]:after {
-  background-image: url(../../assets/images/counter.jpg);
-  background-size: contain;
-  background-repeat: repeat;
-  mix-blend-mode: soft-light;
 }
 
 .keen-slider__slide[data-tag="counter"]:after {
-  background-image: url(../../assets/images/counter.jpg);
-  background-size: contain;
-  background-repeat: repeat;
-  mix-blend-mode: soft-light;
 }
 
 
 .keen-slider__slide[data-tag="suffix"]:after {
-  background-image: url(../../assets/images/suffix.jpg);
-  background-size: contain;
-  background-repeat: repeat;
-  mix-blend-mode: soft-light;
 }
 
 .keen-slider__slide[data-tag="yojijukugo"]:after {
-  background-image: url(../../assets/images/yojijukugo.jpg);
-  background-size: contain;
-  background-repeat: repeat;
-  mix-blend-mode: screen;
 }
 
 .night .keen-slider__slide[data-tag="yojijukugo"]:after {
@@ -174,11 +140,9 @@
 
 .keen-slider__slide[data-tag="onomat"]:after,
 .keen-slider__slide[data-tag="onomatopoeia"]:after {
-  background-image: url(../../assets/images/onomat.png);
 }
 
 .keen-slider__slide[data-tag="term"] {
-  box-shadow: inset 0 0 10px var(--slideTagTermShadow);
 }
 
 .slide-side:not(.current) {
@@ -187,7 +151,7 @@
 
 .slide-side[data-reading] {
   /* border-bottom: 2px dashed var(--slideReadableTextBorder); */
-  border-bottom: 2px dashed var(--text-color);
+  border-bottom: 2px dashed var(--paleBorder);
   position: relative;
 }
 
@@ -196,5 +160,62 @@
   align-self: center;
   text-align: center;
   margin: 0 20px;
-  padding: 0 0 25px;
+  padding: 0 0 35px;
+}
+
+.keen-slider__slide[data-review-level]::after {
+  content:'';
+  position: absolute;
+  bottom:100px;
+  width:80%;
+  left:10%;
+  height:50px;
+  border-bottom-style: dashed;
+  border-radius: 50px;
+}
+
+.keen-slider__slide[data-review-level] .slide-side {
+  color:var(--revLevelMinorTextColor)
+}
+
+.keen-slider__slide[data-review-level="100"] .slide-side,
+.keen-slider__slide[data-review-level="200"] .slide-side,
+.keen-slider__slide[data-review-level="300"] .slide-side {
+  color:var(--revLevelTextColor)
+}
+
+.keen-slider__slide[data-review-level="1"]::after {
+  border-bottom-width: 1px;
+}
+
+.keen-slider__slide[data-review-level="2"]::after {
+  border-bottom-width: 2px;
+}
+
+.keen-slider__slide[data-review-level="3"]::after {
+  border-bottom-width: 3px;
+}
+
+.keen-slider__slide[data-review-level="1"]::after,
+.keen-slider__slide[data-review-level="2"]::after,
+.keen-slider__slide[data-review-level="3"]::after {
+  border-bottom-color: var(--revLevelMinorTextColor);
+}
+
+.keen-slider__slide[data-review-level="100"]::after {
+  border-bottom-width: 2px;
+}
+
+.keen-slider__slide[data-review-level="200"]::after {
+  border-bottom-width: 3px;
+}
+
+.keen-slider__slide[data-review-level="300"]::after {
+  border-bottom-width: 4px;
+}
+
+.keen-slider__slide[data-review-level="100"]::after,
+.keen-slider__slide[data-review-level="200"]::after,
+.keen-slider__slide[data-review-level="300"]::after {
+  border-bottom-color: var(--revLevelTextColor);
 }

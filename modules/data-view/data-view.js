@@ -49,10 +49,10 @@ export const DataView = function () {
             res = [...res, ...matchingEntries]
           }
         }
-        res.forEach((entry, i) => {
+        res.forEach(entry => {
           this.outputEl.insertAdjacentHTML(
             'beforeend',
-            DataTests.entryFormatters.getEntryShortInfoString2(entry, e.target.value, i))
+            DataTests.entryFormatters.getEntryShortInfoString2(entry, e.target.value))
         });
         this.resultCounter.innerHTML = res.length
       }

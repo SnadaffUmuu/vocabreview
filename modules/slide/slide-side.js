@@ -14,7 +14,7 @@ SlideSide.prototype = Object.assign(Object.create(Element.prototype), {
 
   render : function (line) {
     const element = this.getElement();
-    element.innerHTML = line.text;
+    element.innerHTML = `<span>${line.text}</span>`;
     element.dataset.index = line.originalIndex;
     if (line.speakable) {
       element.dataset.reading = line.text;

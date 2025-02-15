@@ -6,6 +6,7 @@ import {
   getDragAfterElement,
   createPlaceholder,
   shuffleArray,
+  setSelectOption,
 } from "../utils.js";
 import { Application } from "../app.js";
 
@@ -537,6 +538,7 @@ export const BoardView = function () {
     this.goodCol.innerHTML = '';
     this.failedCol.innerHTML = '';
     this.learnCol.innerHTML = '';
+    setSelectOption(this.boardActions, '');
     if (resetAll) {
       this.state.removedItems = [];
       this.state.itemsInCols = {};
@@ -548,6 +550,7 @@ export const BoardView = function () {
 
   this.render = function (resetAll) {
     this.reset(resetAll);
+    this.initState();
     if (!Application.getCurrentSourceData()?.currentEntries.length) {
       if (Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();
@@ -595,7 +598,7 @@ export const BoardView = function () {
     this.studyModeEl = this.element.querySelector('#studyMode');
     this.cardModeEl = this.element.querySelector('#cardMode');
     this.sourceItemCounter = this.element.querySelector('#sourceItemsCounter');
-    //this.clicked = false;
+    this.boardActions = this.element.querySelector('#boardActions');
     this.render();
   }
 }
