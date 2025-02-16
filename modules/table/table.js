@@ -30,7 +30,6 @@ export const TableView = function () {
       '.cellContentDraggable': 'toggleCell',
       '.speakme': 'speakCell',
       '.expand': 'toggleExpand',
-      '.entry-info .ellipsis': 'showInfoPopup',
     },
     contextmenu: {
       'tbody': 'UserActionHandlers.preventDefault',
@@ -43,20 +42,23 @@ export const TableView = function () {
       '.rowDrag': 'setRowDragStart',
     },
     dragenter: {
-      'td:not(:first-child)': 'toggleDragoverElementHighlight',
+      'td:not(:first-child) .draggableContainerInner': 'toggleDragoverElementHighlight',
+      'td:not(:first-child) .cellContentDraggable': 'toggleDragoverElementHighlight',
     },
     dragleave: {
-      'td:not(:first-child)': 'toggleDragoverElementHighlight',
+      'td:not(:first-child) .draggableContainerInner': 'toggleDragoverElementHighlight',
+      'td:not(:first-child) .cellContentDraggable': 'toggleDragoverElementHighlight',
     },
     dragover: {
       'th:not([draggable="false"])': 'UserActionHandlers.preventDefault',
       'th:not([draggable="false"]) .drag': 'UserActionHandlers.preventDefault',
       'th:not([draggable="false"]) .toggle': 'UserActionHandlers.preventDefault',
-      'td:not(:first-child)': 'UserActionHandlers.preventDefault',
+      'td:not(:first-child) .draggableContainerInner': 'UserActionHandlers.preventDefault',
+      'td:not(:first-child) .cellContentDraggable': 'UserActionHandlers.preventDefault',
       '.rowDrag': 'dragRow',
     },
     dragend: {
-      'td:not(:first-child)': 'removeDragoverCellHighlights',
+      'td:not(:first-child) .draggableContainerInner': 'removeDragoverCellHighlights',
       '.cellContentDraggable': 'removeDragoverCellHighlights',
       '.rowDrag': 'setRowDragEnd',
     },
@@ -64,7 +66,8 @@ export const TableView = function () {
       'th:not([draggable="false"])': 'setColumnHeaderDragDrop',
       'th:not([draggable="false"]) .drag': 'setColumnHeaderDragDrop',
       'th:not([draggable="false"]) .toggle': 'setColumnHeaderDragDrop',
-      'td:not(:first-child)': 'dropDragItem',
+      'td:not(:first-child) .draggableContainerInner': 'dropDragItem',
+      'td:not(:first-child) .cellContentDraggable': 'dropDragItem',
       '.rowDrag': 'setRowDragDrop'
     },
     touchstart: {
@@ -114,101 +117,6 @@ export const TableView = function () {
     }
   };
 
-  this.colRoles = [
-    'expression',
-    'meaning',
-    'reading',
-  ]; 
-
-  this.lineToTableElHtml = function (line, entry) {
-    return '<div draggable="true" '
-      + ' class="cellContentDraggable ellipsis'
-      + (line.speakable ? ' speakable' : '')
-      + '"'
-      + (line.role ? ' data-role="' + line.role + '"' : '')
-      + (entry.reviewLevel && line.originalIndex == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
-       + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' data-is-reading' : '')
-       + '>'
-       + (line.speakable ? '<span data-reading="'
-         + line.text
-         + '" class="speakme"></span>' : '')
-        + '<span class="line-text">' 
-          + (line.role == DataFactory.LINE_ROLE.info ? 'ⓘ&nbsp;' : '') 
-          + line.text 
-        + '</span>'
-        + '<span class="expand" data-expanded="⋈">✥</span>'
-        + '</div>';
-  };
-
-  this.buildTableHtml = function () {
-    const model = [];
-    this.data.entries.forEach(entry => {
-      const row = [];
-      const lines = entry.lines;
-      this.colRoles.forEach(role => {
-        const lineOfRole = lines.find(l => l.role == role);
-        row.push(lineOfRole ? lineOfRole.originalIndex : null);
-      });
-      //console.log('extra lines', lines.filter(l => !row.includes(l.originalIndex)).map(l => l.originalIndex));
-      lines.filter(l => !row.includes(l.originalIndex)).forEach(l => row.push(l.originalIndex));
-      if (entry.info) {
-        row.push(1000)
-      }
-      model.push(row);
-    });
-    
-    this.columnsCount = Math.max(...model.map(r => r.length));
-
-    const resHTML = '<table id="table"><thead><tr><th draggable="false" data-index="0"></th>'
-      + (Array.from({ length: this.columnsCount }).map((_, i) =>
-        '<th draggable="true" data-index="' + (i + 1) + '"><div class="drag">↔️</div><div class="toggle" toggle</div></th>').join(''))
-      + '<th draggable="true" data-index="' + (this.columnsCount + 1) + '"><div class="drag">↔️</div></th>'
-      + '</tr></thead><tbody>'
-      + model.reduce((resHTML, row, i) => {
-        const entry = this.data.entries[i];
-        let entryInfo = DataFactory.getEntryInfoString(entry, true);
-        let cells = [];
-        row.forEach((cell, ii) => {
-          if (cell == 1000) {
-            cells.push(`
-            <td class="draggableContainer">
-              <div draggable="true" class="cellContentDraggable ellipsis">
-                <span class="line-text">ⓘ&nbsp;${entry.info}</span>
-                <span class="expand" data-expanded="⋈">✥</span>
-              </div>
-            </td>
-            `)
-          } else if (cell == null) {
-            cells.push(`
-            <td class="draggableContainer"></td>
-            `);
-          } else {
-            const theLine = entry.lines.find(l => l. originalIndex == cell);
-            cells.push(`
-            <td class="draggableContainer">
-              ${this.lineToTableElHtml(theLine, entry)}
-            </td>
-            `)
-          }
-        });
-        return resHTML += '<tr' + (entry.tag ? ' data-tag="' + entry.tag + '"' : '') + '><td><div draggable="true" class="rowDrag">↕️</div></td>'
-          + cells.join('')
-          + (cells.length == this.columnsCount ? '' : 
-            Array.from({length: this.columnsCount - cells.length}).map((_, i) => '<td class="draggableContainer"></td>').join('')
-          )
-          + '<td class="entry-info">'
-          + '<div class="ellipsis">'
-          + entryInfo
-          + '<span class="expand" data-expanded="⋈">✥</span>'
-          + '</div>'
-          + '</td>'
-          + '</tr>';
-
-      }, '')
-      + '</tbody></table>';
-    return resHTML;
-  };
-
   this.toggleColumn = function (e) {
     const th = e.target.closest('th');
     if (!th) return;
@@ -247,6 +155,11 @@ export const TableView = function () {
     return this.dragCells.checked ? true : false;
   };
 
+  this.getDropTargetElement = function (el) {
+    return el.classList.contains('draggableContainerInner') ?
+    el : el.closest('.draggableContainerInner')
+  };
+
   this.setColumnHeaderDragStart = function (e) {
     e.dataTransfer.setData('text/plain', e.target.dataset.index);
   };
@@ -275,19 +188,19 @@ export const TableView = function () {
 
   this.toggleDragoverElementHighlight = function (e) {
     if (!this.isDragCellMode()) return;
-    e.target.classList.toggle('over');
+    this.getDropTargetElement(e.target).classList.toggle('over');
   };
 
   this.removeDragoverCellHighlights = function () {
     if (!this.isDragCellMode()) return;
-    this.tableEl.querySelectorAll('td.over').forEach(cell => cell.classList.remove('over'));
+    this.tableEl.querySelectorAll('.over').forEach(cell => cell.classList.remove('over'));
   };
 
   this.dropDragItem = function (e) {
     if (!this.isDragCellMode()) return;
     e.preventDefault();
     if (this.draggedCellContent) {
-      e.target.appendChild(this.draggedCellContent);
+      this.getDropTargetElement(e.target).appendChild(this.draggedCellContent);
       this.draggedCellContent = null;
     }
   };
@@ -317,13 +230,14 @@ export const TableView = function () {
       item.style.top = `${touch.clientY + 10}px`;
       const elFromPoint = document
         .elementFromPoint(touch.clientX, touch.clientY);
-      this.potentialContainer = elFromPoint.tagName == 'TD' ? elFromPoint : elFromPoint.closest('td');
+      this.potentialContainer = elFromPoint.classList.contains('.draggableContainerInner') ? 
+        elFromPoint : elFromPoint.closest('.draggableContainerInner');
       if (this.potentialContainer && this.placeholder) {
         const afterElement = getDragAfterElement(
           this.potentialContainer,
           touch.clientY,
           touch.clientX
-        );
+          );
         if (afterElement) {
           this.potentialContainer.insertBefore(this.placeholder, afterElement);
         } else {
@@ -428,70 +342,137 @@ export const TableView = function () {
     this.draggedRow = null;
   };
 
-  this.showInfoPopup = function (e) {
-    e.stopPropagation();
-    const content = e.target.innerHTML;
-    let infoPopup = document.body.querySelector('.info-popup');
-    if (!infoPopup) {
-      this.tableContainer.insertAdjacentHTML('afterbegin', `
-        <div class="info-popup" style="display:none">
-          <div class="infopopup-content">${content}</div>
-          <div class="close"></div>
-        </div>
-        `);
-      infoPopup = document.body.querySelector('.info-popup');
-    } else {
-      infoPopup.querySelector('.infopopup-content').innerHTML = content;
-    }
-    infoPopup.style.display = '';
-    infoPopup.style.top = (e.y - Math.floor(infoPopup.offsetHeight / 2)) + 'px';
-    infoPopup.style.left = (e.x - infoPopup.offsetWidth) + 'px';
-    if (!this.tableContainer.dataset.listeningForPopupclose) {
-      this.closeListenerFunction = this.closeInfoPopup.bind(this);
-      this.tableContainer.addEventListener('click', this.closeListenerFunction, false);
-      this.tableContainer.dataset.listeningForPopupclose = true;
-    }
-  };
-
-  this.closeInfoPopup = function (e) {
-    if (!e.target.classList.contains('info-popup')
-      && !e.target.closest('.info-popup')
-      || e.target.matches('.info-popup .close')) {
-      const infoPopup = document.body.querySelector('.info-popup');
-      if (infoPopup) {
-        infoPopup.style.display = 'none';
-        infoPopup.querySelector('.infopopup-content').innerHTML = '';
-      }
-    }
-  };
-
-  /*
-  this.getDragAfterElement = function (container, y) {
-    const draggableElements = [
-      ...container.querySelectorAll(".cellContentDraggable:not(.dragging)")
-    ];
-
-    return draggableElements.reduce(
-      (closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
-        if (offset < 0 && offset > closest.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closest;
-        }
-      },
-      { offset: Number.NEGATIVE_INFINITY }
-    ).element;
-  };
-  */
-
   this.setCellEventsAndStuff = function (cell, i) {
     const item = cell.querySelector('.cellContentDraggable');
     if (item) {
       item.id = `draggable-${i}`;
     };
   };
+
+  this.colRoles = [
+    'expression',
+    'meaning',
+    'reading',
+    'example',
+    'example_translation',
+    'alt_reading'
+  ]; 
+
+  this.linesToTableElHtml = function (lines, entry) {
+    return lines.reduce((res, line, i) => {
+      return res += '<div draggable="true" '
+      + ' class="cellContentDraggable ellipsis'
+      + (line.speakable ? ' speakable' : '')
+      + '"'
+      + (line.role ? ' data-role="' + line.role + '"' : '')
+      + (entry.reviewLevel && line.originalIndex == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
+       + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' data-is-reading' : '')
+       + '>'
+       + (line.speakable ? '<span data-reading="'
+         + line.text
+         + '" class="speakme"></span>' : '')
+        + '<span class="line-text">' 
+          + line.text 
+        + '</span>'
+        + '<span class="expand" data-expanded="⋈">✥</span>'
+        + '</div>'
+    }, '');
+  };
+
+  this.buildTableHtml = function () {
+    const model = [];
+    this.data.entries.forEach(entry => {
+      const row = [];
+      const lines = entry.lines;
+      this.colRoles.forEach(role => {
+        const linesOfRole = lines.filter(l => l.role == role);
+        row.push(linesOfRole.length ? linesOfRole.map(l => l.originalIndex) : null);
+      });
+
+      lines.filter(l => 
+        !row.find(lArr => lArr?.includes(l.originalIndex))
+      ).forEach(l => 
+          row.push([l.originalIndex])
+      );
+      
+      if (entry.info) {
+        row.push(1000)
+      }
+      model.push(row);
+    });
+    
+    this.columnsCount = Math.max(...model.map(r => r.length));
+    
+    //remove empty columns
+    let emptyColsIndexes = [];
+
+    Array.from({ length: this.columnsCount }).forEach((_, i) => {
+      if (!model.some(row => row[i] !== null)) {
+        emptyColsIndexes.push(i);
+      }
+    });
+
+    this.remainingColRoles = this.colRoles.filter((role, i) => !emptyColsIndexes.includes(i));
+
+    emptyColsIndexes.reverse();
+
+    model.forEach(row => {
+      emptyColsIndexes.forEach(index => {
+        row.splice(index, 1);
+      });
+    });
+
+    this.columnsCount = Math.max(...model.map(r => r.length));
+
+    const resHTML = '<table id="table"><thead><tr><th draggable="false" data-index="0"></th>'
+      + (Array.from({ length: this.columnsCount }).map((_, i) =>
+        '<th draggable="true" data-index="' + (i + 1) + '">'
+        + '<div class="drag">↔️</div><!--<div class="colName">' + this.remainingColRoles[i] + '</div>-->' 
+        + '<div class="toggle">toggle</div>' 
+      + '</th>').join(''))
+      + '</tr></thead><tbody>'
+      + model.reduce((resHTML, row, i) => {
+        const entry = this.data.entries[i];
+        let cells = [];
+        row.forEach((cell, ii) => {
+          if (cell == 1000) {
+            cells.push(`
+            <td class="draggableContainer">
+              <div class="draggableContainerInner">
+                <div draggable="true" class="cellContentDraggable ellipsis">
+                  <span class="line-text">ⓘ&nbsp;${entry.info}</span>
+                  <span class="expand" data-expanded="⋈">✥</span>
+                </div>
+              </div>
+            </td>
+            `)
+          } else if (cell == null) {
+            cells.push(`
+            <td class="draggableContainer"><div class="draggableContainerInner"></div></td>
+            `);
+          } else {
+            const theLines = entry.lines.filter(l => cell.includes(l. originalIndex));
+            cells.push(`
+            <td class="draggableContainer">
+              <div class="draggableContainerInner">
+              ${this.linesToTableElHtml(theLines, entry)}
+              </div>
+            </td>
+            `)
+          }
+        });
+        return resHTML += '<tr' + (entry.tag ? ' data-tag="' + entry.tag + '"' : '') + '><td><div draggable="true" class="rowDrag">↕️</div></td>'
+          + cells.join('')
+          + (cells.length == this.columnsCount ? '' : 
+            Array.from({length: this.columnsCount - cells.length}).map((_, i) => 
+              '<td class="draggableContainer"><div class="draggableContainerInner"></td>').join('')
+          )
+          + '</tr>';
+
+      }, '')
+      + '</tbody></table>';
+    return resHTML;
+  };  
 
   this.renderTable = function () {
 

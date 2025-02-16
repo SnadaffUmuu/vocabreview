@@ -3,7 +3,47 @@
 ::source::SR_Kona2
 ====
 
-[67] A Debt Repaid
+[59] Soar
+
+右腕
+みぎうで
+правая рука, помощник 
+
+押さえつける
+おさえつける
+придавить, обуздать, скрутить
+
+卑怯者
+ひきょうもの
+подлец (вероломный, дерущийся нечестно)
+
+〜っちゃ
+=〜っては
+お前に生きててもらっちゃ困るんだよ
+It would be a bother for me to have you keep living
+
+振り払う ▲
+ふりはらう
+стряхивать
+僕の上に乗った猫を振り払った
+Я стряхнул кошку, которая забралась на меня
+
+舞い上がる ***
+まいあがる
+взвиваться, взлетать, вздыматься
+ワシが空に舞い上がった
+
+下降
+かこう
+снижение, понижение
+используется, когда движение описывается со стороны. generic descent observed by a third party, irrespective of anyone's intent
+鳥が空から急下降した
+Птица резко снизилась с неба.
+海面の下降
+понижение уровня моря
+::diff::降下 an intentional descent, for example, of a plane
+
+[58] A Debt Repaid
 
 ああ
 да, так (или нет, не так), в ответах
@@ -52,7 +92,7 @@ shit; dang; crap; rats; dammit; tsk
 созреть, поспеть
 トマトが熟する
 
-[66] Terms and Conditions
+[57] Terms and Conditions
 
 お宅
 おたく
@@ -115,7 +155,7 @@ you (referring to someone of equal status with whom one is not especially close)
 A国がB国から独立を宣言した
 Страна А провозгласила независимость от страны Б. 
 
-[65] Negotiations
+[56] Negotiations
 
 いくつも
 много, больше, чем ожидалось
@@ -161,7 +201,7 @@ A国がB国から独立を宣言した
 
 卑怯
 ひきょう
-трусливый, подлый, вероломный, fighting dirty
+подлый, вероломный, fighting dirty (иногда переводят как трус)
 
 やるね！ なかなかやるじゃん！
 Смотри-ка, как ты можешь!

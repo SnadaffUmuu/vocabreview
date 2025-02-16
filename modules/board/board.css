@@ -170,38 +170,48 @@
   color: var(--boardItemLapsedLineTextColor);
 }
 
+.boardItem .itemLine[data-review-level] {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+.boardItem .itemLine[data-review-level="1"],
+.boardItem .itemLine[data-review-level="2"],
+.boardItem .itemLine[data-review-level="3"] {
+  text-decoration-color: var(--text-color);
+  font-size: 21px;
+}
+
+.boardItem .itemLine[data-review-level="100"],
+.boardItem .itemLine[data-review-level="200"],
+.boardItem .itemLine[data-review-level="300"] {
+  text-decoration-color: white;
+  font-size: 25px;
+}
+
 .boardItem .itemLine[data-review-level="1"] {
-  font-size: 20px;
+  text-decoration-style: dotted;
 }
 
 .boardItem .itemLine[data-review-level="2"] {
-  font-size: 20px;
-  text-decoration-line: grammar-error;
+  text-decoration-style: dashed;
 }
 
 .boardItem .itemLine[data-review-level="3"] {
-  font-size: 20px;
-  text-decoration: underline;
-  text-decoration-style: wavy;
-  text-decoration-thickness: from-font;
-  text-decoration-color: brown;
+  text-decoration-style: solid;
 }
 
 .boardItem .itemLine[data-review-level="100"] {
-  font-size: 25px;
+  text-decoration-style: dotted;
 }
 
 .boardItem .itemLine[data-review-level="200"] {
-  font-size: 25px;
-  text-decoration-line: grammar-error;
+  text-decoration-style: dashed;
 }
 
 .boardItem .itemLine[data-review-level="300"] {
-  font-size: 25px;
-  text-decoration: underline;
-  text-decoration-style: wavy;
-  text-decoration-thickness: from-font;
-  text-decoration-color: brown;
+  text-decoration-style: solid;
 }
 
 .boardItem .itemActions {
@@ -294,4 +304,11 @@
 
 body:has(.menuExpanded) {
   overflow: hidden;
+}
+
+.boardItem .itemInfo {
+  position: absolute;
+  left:0;
+  top:100%;
+  display: none;
 }

@@ -179,6 +179,7 @@ export const Slider = function () {
 
   this.render = async function () {
     this.reset();
+    this.initState();
     if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       if (Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();

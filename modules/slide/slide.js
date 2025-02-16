@@ -15,10 +15,9 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     if (entry.tag) {
       element.dataset.tag = entry.tag;
     }
-    const info = entry.info || entry.lines.find(l => l.role == DataFactory.LINE_ROLE.info)?.text
-    if (info) {
+    if (entry.info) {
       const infoEl = element.querySelector('.entry-info');
-      infoEl.insertAdjacentHTML('beforeend', info);
+      infoEl.insertAdjacentHTML('beforeend', entry.info);
       infoEl.style.display = '';
     }
     if (entry.reviewLevel) {
@@ -30,7 +29,7 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     const lRoles = DataFactory.LINE_ROLE;
     const element = this.getElement();
     const readingLine = entry.lines.find(l => l.role == DataFactory.LINE_ROLE.reading);
-    let lines = entry.lines.filter(l => l.role !== DataFactory.LINE_ROLE.info);
+    let lines = entry.lines;
     if (readingLine) {
       lines = entry.lines.filter(l => l.role != DataFactory.LINE_ROLE.reading);
     } 

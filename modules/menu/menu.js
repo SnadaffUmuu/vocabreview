@@ -71,7 +71,9 @@ export const MenuView = function () {
     if (!Application.views.PreloaderView.isShown()) {
       Application.views.PreloaderView.show();
     }
-    Application.changeSource(e.target.value);
+    setTimeout(() => {
+      Application.changeSource(e.target.value);
+    }, 0)
   }
 
   this.reset = function() {

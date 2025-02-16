@@ -51,6 +51,8 @@
   --tableAddColBorderActive: rgba(255, 255, 255, 0.5);
   --tableCellBorder: gray;
   --tableReadableCellShadow: rgba(255, 0, 0, 0.158);
+  --tableHiddenContentBg:#9899c244;
+  --tableHiddenReadableContentBg:rgba(128, 128, 128, 0.178);
   --tableDragOverCellBg: rgba(154, 255, 154, 0.5);
   --tableDraggingBg: rgba(135, 207, 235, 0.63);
   --tablePlaceholderBorder: #666;
@@ -61,10 +63,17 @@
   --tableRevewLevelTextColor:#ffffcb;
   --tableRevewLevelTextColor1:whitesmoke;
 
+  --tableTagBgLineYoji:#d0cbff;
+  --tableTagBgLineOnoma:#a7e3ec;
+  --tableTagBgLineGrammar:#e5c1e9;
+  --tableTagBgLineName: #cde0bb;
+  --tableTagBgLineTerm: plum;
+  --tableTagBgLinePattern: #f6ceff;
+
   --input-bg:#dfd8e7;
 
-  --revLevelTextColor:#0800ff;
-  --revLevelMinorTextColor:#142ce6;
+  --revLevelTextColor:#0800FF;
+  --revLevelMinorTextColor:#142CE6;
 
   --tagTextColor: white;
   --tagBg: #bab1c7;
@@ -99,6 +108,13 @@ body.night {
   --slideTagOnomatBg: #5a5100;
   --slideTagTermShadow: #a1001e;
   --slideSpeakableLineBg: #3b0000;
+
+  --tableTagBgLineYoji:#06096b;
+  --tableTagBgLineOnoma:#005e6c;
+  --tableTagBgLineGrammar:#6c0079;
+  --tableTagBgLineName: #760000;
+  --tableTagBgLineTerm: #8e008e;
+  --tableTagBgLinePattern: #590280;
 
   --input-bg:#aebdcc;
 
@@ -186,6 +202,7 @@ button {
 
 .example:before,
 [data-role="example"]:before,
+#table [data-role="example"] .line-text:before,
 [role="example"]:before {
   content: '✦';
   font-size: 14px;

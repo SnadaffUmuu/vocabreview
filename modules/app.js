@@ -80,12 +80,10 @@ export const Application = {
             self.initialData[value] = currData;
           }
 
-          //if (!self.data[value]) {
           self.data[value] = new Proxy(
             self.initialData[value],
             self.getSourceDataProxy(self)
           )
-          //}
           Object.assign(self.data[value], self.initialData[value]);
 
         } else if ('appType' == property) {
@@ -118,12 +116,6 @@ export const Application = {
         target[property] = value;
         if ('allEntries' == property) {
 
-          /*
-          if (self.initialData[source]?.currentEntries) {
-            delete self.initialData[source]?.currentEntries;
-          }
-          */
-
           self.saveToLocalStorage('review-data', self.initialData);
 
           if (value.length > 100
@@ -141,13 +133,11 @@ export const Application = {
           self.initialData[self.state.currentSource] = target;
           self.saveToLocalStorage('review-data', self.initialData);
           Router.renderMenuView();
-          //Router.renderCurrentView(true);
           Router.renderCurrentView();
 
         } else if ('currentEntries' == property) {
           self.saveToLocalStorage('review-data', self.initialData);
           self.views.InfobarView.render();
-          //Router.renderCurrentView(true);
           Router.renderCurrentView();
         }
         return true;
@@ -261,6 +251,7 @@ export const Application = {
       if (request.responseText) {
         this.currentRawData = request.responseText;
         delete this.initialData[name];
+        delete this.state.views?.[name];
         this.state.currentSource = name;
       }
     }.bind(this);

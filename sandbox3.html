@@ -6,52 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Review Sanbox</title>
   <style>
-    * {
-      margin: 0px;
-      padding: 0px;
-    }
-
-    body {
-      position: relative;
-    }
-    
-    div {
-      background: 
-      radial-gradient(closest-side, #2fa5ff, #fff) 0/ 0.7em 0.7em space, 
-      linear-gradient(90deg, #999, #fff);
-      background-blend-mode: multiply;
-      filter: contrast(20) blur(2px) contrast(5);
-      position: fixed;
-      top:0;
-      left:0;
-      width:100vw;
-      height:100vh;
-    }
-    article {
-      position: fixed;
-      top:0;
-      left:0;
-      width:100vw;
-      height:100vh;
-      background: linear-gradient(90deg, #6d0000, #6d0000);
-      mix-blend-mode: multiply;
-      z-index: 100;
+    .wave {
+      background: repeating-linear-gradient(
+        135deg,
+        transparent,
+        transparent 20px,
+        #f00 20px,
+        #f00 21px,
+        transparent 21px,
+        transparent 40px
+      );
+      background-size: 100% 40px;
+      height: 200px;
     }
   </style>
   <script>
     
   </script>
 </head>
-
 <body>
-  <div>
-    
-    asdfasdfsadf
-  </div>
-  <article>laksdjf;</article>
-  
-  <script>
-  </script>
+  <div class="wave"></div>
 </body>
 
 </html>

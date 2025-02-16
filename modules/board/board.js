@@ -13,6 +13,10 @@ import { Application } from "../app.js";
 export const BoardView = function () {
   this.actionsContainer = null;
 
+  this.namespaces = {
+    'UserActionHandlers': UserActionHandlers
+  }
+
   this.events = {
     'click #resetBoard': 'resetBoard',
     'change #cardMode': 'setMode',
@@ -22,10 +26,6 @@ export const BoardView = function () {
     'click #fixLapses': 'fixLapses',
     'change #boardActions' : 'executeFunction',
   };
-
-  this.namespaces = {
-    'UserActionHandlers': UserActionHandlers
-  }
 
   this.renderedEvents = {
     click: {
@@ -401,24 +401,12 @@ export const BoardView = function () {
   }
 
   this.renderLine = function (l, currentLineIndex, lapsedLines, entry) {
-    /*
-    if (l.role && l.role == DataFactory.LINE_ROLE.reading) {
-      return;
-    }
-    */
     const dataset = {
       'original-index': l.originalIndex
     };
     if (currentLineIndex != null && l.originalIndex == currentLineIndex) {
       dataset.current = true;
     }
-    /*
-    if (l.reading) {
-      dataset.reading = l.reading;
-    } else if (l.speakable) {
-      dataset.reading = l.text;
-    }
-    */
     if (l.speakable) {
       dataset.reading = l.text;
     }
@@ -502,7 +490,11 @@ export const BoardView = function () {
       lapsedLines = stateLapses[entry.originalIndex];
     }
     return `
-      <div class="boardItem" draggable="true" data-upper-line-index="${currentIndex}" data-original-index="${entry.originalIndex}">
+      <div class="boardItem" 
+        draggable="true" 
+        data-upper-line-index="${currentIndex}" 
+        data-original-index="${entry.originalIndex}">
+        ${entry.info ? ' <div class="itemInfo">' + entry + '</div>' : ''}
         <div class="lineCounter">${entry.lines.length}</div>
         <div class="tapZone"></div>
         ${others.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines, entry)).join('')}

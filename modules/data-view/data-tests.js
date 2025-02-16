@@ -150,6 +150,13 @@ export const DataTests = {
         DataTests.entryFormatters.getEntryShortInfoString2(en))
     },
     
+    hasLineAltReading : function (entries) {
+      return entries.filter(en => 
+        en.lines.some(l => l.role && l.role == DataFactory.LINE_ROLE.alt_reading)
+      ).map((en, i) => 
+        DataTests.entryFormatters.getEntryShortInfoString2(en))
+    },
+    
     hasLineStartingWithEqual : function (entries) {
       return entries.filter(en => DataTests.filters.hasLineStartingWith(en.lines, '=')
         || DataTests.filters.hasLineStartingWith(en.lines, '＝')
@@ -163,6 +170,11 @@ export const DataTests = {
           DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
+    hasTag : function (entries) {
+      return entries.filter(en => en.tag).map((en, i) => 
+          DataTests.entryFormatters.getEntryShortInfoString2(en));
+    },
+
     hasTagGrammar : function (entries) {
       return entries.filter(en =>
         en.tag == DataFactory.ENTRY_TAG.grammar).map((en, i) => 
@@ -187,12 +199,6 @@ export const DataTests = {
           DataTests.entryFormatters.getEntryShortInfoString2(en));
     },
     
-    hasLineInfo : function (entries) {
-      return entries.filter(en => 
-        en.lines.some(l => l.role && l.role == DataFactory.LINE_ROLE.info)
-      ).map((en, i) => 
-        DataTests.entryFormatters.getEntryShortInfoString2(en))
-    },
   }
   
 }

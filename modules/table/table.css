@@ -1,6 +1,3 @@
-#tableView {
-}
-
 #tableActions {
   box-sizing: border-box;
   padding: 0 7px 10px;
@@ -38,38 +35,112 @@
   background-color: var(--bg);
 }
 
-#table tr[data-tag] {
-}
-
-.night #table tr[data-tag] {
+#table tr[data-tag] .line-text {
+  backdrop-filter: blur(2px);
 }
 
 #table tr[data-tag="grammar"] {
+   background: repeating-linear-gradient(
+    30deg,
+    var(--tableTagBgLineGrammar),
+    var(--tableTagBgLineGrammar) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+
+#table tr[data-tag="onomatopoeia"] {
+  background: repeating-linear-gradient(
+    150deg,
+    var(--tableTagBgLineOnoma),
+    var(--tableTagBgLineOnoma) 1px,
+    transparent 1px,
+    transparent 10px
+  );
 }
 
 #table tr[data-tag="geo"] {
+  background: repeating-linear-gradient(
+    0deg,
+    var(--tableHiddenReadableContentBg),
+    var(--tableHiddenReadableContentBg) 1px,
+    transparent 1px,
+    transparent 10px
+  );
 }
 
 #table tr[data-tag="name"] {
+    background: repeating-linear-gradient(
+    90deg,
+    var(--tableTagBgLineName),
+    var(--tableTagBgLineName) 1px,
+    transparent 1px,
+    transparent 7px
+  );
+}
+
+#table tr[data-tag="term"] {
+  background-image: radial-gradient(var(--tableTagBgLineTerm) 1px, transparent 0px);
+  background-repeat: repeat;
+  background-size: 10px 10px;
+  background-position: center;
+}
+
+#table tr[data-tag="pattern"] {
+  background-image: radial-gradient(var(--tableTagBgLinePattern) 3px, transparent 0px);
+  background-repeat: repeat;
+  background-size: 15px 15px;
+  background-position: center;
 }
 
 #table tr[data-tag="yojijukugo"] {
-}
-
-#table tr[data-tag="yojijukugo"] {
+  background: repeating-linear-gradient(
+    30deg,
+    var(--tableTagBgLineYoji),
+    var(--tableTagBgLineYoji) 1px,
+    transparent 1px,
+    transparent 10px
+  ),
+  repeating-linear-gradient(
+    150deg,
+    var(--tableTagBgLineYoji),
+    var(--tableTagBgLineYoji) 1px,
+    transparent 1px,
+    transparent 10px
+  );
 }
 
 #table th {
   position: sticky;
-  top:0;
+  top:40px;
   background: var(--bg);
+  z-index:500;
 }
 
 #table td, #table th {
   border:1px solid var(--tableCellBorder);
 }
 
-#table th > div,
+#table th .colName,
+#table th .drag {
+  box-sizing: border-box;
+  padding: 10px 5px;
+  display: inline-block;
+  width:48%;
+  vertical-align: top;
+}
+
+#table th .drag {
+  margin-right:5px;
+  cursor:move;
+}
+
+#table th .toggle {
+  width:100%;
+  box-sizing: border-box;
+  padding:3px 5px 7px;
+}
+
 #table td .cellContentDraggable {
   box-sizing: border-box;
   padding: 5px;
@@ -80,12 +151,13 @@
 
 #table td .rowDrag {
   cursor: move;
-  max-width:30px;
   width:40px;
   height:100%;
   box-sizing: border-box;
-  padding-top:20px;
   text-align: center;
+  display:flex;
+  flex-flow:column nowrap;
+  justify-content: center;
 }
 
 #table td .cellContentDraggable {
@@ -111,7 +183,6 @@
 }
 
 #table td .cellContentDraggable.speakable {
-  /* color: var(--table-text-color-speakable); */
   font-size: 17px;
 }
 
@@ -119,20 +190,13 @@
   border-top:1px solid var(--table-text-color-speakable);
 }
 
-#table td.over,
-#table td.over > div {
+#table .over,
+#table .over {
   background: var(--tableDragOverCellBg)
 }
 
 #table td.hidden .cellContentDraggable {
   opacity: 0 !important;
-}
-
-#table th .drag {
-  margin-right:5px;
-  display: inline-block;
-  cursor:move;
-  padding:10px;
 }
 
 #table td .cellContentDraggable.dragging,
@@ -146,12 +210,18 @@
   position: absolute !important;
 }
 
-.draggableContainer {
-  /* position: relative; */
+.draggableContainerInner {
+  height:100%;
+  display:flex;
+  flex-flow: column nowrap;
+}
+
+.draggableContainer.hidden:has(.cellContentDraggable) {  
+  background: var(--tableHiddenContentBg);
 }
 
 .draggableContainer.hidden:has([data-reading]) {  
-  background: rgba(128, 128, 128, 0.178);
+  background: var(--tableHiddenReadableContentBg);
 }
 
 .speakme {
@@ -166,12 +236,6 @@
   z-index:100;
   opacity:0.5;
 }
-
-/*
-.cellContentDraggable, .draggableContainer {
-  touch-action: none;
-}
-*/
 
 #table .placeholder {
   border: 2px dashed var(--tablePlaceholderBorder);
@@ -193,10 +257,6 @@
   overflow: hidden;
 }
 
-#table .entry-info .ellipsis {
-  -webkit-line-clamp: 4;
-}
-
 #table .expand,
 #table .expand.expanded {
   position: absolute;
@@ -208,42 +268,10 @@
   opacity:0.2;
 }
 
-#table .entry-info {
-  font-size:12px;
-  padding:5px;
-  position:relative;
-}
-
-#table .entry-info > div {
-  box-sizing: border-box;
-  min-height: 30px;
-  min-width: 150px;
-  max-width: 250px;  
-}
-
-.info-popup {
-  position: fixed;
-  padding:10px;
-  z-index: 1000;
-  background:var(--tableInfoPopupBg);
-  width:250px;
-  font-size:14px;
-  color:var(--tableInfoPopupTextColor);
-}
-
-.info-popup .close {
-  width:8px;
-  height:8px;
-  top:2px;
-  right:2px;
-  background: var(--tableInfoPopupCloseElBg);
-  cursor: pointer;
-  position: absolute;
-}
-
 #table [data-review-level] .line-text {
   border-radius: 5px;
   border-bottom-style: solid;
+  padding-bottom:3px;
 }
 
 #table [data-review-level="100"] .line-text,
@@ -251,7 +279,7 @@
 #table [data-review-level="300"] .line-text {
   color:var(--revLevelTextColor);
   border-bottom-color:var(--revLevelTextColor);
-  font-size:21px !important;
+  font-size:25px !important;
 }
 
 #table [data-review-level="1"] .line-text,
@@ -259,7 +287,7 @@
 #table [data-review-level="3"] .line-text {
   color:var(--revLevelMinorTextColor);
   border-bottom-color:var(--revLevelMinorTextColor);
-  font-size:19px !important;
+  font-size:22px !important;
 }
 
 #table [data-review-level="1"] .line-text {
@@ -288,4 +316,20 @@
 
 #table [data-is-reading] {
   color: var(--table-text-color-reading) !important;
+}
+
+#table .line-text {
+  display:inline-block;
+}
+
+#table [data-role="example"]:before {
+  content: '';
+  display:none;
+}
+
+#table [data-role="example"] .line-text:before {
+  content: '✦';
+  font-size: 14px;
+  opacity: 0.6;
+  vertical-align: middle;
 }
