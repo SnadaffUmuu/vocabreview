@@ -95,7 +95,7 @@ export const TableView = function () {
 
     this.tableEl.querySelectorAll('tbody tr').forEach(row => {
       row.insertAdjacentHTML('beforeend', '<td></td>');
-      this.setCellEventsAndStuff(row.querySelector('td:last-child'), columnsCount)
+      this.setCellIndex(row.querySelector('td:last-child'), columnsCount)
     })
   };
 
@@ -342,7 +342,7 @@ export const TableView = function () {
     this.draggedRow = null;
   };
 
-  this.setCellEventsAndStuff = function (cell, i) {
+  this.setCellIndex = function (cell, i) {
     const item = cell.querySelector('.cellContentDraggable');
     if (item) {
       item.id = `draggable-${i}`;
@@ -479,10 +479,14 @@ export const TableView = function () {
     this.tableContainer.innerHTML = this.buildTableHtml();
     this.tableEl = this.tableContainer.querySelector('table');
 
-    this.cells = this.tableEl.querySelectorAll('td:not(:first-child)');
+    if (this.tableEl.querySelector('[data-tag]')) {
+      this.tableEl.insertAdjacentHTML('afterend', DataFactory.buildLegendHtml())
+    }
+
     this.draggedCellContent = null;
+    this.cells = this.tableEl.querySelectorAll('td:not(:first-child)');
     this.cells.forEach((cell, i) => {
-      this.setCellEventsAndStuff(cell, i)
+      this.setCellIndex(cell, i)
     });
     this.tbody = this.tableEl.querySelector('tbody');
     this.draggedRow = null;

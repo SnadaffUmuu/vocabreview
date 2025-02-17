@@ -15,7 +15,7 @@
   --text-color: #141f76;
   --table-text-color-speakable: #2525c2;
   --table-text-color-reading: #2525c293;
-  --icon-speakable-bg: #dcd6f5;
+  --icon-speakable-bg: #e6deee;
   --appheader-title-text-color: #1e20c0;
   --preloader-color: #2525c2;
   --preloader-bg: #9899c244;
@@ -30,12 +30,14 @@
   --boardGoodColBorder: #92ccb3;
   --boardFailedColBorder: #db9292;
   --boardLearnColBorder: #92b4db;
+  --boardItemBorder:#bfbfbf;
   --boardItemPlaceholder: rgba(130, 200, 205, 0.3);
   --boardItem:var(--button-primary);
   --boardItemLapsedBorder:rgba(159, 0, 0, 0.26);
   --boardItemLapsedLineTextColor:rgb(90, 30, 78);
   --boardRemoveItemTextColor:#e6004d;
   --boardItemMenuExpandedBorder: #a6cecf;
+  --boardInfoShadow:#a6cecf; 
 
   --slideInfoBg: #c4bfca;
   --slideInfoColor: var(--text-color);
@@ -51,8 +53,8 @@
   --tableAddColBorderActive: rgba(255, 255, 255, 0.5);
   --tableCellBorder: gray;
   --tableReadableCellShadow: rgba(255, 0, 0, 0.158);
-  --tableHiddenContentBg:#9899c244;
-  --tableHiddenReadableContentBg:rgba(128, 128, 128, 0.178);
+  --tableHiddenContentBg:#d9d2dd;
+  --tableHiddenReadableContentBg:#ddd4d6;
   --tableDragOverCellBg: rgba(154, 255, 154, 0.5);
   --tableDraggingBg: rgba(135, 207, 235, 0.63);
   --tablePlaceholderBorder: #666;
@@ -69,6 +71,8 @@
   --tableTagBgLineName: #cde0bb;
   --tableTagBgLineTerm: plum;
   --tableTagBgLinePattern: #f6ceff;
+  --tableTagBgLineCounter: #afeed4;
+  --tableTagBgLineSuffix: #a7e3ec;
 
   --input-bg:#dfd8e7;
 
@@ -87,7 +91,7 @@ body.night {
   --text-color: #a6cecf;
   --table-text-color-speakable: #f7d4ff;
   --table-text-color-reading: #f7d4ff6e;
-  --icon-speakable-bg: #712e52;
+  --icon-speakable-bg: #5e1730;
   --appheader-title-text-color: var(--text-color);
 
   --button-primary:#320008;
@@ -96,10 +100,12 @@ body.night {
   --boardGoodColBorder: #338d86;
   --boardFailedColBorder: #9f0000;
   --boardLearnColBorder: #adb8c5;
+  --boardItemBorder:#00031b;
   --boardItem:var(--button-primary);
   --boardItemLapsedBorder:rgb(159 0 0 / 66%);
   --boardItemLapsedLineTextColor:rgba(255, 255, 255, 0.798);
   --boardItemMenuExpandedBorder: #6b526d;
+  --boardInfoShadow:rgb(22 0 36); 
   --currentSlideIndexTextColor: var(--text-color);
 
   --slideInfoBg: #3b0000;
@@ -109,12 +115,17 @@ body.night {
   --slideTagTermShadow: #a1001e;
   --slideSpeakableLineBg: #3b0000;
 
+  --tableHiddenContentBg:#492037;
+  --tableHiddenReadableContentBg:#561723;
+
   --tableTagBgLineYoji:#06096b;
-  --tableTagBgLineOnoma:#005e6c;
+  --tableTagBgLineOnoma:#00687d;
   --tableTagBgLineGrammar:#6c0079;
   --tableTagBgLineName: #760000;
   --tableTagBgLineTerm: #8e008e;
   --tableTagBgLinePattern: #590280;
+  --tableTagBgLineCounter: #17597a;
+  --tableTagBgLineSuffix: #00687d;
 
   --input-bg:#aebdcc;
 
@@ -208,4 +219,26 @@ button {
   font-size: 14px;
   opacity: 0.6;
   vertical-align: middle;
+}
+
+.tagsLegend {
+  margin-top:20px;
+  border-left: 1px solid var(--tableCellBorder);
+  border-top: 1px solid var(--tableCellBorder);
+  display:flex;
+  flex-flow:row wrap;
+  align-items: stretch;
+  font-size:14px;
+}
+
+.tagsLegend [data-tag] {
+  padding: 10px;
+  flex: 1 1 auto;
+  border-right: 1px solid var(--tableCellBorder);
+  border-bottom: 1px solid var(--tableCellBorder);
+  text-align: center;
+}
+
+.tagsLegend [data-tag] > span {
+  display: inline-block;
 }

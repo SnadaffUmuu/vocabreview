@@ -6,6 +6,8 @@ import {
 
 export const DataFactory = {
 
+  globalPool : 'learning',
+
   vocabFilesIndex: [
     'test',
     'SR_Kona2',
@@ -24,6 +26,7 @@ export const DataFactory = {
     'SR_Obon_Society',
     'chat',
     'boxes_packs',
+    'learning',
   ],  
 
   ENTRY_TAG: {
@@ -36,6 +39,14 @@ export const DataFactory = {
     pattern: 'pattern',
     counter: 'counter',
     suffix: 'suffix',
+  },
+
+  buildLegendHtml() {
+    const tagsHtml = Object.values(DataFactory.ENTRY_TAG).reduce((res, currentTag, i) => {
+      res += `<div data-tag="${currentTag}"><span>${currentTag}</span></div>`;
+      return res;
+    }, '');
+    return `<div class="tagsLegend">${tagsHtml}</div>`;
   },
 
   ENTRY_TYPE: {

@@ -35,11 +35,14 @@
   background-color: var(--bg);
 }
 
-#table tr[data-tag] .line-text {
-  backdrop-filter: blur(2px);
+#table tr[data-tag] .line-text,
+.tagsLegend [data-tag] > span {
+  backdrop-filter: blur(4px);
+  border-radius: 15px;
 }
 
-#table tr[data-tag="grammar"] {
+#table tr[data-tag="grammar"],
+.tagsLegend [data-tag="grammar"] {
    background: repeating-linear-gradient(
     30deg,
     var(--tableTagBgLineGrammar),
@@ -49,7 +52,8 @@
   );
 }
 
-#table tr[data-tag="onomatopoeia"] {
+#table tr[data-tag="onomatopoeia"],
+.tagsLegend [data-tag="onomatopoeia"] {
   background: repeating-linear-gradient(
     150deg,
     var(--tableTagBgLineOnoma),
@@ -59,7 +63,8 @@
   );
 }
 
-#table tr[data-tag="geo"] {
+#table tr[data-tag="geo"],
+.tagsLegend [data-tag="geo"] {
   background: repeating-linear-gradient(
     0deg,
     var(--tableHiddenReadableContentBg),
@@ -69,7 +74,8 @@
   );
 }
 
-#table tr[data-tag="name"] {
+#table tr[data-tag="name"],
+.tagsLegend [data-tag="name"] {
     background: repeating-linear-gradient(
     90deg,
     var(--tableTagBgLineName),
@@ -79,21 +85,43 @@
   );
 }
 
-#table tr[data-tag="term"] {
+#table tr[data-tag="term"],
+.tagsLegend [data-tag="term"] {
   background-image: radial-gradient(var(--tableTagBgLineTerm) 1px, transparent 0px);
   background-repeat: repeat;
   background-size: 10px 10px;
   background-position: center;
 }
 
-#table tr[data-tag="pattern"] {
+#table tr[data-tag="pattern"],
+.tagsLegend [data-tag="pattern"] {
   background-image: radial-gradient(var(--tableTagBgLinePattern) 3px, transparent 0px);
   background-repeat: repeat;
   background-size: 15px 15px;
   background-position: center;
 }
 
-#table tr[data-tag="yojijukugo"] {
+#table tr[data-tag="counter"],
+.tagsLegend [data-tag="counter"] {
+  background-image: radial-gradient(var(--tableTagBgLineCounter) 2px, transparent 0px);
+  background-repeat: repeat;
+  background-size: 13px 13px;
+  background-position: center;
+}
+
+#table tr[data-tag="suffix"],
+.tagsLegend [data-tag="suffix"] {
+  background: repeating-linear-gradient(
+    0deg,
+    var(--tableTagBgLineSuffix),
+    var(--tableTagBgLineSuffix) 1px,
+    transparent 1px,
+    transparent 7px
+  );
+}
+
+#table tr[data-tag="yojijukugo"],
+.tagsLegend [data-tag="yojijukugo"] {
   background: repeating-linear-gradient(
     30deg,
     var(--tableTagBgLineYoji),
@@ -183,7 +211,7 @@
 }
 
 #table td .cellContentDraggable.speakable {
-  font-size: 17px;
+  font-size: 19px;
 }
 
 #table td .cellContentDraggable.speakable + #table td .cellContentDraggable.speakable {
@@ -197,6 +225,7 @@
 
 #table td.hidden .cellContentDraggable {
   opacity: 0 !important;
+  pointer-events: none;
 }
 
 #table td .cellContentDraggable.dragging,
@@ -224,7 +253,7 @@
   background: var(--tableHiddenReadableContentBg);
 }
 
-.speakme {
+#table .speakme {
   position: absolute;
   cursor: pointer;
   width:20px;
@@ -234,7 +263,6 @@
   top:0;
   right:0;
   z-index:100;
-  opacity:0.5;
 }
 
 #table .placeholder {

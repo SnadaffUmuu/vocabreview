@@ -15,6 +15,7 @@ Test data
 校長
 こうちょう
 ONOMATO
+info text goes here
 ::onomat
 
 校長

@@ -11,7 +11,7 @@ import { PreloaderView } from "./preloader/preloader.js";
 import { SlideSide } from "./slide/slide-side.js";
 import { Slide } from "./slide/slide.js";
 import { BoardView } from "./board/board.js";
-import { setDeep } from "./utils.js";
+import { setDeep, stringToHash } from "./utils.js";
 
 export const Application = {
   views: null,
@@ -19,7 +19,7 @@ export const Application = {
   currentRawData: null,
   defaultState: {
     nightMode: false,
-    appType: 'slider',
+    appType: 'data',
     views: {},
   },
   currentSource: null,
@@ -64,19 +64,26 @@ export const Application = {
         if ('currentSource' == property) {
           let currData = self.initialData[value];
           if (!currData) {
-            const {
-              excludedEntries,
-              excludedLines,
-              structure,
-              allEntries
-            } = DataFactory.parse(self.currentRawData);
-
-            currData = {
-              excludedEntries,
-              excludedLines,
-              structure,
-              allEntries
+            if (value == DataFactory.globalPool) {
+              currData = {
+                allEntries : [],
+                structure : []
+              }
+            } else {
+              const {
+                excludedEntries,
+                excludedLines,
+                structure,
+                allEntries
+              } = DataFactory.parse(self.currentRawData);
+              currData = {
+                excludedEntries,
+                excludedLines,
+                structure,
+                allEntries
+              }
             }
+
             self.initialData[value] = currData;
           }
 
@@ -118,7 +125,7 @@ export const Application = {
 
           self.saveToLocalStorage('review-data', self.initialData);
 
-          if (value.length > 100
+          if (!target.global && value.length > 100
             && !target.currentEntries?.length) {
             const firstNode = target.structure[0].children ?
               target.structure[0].children[0].id
@@ -127,10 +134,14 @@ export const Application = {
             target.currentEntries = value.filter(entry =>
               entry.section == firstNode).map(entry => entry.originalIndex);
 
-          } else if (!target.currentEntries?.length) {
+          } else if (!target.global && !target.currentEntries?.length) {
             target.currentEntries = value.map(entry => entry.originalIndex);
           }
-          self.initialData[self.state.currentSource] = target;
+          if (target.global) {
+            self.initialData[DataFactory.globalPool] = target;
+          } else {
+            self.initialData[self.state.currentSource] = target;
+          }
           self.saveToLocalStorage('review-data', self.initialData);
           Router.renderMenuView();
           Router.renderCurrentView();
@@ -144,9 +155,13 @@ export const Application = {
       },
       get(target, property) {
         if (property == 'currentEntries') {
-          return target.currentEntries?.length ?
-            target.allEntries.filter(entry =>
-              target.currentEntries.includes(entry.originalIndex)) : []
+          if (target.global) {
+            return target.allEntries
+          } else {
+            return target.currentEntries?.length ?
+              target.allEntries.filter(entry =>
+                target.currentEntries.includes(entry.originalIndex)) : []
+          }
         } else {
           return target[property]
         }
@@ -181,7 +196,7 @@ export const Application = {
     for (let source in this.initialData) {
       const thisSource = source;
 
-      if (this.initialData[thisSource].allEntries) {
+      if (thisSource !== DataFactory.globalPool && this.initialData[thisSource].allEntries) {
         if (this.initialData[thisSource].allEntries?.length > 100
           && !this.initialData[thisSource].currentEntries?.length) {
 
@@ -197,6 +212,14 @@ export const Application = {
           this.initialData[thisSource].currentEntries = this.initialData[thisSource]
             .allEntries.map(entry => entry.originalIndex);
         }
+      }
+    }
+
+    if (!this.initialData[DataFactory.globalPool]) {
+      this.initialData[DataFactory.globalPool] = {
+        allEntries : [],
+        structure : [],
+        global : true,
       }
     }
 
@@ -233,7 +256,8 @@ export const Application = {
   },
 
   changeSource: function (sourceName) {
-    if (!this.initialData[sourceName]?.allEntries) {
+    if (!this.initialData[sourceName]?.allEntries
+      && sourceName != DataFactory.globalPool) {
       this.loadAndSetCurrentSource(sourceName);
     } else {
       Application.state.currentSource = sourceName;
@@ -241,6 +265,7 @@ export const Application = {
   },
 
   loadAndSetCurrentSource: function (name) {
+    if (name == DataFactory.globalPool) return;
     if ('' == name) {
       this.reset();
     }
@@ -259,7 +284,8 @@ export const Application = {
   },
 
   loadAllSources: async function () {
-    const promises = DataFactory.vocabFilesIndex.map(async (source) => {
+    const promises = DataFactory.vocabFilesIndex.filter(s => 
+      s !== DataFactory.globalPool).map(async (source) => {
       if (!this.data[source] || !this.data[source].allEntries?.length) {
         const now = new Date().getMilliseconds();
         const response = await fetch(`./vocab/${source}.txt?n=${now}`);
@@ -303,6 +329,25 @@ export const Application = {
   getCurrentSourceData: function () {
     return this.data[this.state.currentSource]
   },
+
+  addToGlobal: function (entries) {
+    const globalEntries = this.data[DataFactory.globalPool]?.allEntries ?? [];
+    const modified = structuredClone(entries).map(entry => {
+      entry.source = this.state.currentSource;
+      entry.hash = stringToHash(JSON.stringify(entry));
+      return entry;
+    }).filter(entry => 
+      !globalEntries.find(gl => gl.hash == entry.hash));
+    const result = [...globalEntries, ...modified];
+    result.forEach((entry, i) => {
+      entry.originalIndex = i
+    })
+    this.data[DataFactory.globalPool].allEntries = result;
+  }, 
+
+  flushGlobal : function () {
+    this.data[DataFactory.globalPool].allEntries = [];
+  }
 
 };
 

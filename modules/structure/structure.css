@@ -5,6 +5,10 @@
   align-items: stretch;
 }
 
+#menu:has([value="learning"][selected]) #structureActions {
+  display:none;
+}
+
 #filterCollection {
   height:auto;
   flex: 1 0 auto;
@@ -68,3 +72,10 @@ label[for="toggleAll"] {
   transform: scaleY(1); 
 }
 
+#globalPoolActions {
+  display:none;
+}
+
+#menu:has([value="learning"][selected]) #globalPoolActions {
+  display:block;
+}

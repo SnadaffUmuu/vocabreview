@@ -9,7 +9,13 @@ export const StructureView = function () {
   this.events = {
     'click #toggleAll': 'toggleAll',
     'click #filterCollection': 'filterCollection',
+    'click #flushGlobal' : 'flushGlobal',
   };
+
+  this.flushGlobal = function() {
+    Application.flushGlobal();
+  };
+
   this.trueCheckboxesSelector = '.treeCheckbox';
 
   this.toggleTreeCheckboxes = function (e) {
@@ -118,6 +124,7 @@ export const StructureView = function () {
     View.prototype.show.call(this);
     this.treeEl = document.getElementById('structureTree');
     this.toggleAll = document.getElementById('toggleAll');
+    this.flashGlobal = document.getElementById('flushGlobal');
     this.render();
   }
 };

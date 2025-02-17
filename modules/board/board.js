@@ -7,6 +7,7 @@ import {
   createPlaceholder,
   shuffleArray,
   setSelectOption,
+  stringToHash,
 } from "../utils.js";
 import { Application } from "../app.js";
 
@@ -35,6 +36,7 @@ export const BoardView = function () {
       '.itemActions .speakLine': 'speakLine',
       '.expandLine': 'toggleExpandLine',
       '.removeItem': 'removeItem',
+      '.toggleInfo': 'toggleInfo',
     },
     contextmenu: {
       '#boardSourceCards': 'UserActionHandlers.preventDefault',
@@ -78,9 +80,36 @@ export const BoardView = function () {
     this[e.target.value]();
   },
 
-  this.removeAllBut = function (e) {
-    
+  this.addToGlobal = function () {
+    const candidates = [...this.learnCol.querySelectorAll('.boardItem')];
+    const entriesToAdd = candidates.map(el => 
+      this.data.entries.find(entry => 
+        entry.originalIndex == el.dataset.originalIndex))
+
+    Application.addToGlobal(structuredClone(entriesToAdd));
+
+    candidates.forEach(el => {
+      delete this.state.itemsInCols[el.dataset.originalIndex];
+    });
+    this.state.selfUpdate = !this.state.selfUpdate;
+    this.render();
   },
+
+  this.markGlobal  = function () {
+    const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
+    [...this.element.querySelectorAll('.boardItem')].forEach(el => {
+      const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
+      if (entry) {
+        entry.source ??= Application.state.currentSource;
+        entry.hash ??= stringToHash(JSON.stringify(entry));
+        if (globalHashes.includes(entry.hash)) {
+          el.dataset.global = true;
+        } else {
+          delete el.dataset.global
+        }
+      }
+    })
+  };
 
   this.collapseAllItems = function (e) {
     if (!e.target.classList.contains('itemDroppableContainer')
@@ -99,6 +128,7 @@ export const BoardView = function () {
       */
       item.classList.remove('lineExpanded');
       item.classList.remove('menuExpanded');
+      item.classList.remove('infoShown');
       item.style.top = 'unset';
       item.parentNode.querySelector('.expandPlaceholder')?.remove();
     });
@@ -109,14 +139,24 @@ export const BoardView = function () {
     this.getDragItem(e.target).classList.toggle('lineExpanded');
   };
 
+  this.toggleInfo = function (e) {
+    if (!this.isStudyMode()) return;
+    this.getDragItem(e.target).classList.toggle('infoShown');
+  };
+
   this.removeItem = function (e) {
     const item = this.getDragItem(e.target);
-    this.state.removedItems.push(parseInt(item.dataset.originalIndex));
-    this.state.removedItems = this.state.removedItems;
-    delete this.state.itemsInCols[item.dataset.originalIndex];
-    this.state.itemsInCols = this.state.itemsInCols;
-    item.remove();
-    this.element.querySelector('.expandPlaceholder')?.remove();
+    if (Application.state.currentSource == DataFactory.globalPool) {
+      Application.getCurrentSourceData().allEntries = Application.getCurrentSourceData().allEntries.filter(entry => 
+        entry.hash !== parseInt(item.dataset.hash));
+    } else {
+      this.state.removedItems.push(parseInt(item.dataset.originalIndex));
+      this.state.removedItems = this.state.removedItems;
+      delete this.state.itemsInCols[item.dataset.originalIndex];
+      this.state.itemsInCols = this.state.itemsInCols;
+      item.remove();
+      this.element.querySelector('.expandPlaceholder')?.remove();
+    }
   };
 
   this.toggleItemMenu = function (e) {
@@ -225,6 +265,7 @@ export const BoardView = function () {
     if (elementFromPoint) {
       //const elFromPoint = document.elementFromPoint(x, y);
       if (Application.views.MenuView.element.contains(elementFromPoint)) {
+        console.log('remove from infobar');
         this.removeItem(e);
       } else {
         const item = this.getDragItem(e.target);
@@ -449,29 +490,25 @@ export const BoardView = function () {
   this.renderItem = function (entry, mode, stateLapses) {
     const lines = entry.lines;
     const lRoles = DataFactory.LINE_ROLE;
-    const currentLineIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
-    //const currentLineIndex = null;
-    let currentIndex = currentLineIndex;
+    let currentIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
     const reading = lines.find(line => line.role == lRoles.reading);
-    //const others = lines.filter(line => line.role !== lRoles.reading);
-    const others = lines;
     if (currentIndex == null) {
       switch (mode) {
         case lRoles.expression:
-          currentIndex = others.find(line => line.role == lRoles.expression)?.originalIndex
+          currentIndex = lines.find(line => line.role == lRoles.expression)?.originalIndex
           break;
         case lRoles.meaning:
-          currentIndex = others.find(line => line.role == lRoles.meaning)?.originalIndex
+          currentIndex = lines.find(line => line.role == lRoles.meaning)?.originalIndex
           break;
         case lRoles.example:
-          const examples = others.filter(line => line.role == lRoles.example);
+          const examples = lines.filter(line => line.role == lRoles.example);
           currentIndex = examples.length ? shuffleArray(examples)[0]?.originalIndex : null;
           break;
         case 'random':
-          currentIndex = shuffleArray(others)[0].originalIndex;
+          currentIndex = shuffleArray(lines)[0].originalIndex;
         case 'original':
         default:
-          currentIndex = others[0].originalIndex ?? lines[0].originalIndex;
+          currentIndex = lines[0].originalIndex ?? lines[0].originalIndex;
       }
     }
     if (currentIndex == null) {
@@ -482,6 +519,7 @@ export const BoardView = function () {
       <div class="itemAction removeItem">✖</div>
       <div class="itemAction expandLine">⇕</div>
       <div class="itemAction speakLine">▶</div>
+      ${entry.info ? '<div class="itemAction toggleInfo">ⓘ</div>' : ''}
       <div class="itemAction reading">${reading ? reading.text : ''}</div>
     </div>
   `;
@@ -491,13 +529,15 @@ export const BoardView = function () {
     }
     return `
       <div class="boardItem" 
-        draggable="true" 
+        draggable="true"
+        ${entry.tag ? ' data-tag="' + entry.tag + '"' : ''} 
+        ${entry.hash ? ' data-hash="' + entry.hash + '"' : ''} 
         data-upper-line-index="${currentIndex}" 
         data-original-index="${entry.originalIndex}">
-        ${entry.info ? ' <div class="itemInfo">' + entry + '</div>' : ''}
+        ${entry.info ? ' <div class="itemInfo">ⓘ&nbsp;' + entry.info + '</div><div class="infoMark">i</div>' : ''}
         <div class="lineCounter">${entry.lines.length}</div>
         <div class="tapZone"></div>
-        ${others.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines, entry)).join('')}
+        ${lines.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines, entry)).join('')}
         ${entryActions}
       </div>
     `;
@@ -515,6 +555,7 @@ export const BoardView = function () {
       container.insertAdjacentHTML('beforeend', html);
       this.updateSourceItemsCount();
     });
+    this.tagsLegend.innerHTML = DataFactory.buildLegendHtml();
   };
 
   this.handleStateChange = function (newState, prop, value) {
@@ -591,6 +632,7 @@ export const BoardView = function () {
     this.cardModeEl = this.element.querySelector('#cardMode');
     this.sourceItemCounter = this.element.querySelector('#sourceItemsCounter');
     this.boardActions = this.element.querySelector('#boardActions');
+    this.tagsLegend = this.element.querySelector('#boardLegend');
     this.render();
   }
 }
