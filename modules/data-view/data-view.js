@@ -1,6 +1,7 @@
 import { View } from "../view.js";
 import { Application } from "../app.js";
 import { DataTests } from "./data-tests.js";
+import { DataFactory } from "../data.js";
 
 export const DataView = function () {
 
@@ -10,8 +11,8 @@ export const DataView = function () {
     'change #filtered': 'trigerDataTest',
   }
 
-  this.getBreadcrumbs = function(entry, source) {
-    const theStructure = Application.data[source].structure;
+  this.getBreadcrumbs = function(entry) {
+    const theStructure = Application.data[entry.source].structure;
     let structureNode = theStructure.find(o => o.id == entry.section);
     if (structureNode) {
       return structureNode.name
@@ -23,7 +24,6 @@ export const DataView = function () {
           res = theStructure.find(n => n.id == childNode.parentId).name + ' / ' + childNode.name;
           break
         }
-        //生身
       }
       return res;
     }
@@ -38,8 +38,10 @@ export const DataView = function () {
         e.preventDefault();
         let res = [];
         for (let source in Application.data) {
-          const matchingEntries = Application.data[source]?.allEntries?.filter(en =>
-            en.lines.some(l => l.text.indexOf(e.target.value) != -1));
+          if (source = DataFactory.globalPool) continue;
+          
+          const matchingEntries = structuredClone(Application.data[source]?.allEntries?.filter(en =>
+            en.lines.some(l => l.text.indexOf(e.target.value) != -1)));
           matchingEntries.forEach(entry => {
             entry.source = source;
             entry.breadcrumbs = this.getBreadcrumbs(entry, source);
@@ -67,7 +69,7 @@ export const DataView = function () {
     const action = new Function('entries', this.editor.getValue());
     const entries = this.getData().map(entry => {
       entry.source = Application.state.currentSource;
-      entry.breadcrumbs = this.getBreadcrumbs(entry, Application.state.currentSource);
+      entry.breadcrumbs = this.getBreadcrumbs(entry);
       return entry
     });
     this.outputEl.innerHTML = action(entries);
@@ -82,7 +84,7 @@ export const DataView = function () {
     this.testsSelect.addEventListener('change', (e) => {
       if (e.target.value !== '') {
         const entries = this.getData().map(entry => {
-          entry.source = Application.state.currentSource;
+          entry.source ??= Application.state.currentSource;
           entry.breadcrumbs = this.getBreadcrumbs(entry, Application.state.currentSource);
           return entry
         });        

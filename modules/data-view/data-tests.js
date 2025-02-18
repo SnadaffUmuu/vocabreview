@@ -61,7 +61,7 @@ export const DataTests = {
         entryInfo += '<div class="entryInfo">ⓘ&nbsp;' + entry.info + '</div>';
       }
       entryInfo += `<div class="section">
-        ${searchQuery ? entry.source + ': ' : ''}${entry.breadcrumbs}
+        ${entry.source ? entry.source + ': ' : ''}${entry.breadcrumbs}
       </div>`
       return `<article class="dataEntry">
         ${rl ? '<div class="reviewLevel tag">' + rl + '</div>' : ''}

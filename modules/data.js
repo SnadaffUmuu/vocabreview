@@ -6,7 +6,7 @@ import {
 
 export const DataFactory = {
 
-  globalPool : 'learning',
+  globalPool : 'global',
 
   vocabFilesIndex: [
     'test',
@@ -26,7 +26,7 @@ export const DataFactory = {
     'SR_Obon_Society',
     'chat',
     'boxes_packs',
-    'learning',
+    'global',
   ],  
 
   ENTRY_TAG: {

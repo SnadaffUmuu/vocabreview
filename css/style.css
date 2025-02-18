@@ -38,13 +38,14 @@
   --boardRemoveItemTextColor:#e6004d;
   --boardItemMenuExpandedBorder: #a6cecf;
   --boardInfoShadow:#a6cecf; 
+  --boardGlobalItemShadow: #a07fff;
 
   --slideInfoBg: #c4bfca;
   --slideInfoColor: var(--text-color);
   --slideTagGrammarBg: #dcfeff;
   --slideTagOnomatBg: #f1f0e6;
   --slideTagTermShadow: #b1a9aa;
-  --slideReadableTextBorder: rgba(56, 119, 255, 0.514);
+  --slideReadableTextBorder: #7b9bff;
   --slideSpeakableLineBg: #c4bfca;
   --currentSlideIndexTextColor: var(--text-color);
 
@@ -65,19 +66,21 @@
   --tableRevewLevelTextColor:#ffffcb;
   --tableRevewLevelTextColor1:whitesmoke;
 
-  --tableTagBgLineYoji:#d0cbff;
-  --tableTagBgLineOnoma:#a7e3ec;
-  --tableTagBgLineGrammar:#e5c1e9;
-  --tableTagBgLineName: #cde0bb;
-  --tableTagBgLineTerm: plum;
-  --tableTagBgLinePattern: #f6ceff;
-  --tableTagBgLineCounter: #afeed4;
-  --tableTagBgLineSuffix: #a7e3ec;
+  --tagBgYoji:#d0cbff;
+  --tagBgOnoma:#a7e3ec;
+  --tagBgGrammar:#e5c1e9;
+  --tagBgGeo:#ddd4d6;
+  --tagBgName: #cde0bb;
+  --tagBgTerm: plum;
+  --tagBgPattern: #f6ceff;
+  --tagBgCounter: #afeed4;
+  --tagBgSuffix: #a7e3ec;
 
   --input-bg:#dfd8e7;
 
-  --revLevelTextColor:#0800FF;
   --revLevelMinorTextColor:#142CE6;
+  --revLevelTextColor:#5800bc;
+  --revLevelExtraTextColor:#8A009B;
 
   --tagTextColor: white;
   --tagBg: #bab1c7;
@@ -106,8 +109,11 @@ body.night {
   --boardItemLapsedLineTextColor:rgba(255, 255, 255, 0.798);
   --boardItemMenuExpandedBorder: #6b526d;
   --boardInfoShadow:rgb(22 0 36); 
+  --boardGlobalItemShadow: #bc77dd;
+
   --currentSlideIndexTextColor: var(--text-color);
 
+  --slideReadableTextBorder: #0049ff;
   --slideInfoBg: #3b0000;
   --slideInfoColor: var(--text-color);
   --slideTagGrammarBg: #005266;
@@ -115,22 +121,27 @@ body.night {
   --slideTagTermShadow: #a1001e;
   --slideSpeakableLineBg: #3b0000;
 
+  --slideReview1TextColor:#0000d9;
+
   --tableHiddenContentBg:#492037;
   --tableHiddenReadableContentBg:#561723;
 
-  --tableTagBgLineYoji:#06096b;
-  --tableTagBgLineOnoma:#00687d;
-  --tableTagBgLineGrammar:#6c0079;
-  --tableTagBgLineName: #760000;
-  --tableTagBgLineTerm: #8e008e;
-  --tableTagBgLinePattern: #590280;
-  --tableTagBgLineCounter: #17597a;
-  --tableTagBgLineSuffix: #00687d;
+  --tagBgYoji:#06096b;
+  --tagBgOnoma:#00687d;
+  --tagBgGrammar:#6c0079;
+  --tagBgGeo:#6d202f;
+  --tagBgName: #760000;
+  --tagBgTerm: #8e008e;
+  --tagBgPattern: #590280;
+  --tagBgCounter: #17597a;
+  --tagBgSuffix: #064d5b;
 
   --input-bg:#aebdcc;
 
-  --revLevelTextColor:#E9E9E9;
   --revLevelMinorTextColor:#B8D8D9;
+  --revLevelTextColor:#E9E9E9;
+  /* --revLevelExtraTextColor:#82a6e2; */
+  --revLevelExtraTextColor:#ffe7bf;
 
   --tagTextColor: #9a9797;
   --tagBg: #64203c;

@@ -5,10 +5,6 @@
   align-items: stretch;
 }
 
-#menu:has([value="learning"][selected]) #structureActions {
-  display:none;
-}
-
 #filterCollection {
   height:auto;
   flex: 1 0 auto;
@@ -76,6 +72,10 @@ label[for="toggleAll"] {
   display:none;
 }
 
-#menu:has([value="learning"][selected]) #globalPoolActions {
+#menu:has(option[value="global"]:checked) #globalPoolActions {
   display:block;
+}
+
+#menu:has(option[value="global"]:checked) #structureActions {
+  display:none;
 }

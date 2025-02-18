@@ -330,7 +330,9 @@ export const Application = {
     return this.data[this.state.currentSource]
   },
 
-  addToGlobal: function (entries) {
+  setGlobal: function (entries) {
+    if (this.state.currentSource = DataFactory.globalPool) return;
+    
     const globalEntries = this.data[DataFactory.globalPool]?.allEntries ?? [];
     const modified = structuredClone(entries).map(entry => {
       entry.source = this.state.currentSource;

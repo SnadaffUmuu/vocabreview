@@ -12,17 +12,22 @@
   align-items: center;
 }
 
+body:has(#menu option[value="global"]:checked) #boardActions option[value="setGlobal"],
+body:has(#menu option[value="global"]:checked) #markGlobal {
+  display:none;
+}
+
 [for="studyMode"] {
   position: fixed;
-  top: 48px;
+  top: 51px;
   right: 10px;
   background: var(--bg);
 }
 
-#studyMode {
+/* #studyMode {
   width: 20px;
   height: 20px;
-}
+} */
 
 #boardContainer {
   flex: 1 0 auto;
@@ -42,9 +47,12 @@
 
 #sourceItemsCounter {
   position: absolute;
-  top:-12px; 
+  top:-8px; 
   right:10px;
   z-index:100;
+  width:23px;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 #boardSourceCards {
@@ -139,8 +147,8 @@
   background: 
     repeating-linear-gradient(
       30deg,
-      var(--tableTagBgLineGrammar),
-      var(--tableTagBgLineGrammar) 1px,
+      var(--tagBgGrammar),
+      var(--tagBgGrammar) 1px,
       transparent 1px,
       transparent 10px
     ),
@@ -152,8 +160,8 @@
   background: 
     repeating-linear-gradient(
       150deg,
-      var(--tableTagBgLineOnoma),
-      var(--tableTagBgLineOnoma) 1px,
+      var(--tagBgOnoma),
+      var(--tagBgOnoma) 1px,
       transparent 1px,
       transparent 10px
     ),
@@ -165,8 +173,8 @@
   background: 
     repeating-linear-gradient(
       0deg,
-      var(--tableHiddenReadableContentBg),
-      var(--tableHiddenReadableContentBg) 1px,
+      var(--tagBgGeo),
+      var(--tagBgGeo) 1px,
       transparent 1px,
       transparent 8px
     ),
@@ -178,8 +186,8 @@
   background: 
     repeating-linear-gradient(
       90deg,
-      var(--tableTagBgLineName),
-      var(--tableTagBgLineName) 1px,
+      var(--tagBgName),
+      var(--tagBgName) 1px,
       transparent 1px,
       transparent 7px
     ),
@@ -189,7 +197,7 @@
 .boardItem[data-tag="term"],
 .tagsLegend [data-tag="term"] {
   background: 
-    radial-gradient(var(--tableTagBgLineTerm) 1px, transparent 0px),
+    radial-gradient(var(--tagBgTerm) 1px, transparent 0px),
     var(--boardItem);
   background-repeat: repeat;
   background-size: 10px 10px, auto;
@@ -199,7 +207,7 @@
 .boardItem[data-tag="pattern"],
 .tagsLegend [data-tag="pattern"] {
   background: 
-    radial-gradient(var(--tableTagBgLinePattern) 3px, transparent 0px),
+    radial-gradient(var(--tagBgPattern) 3px, transparent 0px),
     var(--boardItem);
   background-repeat: repeat;
   background-size: 13px 13px, auto;
@@ -209,7 +217,7 @@
 .boardItem[data-tag="counter"],
 .tagsLegend [data-tag="counter"] {
   background: 
-    radial-gradient(var(--tableTagBgLineCounter) 2px, transparent 0px),
+    radial-gradient(var(--tagBgCounter) 2px, transparent 0px),
     var(--boardItem);
   background-repeat: repeat;
   background-size: 13px 13px, auto;
@@ -221,8 +229,8 @@
   background: 
     repeating-linear-gradient(
       0deg,
-      var(--tableTagBgLineSuffix),
-      var(--tableTagBgLineSuffix) 1px,
+      var(--tagBgSuffix),
+      var(--tagBgSuffix) 1px,
       transparent 1px,
       transparent 8px
     ),
@@ -234,15 +242,15 @@
   background: 
     repeating-linear-gradient(
       30deg,
-      var(--tableTagBgLineYoji),
-      var(--tableTagBgLineYoji) 1px,
+      var(--tagBgYoji),
+      var(--tagBgYoji) 1px,
       transparent 1px,
       transparent 10px
     ),
     repeating-linear-gradient(
       150deg,
-      var(--tableTagBgLineYoji),
-      var(--tableTagBgLineYoji) 1px,
+      var(--tagBgYoji),
+      var(--tagBgYoji) 1px,
       transparent 1px,
       transparent 10px
     ),
@@ -268,13 +276,8 @@
   border-color: var(--boardItemLapsedBorder);
 }
 
-.boardItem[data-global]::after {
-  position: absolute;
-  top:-23px;
-  right: -15px;
-  content: '・';
-  color:orange;
-  font-size: 30px;
+.boardItem[data-global] {
+  box-shadow: 3px 3px 7px -3px var(--boardGlobalItemShadow);
 }
 
 .boardItem .itemLine {
@@ -312,7 +315,7 @@
 }
 
 .boardItem .itemLine[data-review-level] {
-  text-decoration: underline;
+  /* text-decoration: underline; */
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
 }
@@ -333,26 +336,32 @@
 
 .boardItem .itemLine[data-review-level="1"] {
   text-decoration-style: dotted;
+  color:var(--revLevelMinorTextColor);
 }
 
 .boardItem .itemLine[data-review-level="2"] {
   text-decoration-style: dashed;
+  color:var(--revLevelTextColor);
 }
 
 .boardItem .itemLine[data-review-level="3"] {
   text-decoration-style: solid;
+  color:var(--revLevelExtraTextColor);
 }
 
 .boardItem .itemLine[data-review-level="100"] {
   text-decoration-style: dotted;
+  color:var(--revLevelMinorTextColor);
 }
 
 .boardItem .itemLine[data-review-level="200"] {
   text-decoration-style: dashed;
+  color:var(--revLevelTextColor);
 }
 
 .boardItem .itemLine[data-review-level="300"] {
   text-decoration-style: solid;
+  color:var(--revLevelExtraTextColor);
 }
 
 .boardItem .itemActions {
@@ -467,7 +476,7 @@ body:has(.menuExpanded) {
 .boardItem .itemInfo {
   position: absolute;
   left:calc(0% - 1px);
-  top:calc(100% - 1px);
+  top:calc(100% + 1px);
   display: none;
   background: var(--boardItem);
   padding:5px 10px 10px;

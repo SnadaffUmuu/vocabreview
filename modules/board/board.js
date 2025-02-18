@@ -26,6 +26,7 @@ export const BoardView = function () {
     'click #setLapses': 'setLapses',
     'click #fixLapses': 'fixLapses',
     'change #boardActions' : 'executeFunction',
+    'change #markGlobal' : 'toggleMarkGlobal'
   };
 
   this.renderedEvents = {
@@ -80,13 +81,13 @@ export const BoardView = function () {
     this[e.target.value]();
   },
 
-  this.addToGlobal = function () {
+  this.setGlobal = function () {
     const candidates = [...this.learnCol.querySelectorAll('.boardItem')];
     const entriesToAdd = candidates.map(el => 
       this.data.entries.find(entry => 
         entry.originalIndex == el.dataset.originalIndex))
 
-    Application.addToGlobal(structuredClone(entriesToAdd));
+    Application.setGlobal(structuredClone(entriesToAdd));
 
     candidates.forEach(el => {
       delete this.state.itemsInCols[el.dataset.originalIndex];
@@ -95,20 +96,27 @@ export const BoardView = function () {
     this.render();
   },
 
-  this.markGlobal  = function () {
-    const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
-    [...this.element.querySelectorAll('.boardItem')].forEach(el => {
-      const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
-      if (entry) {
-        entry.source ??= Application.state.currentSource;
-        entry.hash ??= stringToHash(JSON.stringify(entry));
-        if (globalHashes.includes(entry.hash)) {
-          el.dataset.global = true;
-        } else {
-          delete el.dataset.global
+  this.toggleMarkGlobal  = function (e) {
+    const items = this.element.querySelectorAll('.boardItem');
+    if (e.target.checked) {
+      const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
+      [...items].forEach(el => {
+        const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
+        if (entry) {
+          entry.source ??= Application.state.currentSource;
+          entry.hash ??= stringToHash(JSON.stringify(entry));
+          if (globalHashes.includes(entry.hash)) {
+            el.dataset.global = true;
+          } else {
+            delete el.dataset.global
+          }
         }
-      }
-    })
+      })
+    } else {
+      [...items].forEach(el => {
+        delete el.dataset.global
+      })
+    }
   };
 
   this.collapseAllItems = function (e) {
@@ -282,12 +290,11 @@ export const BoardView = function () {
   };
 
   this.setLapses = function (e) {
-    const badItems = this.failedCol.querySelectorAll('.boardItem');
-    //if (!badItems.length) return;
     [...this.goodCol.querySelectorAll('.boardItem')].forEach(item => {
       this.state.removedItems.push(parseInt(item.dataset.originalIndex));
       delete this.state.itemsInCols[item.dataset.originalIndex];
     });
+    const badItems = this.failedCol.querySelectorAll('.boardItem');
     badItems.forEach(item => {
       const index = parseInt(item.dataset.originalIndex);
       const lapsedSideOfItem = parseInt(item.querySelector('[data-current]').dataset.originalIndex);
@@ -571,6 +578,7 @@ export const BoardView = function () {
     this.goodCol.innerHTML = '';
     this.failedCol.innerHTML = '';
     this.learnCol.innerHTML = '';
+    this.element.querySelector('#markGlobal').removeAttribute('checked');
     setSelectOption(this.boardActions, '');
     if (resetAll) {
       this.state.removedItems = [];
@@ -633,6 +641,7 @@ export const BoardView = function () {
     this.sourceItemCounter = this.element.querySelector('#sourceItemsCounter');
     this.boardActions = this.element.querySelector('#boardActions');
     this.tagsLegend = this.element.querySelector('#boardLegend');
+    this.renderedEventSet = null;
     this.render();
   }
 }

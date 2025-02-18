@@ -28,6 +28,7 @@ export const TableView = function () {
     click: {
       'th .toggle': 'toggleColumn',
       '.cellContentDraggable': 'toggleCell',
+      '.draggableContainerInner': 'toggleCell',
       '.speakme': 'speakCell',
       '.expand': 'toggleExpand',
     },

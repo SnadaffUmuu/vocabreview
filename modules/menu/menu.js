@@ -32,6 +32,7 @@ export const MenuView = function () {
   this.switchView = function (e) {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       Application.switchView(e.target.value);
+      this.toggleMenu();
     });
   },
 
@@ -73,6 +74,7 @@ export const MenuView = function () {
     }
     setTimeout(() => {
       Application.changeSource(e.target.value);
+      this.toggleMenu();
     }, 0)
   }
 

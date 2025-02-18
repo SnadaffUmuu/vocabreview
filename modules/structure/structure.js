@@ -67,7 +67,8 @@ export const StructureView = function () {
       const checkedSections = Array.from(
         this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
       ).map(ch => parseInt(ch.value))
-      Application.filter(checkedSections)
+      Application.filter(checkedSections);
+      Application.views.MenuView.toggleMenu();
     });
   }
 
