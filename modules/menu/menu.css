@@ -43,24 +43,32 @@
 #globalActions {
   position: absolute;
   right: 10px;
-  left:65px;
+  left:75px;
   top: 8px;
-  display: flex;
+  /* display: flex;
   flex-flow:row nowrap;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 10px; */
 }
 
 #dataActions {
   display: flex;
   flex-flow: row wrap;
-  gap: 5px;
-  padding-top:20px;
+  justify-content: flex-end;
+  gap: 20px 15px;
+  margin-bottom:20px;
 }
 
 #dataActions select {
-  flex:1 1 auto;
-  width:40%;
+  flex:1 1 100%;
+}
+
+#dataActions .switchView {
+  flex:0 1 auto;
+}
+
+#dataActions .switchView.active {
+  background-color: red;
 }
 
 body:has(#menu option[value="global"]:checked) #reloadCurrentSource {

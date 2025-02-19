@@ -4,12 +4,21 @@
 }
 
 #boardActionsBlock {
-  padding: 10px;
+  padding: 10px 5px;
   flex: 0 1 auto;
-  font-size: 14px;
+  font-size: 13px;
   display: flex;
-  gap: 10px;
+  gap: 5px;
   align-items: center;
+}
+
+#boardActionsBlock select {
+  flex:0 2 auto;
+  max-width: 60px;
+}
+
+[for="markGlobal"] {
+  padding-right: 33px;
 }
 
 body:has(#menu option[value="global"]:checked) #boardActions option[value="setGlobal"],
@@ -114,7 +123,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 
 .boardItem,
 #boardView .placeholder {
-  padding: 2px 7px 4px;
+  padding: 2px 7px 2px;
   border-radius: 5px;
   box-sizing: border-box;
   min-height: 29px;
@@ -261,8 +270,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   display:none
 }
 
-#boardSourceCardsOuter:has([data-tag]) #boardLegend,
-#boardColsContainerOuter:has([data-tag]) #boardLegend {
+#boardContainer:has([data-tag]) #boardLegend {
   display:unset;
 }
 
@@ -290,7 +298,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   line-height: 140%;
   border-radius: 10px;
   backdrop-filter: blur(3px);
-  padding:2px 1px;
+  padding:0px 1px;
 }
 
 /* .boardItem.menuExpanded .itemLine {
@@ -462,7 +470,7 @@ body:has(.menuExpanded) {
 .boardItem .infoMark {
   position: absolute;
   right:12px;
-  top:-2px;
+  top:0px;
   font-size:12px;
   display: none;
   backdrop-filter: blur(3px);
