@@ -29,7 +29,8 @@ export const TableView = function () {
       'th .toggle': 'toggleColumn',
       '.cellContentDraggable': 'toggleCell',
       '.draggableContainerInner': 'toggleCell',
-      '.speakme': 'speakCell',
+      // '.speakme': 'speakCell',
+      '[data-reading]': 'speakCell',
       '.expand': 'toggleExpand',
     },
     contextmenu: {
@@ -141,15 +142,14 @@ export const TableView = function () {
   };
 
   this.toggleExpand = function (e) {
-    let item = e.target.closest('.cellContentDraggable');
+/*
+    let item = e.target.closest('.draggableContainerInner');
     if (!item) {
       item = e.target.closest('div')
-    }
-    item.classList.toggle('ellipsis');
-    const swap = e.target.dataset.expanded;
-    const old = e.target.innerHTML;
-    e.target.innerHTML = swap;
-    e.target.dataset.expanded = old;
+    }*/
+    [...e.target.closest('tr').querySelectorAll('.draggableContainerInner')].forEach(el =>
+      el.classList.toggle('ellipsis')
+      )
   };
 
   this.isDragCellMode = function () {
@@ -360,22 +360,24 @@ export const TableView = function () {
   ]; 
 
   this.linesToTableElHtml = function (lines, entry) {
+    //${line.speakable ? '<div class="speakme" data-reading="' + line.text+ '"></div>' : ''}
     return lines.reduce((res, line, i) => {
       return res += '<div draggable="true" '
-      + ' class="cellContentDraggable ellipsis'
-      + (line.speakable ? ' speakable' : '')
+      + ' class="cellContentDraggable'
+      // + (line.speakable ? ' speakable' : '')
       + '"'
       + (line.role ? ' data-role="' + line.role + '"' : '')
       + (entry.reviewLevel && line.originalIndex == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
        + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' data-is-reading' : '')
        + '>'
-       + (line.speakable ? '<span data-reading="'
-         + line.text
-         + '" class="speakme"></span>' : '')
-        + '<span class="line-text">' 
+      //  + (line.speakable ? '<span data-reading="'
+      //    + line.text
+      //    + '" class="speakme"></span>' : '')
+        + '<span class="line-text"'
+          + (line.speakable ? ' data-reading="' + line.text+ '"' : '')
+        + '>' 
           + line.text 
         + '</span>'
-        + '<span class="expand" data-expanded="⋈">✥</span>'
         + '</div>'
     }, '');
   };
@@ -439,11 +441,11 @@ export const TableView = function () {
           if (cell == 1000) {
             cells.push(`
             <td class="draggableContainer">
-              <div class="draggableContainerInner">
-                <div draggable="true" class="cellContentDraggable ellipsis">
+            <div class="draggableContainerInner ellipsis">
+                <div class="expand"></div>
+                <div draggable="true" class="cellContentDraggable">
                   <span class="line-text">ⓘ&nbsp;${entry.info}</span>
-                  <span class="expand" data-expanded="⋈">✥</span>
-                </div>
+                  </div>
               </div>
             </td>
             `)
@@ -455,8 +457,9 @@ export const TableView = function () {
             const theLines = entry.lines.filter(l => cell.includes(l. originalIndex));
             cells.push(`
             <td class="draggableContainer">
-              <div class="draggableContainerInner">
-              ${this.linesToTableElHtml(theLines, entry)}
+              <div class="draggableContainerInner ellipsis">
+                <div class="expand"></div>
+                ${this.linesToTableElHtml(theLines, entry)}
               </div>
             </td>
             `)

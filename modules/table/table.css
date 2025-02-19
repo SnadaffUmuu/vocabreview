@@ -147,6 +147,7 @@
 
 #table td, #table th {
   border:1px solid var(--tableCellBorder);
+
 }
 
 #table th .colName,
@@ -169,14 +170,6 @@
   padding:3px 5px 7px;
 }
 
-#table td .cellContentDraggable {
-  box-sizing: border-box;
-  padding: 5px;
-  min-height:30px;
-  min-width:150px;
-  max-width:250px;
-}
-
 #table td .rowDrag {
   cursor: move;
   width:40px;
@@ -190,16 +183,22 @@
 
 #table td .cellContentDraggable {
   cursor: grab;
-  height:100%;
+  box-sizing: border-box;
+  /* 
+  position:relative;
   display: flex;
   align-items: center;
-  position:relative;
   padding-right:20px;
   padding-top:15px;
-  padding-bottom:10px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  overflow: hidden;  
+  padding: 5px; 
+  */
+  padding:3px 0 10px;
+  height:100%;
+  min-height:30px;
+  min-width:150px;
+  max-width:250px;
+  flex:1 1 auto;
+  clear: both;
 }
 
 #table td.hidden > .cellContentDraggable {
@@ -210,12 +209,12 @@
   cursor:crosshair;
 }
 
-#table td .cellContentDraggable.speakable {
+#table td .cellContentDraggable[data-role="expression"] {
   font-size: 19px;
 }
 
-#table td .cellContentDraggable.speakable + #table td .cellContentDraggable.speakable {
-  border-top:1px solid var(--table-text-color-speakable);
+#table td .cellContentDraggable + .cellContentDraggable {
+  border-top:1px solid var(--paleBorder);
 }
 
 #table .over,
@@ -239,10 +238,18 @@
   position: absolute !important;
 }
 
+.draggableContainer {
+  vertical-align: top;
+}
+
 .draggableContainerInner {
-  height:100%;
-  display:flex;
+  /* height:100%;
+  display:flex; */
   flex-flow: column nowrap;
+  position:relative;
+  padding:0 0 10px;
+  box-sizing: border-box;
+  justify-content: flex-start;
 }
 
 .draggableContainer.hidden:has(.cellContentDraggable) {  
@@ -251,18 +258,6 @@
 
 .draggableContainer.hidden:has([data-reading]) {  
   background: var(--tableHiddenReadableContentBg);
-}
-
-#table .speakme {
-  position: absolute;
-  cursor: pointer;
-  width:20px;
-  height:20px;
-  border-bottom-left-radius: 10px;
-  background: var(--icon-speakable-bg);
-  top:0;
-  right:0;
-  z-index:100;
 }
 
 #table .placeholder {
@@ -279,21 +274,39 @@
 }
 
 #table .ellipsis {
-  display: -webkit-box;
+  /* display: -webkit-box;
   -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;  
+  -webkit-box-orient: vertical;   */
   overflow: hidden;
+  max-height: 80px;
 }
 
 #table .expand,
 #table .expand.expanded {
-  position: absolute;
-  right:2px;
-  bottom:0;
-  font-size: 20px;
-  text-align: center;
-  vertical-align: middle;
-  opacity:0.2;
+  /* position: absolute;
+  right:0;
+  top:0;
+  left:0;
+  padding-left:2px; */
+  /*font-size: 17px;
+   text-align: left;
+  vertical-align: middle; 
+  backdrop-filter: sepia(90%);
+  opacity:0.3;
+  */
+  height:15px;
+  cursor: pointer;
+}
+
+#table .speakme {
+  float: right;
+  cursor: pointer;
+  height:15px;
+  width:50%px;
+  /* position: absolute;
+  top:0;
+  right:0;
+  z-index:100; */
 }
 
 #table [data-review-level] .line-text {
@@ -348,6 +361,7 @@
 
 #table .line-text {
   display:inline-block;
+  margin: 0 20px 0 5px;
 }
 
 #table [data-role="example"]:before {
