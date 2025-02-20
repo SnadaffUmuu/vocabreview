@@ -89,7 +89,6 @@ export const MenuView = function () {
     }
     setTimeout(() => {
       Application.changeSource(e.target.value);
-      this.toggleMenu();
     }, 0)
   }
 

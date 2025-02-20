@@ -156,7 +156,7 @@ export const Slider = function () {
 
   this.handleStateChange = function (newState, prop, value) {
     if (prop == 'mode') {
-      delete this.state.sideIndexes;
+      this.state.sideIndexes = {};
     } else if (prop == 'order') {
       //this.render();
     }
@@ -169,16 +169,21 @@ export const Slider = function () {
     this.state.sideIndexes && delete this.state.sideIndexes;
   };
 
-  this.reset = function () {
+  this.reset = function (resetAll) {
     this.data = {};
+    if(resetAll) {
+      this.state.order = [];
+      this.state.sideIndexes = {};
+      this.state.currentIndex = 0;
+    }
     if (this.slider) {
       this.slider.destroy();
     }
     this.sliderOuter.innerHTML = this.keensliderContainerTemplate.outerHTML;
   };  
 
-  this.render = async function () {
-    this.reset();
+  this.render = async function (resetAll) {
+    this.reset(resetAll);
     this.initState();
     if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       if (Application.views.PreloaderView.isShown()) {
@@ -187,7 +192,7 @@ export const Slider = function () {
       return
     }
     this.data.entries = structuredClone(Application.getCurrentSourceData().currentEntries);
-    if (this.state.order) {
+    if (this.state.order?.length) {
       this.data.shuffledEntries = this.state.order.map(i => this.data.entries[i]);
       this.isRandomEl.checked = true;
     }

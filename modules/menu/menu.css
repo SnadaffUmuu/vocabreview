@@ -23,7 +23,7 @@
 
 #menu {
   z-index: 300;
-  max-width: 85vw;
+  max-width: 70vw;
   transition: transform 0.5s;
   position: fixed;
   top:0;
@@ -55,12 +55,16 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-end;
-  gap: 20px 15px;
-  margin-bottom:20px;
+  gap: 15px;
+  margin-bottom:15px;
 }
 
 #dataActions select {
   flex:1 1 100%;
+}
+
+#dataActions #vocabSources {
+  height: 30px;
 }
 
 #dataActions .switchView {

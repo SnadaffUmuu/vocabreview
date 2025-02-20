@@ -51,7 +51,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   display: flex;
   flex-flow: row nowrap;
   overflow: auto;
-  max-height: 25vh;
+max-height: 25vh;
 }
 
 #sourceItemsCounter {
@@ -120,14 +120,13 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   justify-content: center;
   border-color: var(--boardLearnColBorder);
 }
-
 .boardItem,
 #boardView .placeholder {
-  padding: 2px 7px 2px;
-  border-radius: 5px;
+  padding: 5px 0 5px 5px; /* ??? */
+  border-radius: 5px; /* ??? */
   box-sizing: border-box;
-  min-height: 29px;
-  max-width: calc(100vw - 20px);
+  min-height: 29px; /* ??? */
+  max-width: calc(100vw - 20px); /* ??? */
   position: relative;
   border: 1px solid transparent;
 }
@@ -293,7 +292,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   overflow: hidden;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  margin-right: 20px;
+  margin-right: 25px;
   min-height: 23px;
   line-height: 140%;
   border-radius: 10px;

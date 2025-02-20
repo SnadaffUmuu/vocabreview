@@ -21,6 +21,10 @@
   white-space: nowrap;
 }
 
+#cardMode {
+  width:100px
+}
+
 #currentSlideIndex {
   color: var(--currentSlideIndexTextColor);
   font-size:20px;

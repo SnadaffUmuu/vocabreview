@@ -81,6 +81,45 @@ export const DataFactory = {
     unknown: 'unknown',
   },
 
+  lineOrders: {
+    'expression' : [
+      'expression',
+      'alt_reading',
+      'example',
+      'meaning',
+      'example_translation',
+      'reading',
+      'unknown',
+    ],
+    'meaning' : [
+      'meaning',
+      'expression',
+      'alt_reading',
+      'example',
+      'example_translation',
+      'reading',
+      'unknown',
+    ],
+    'example' : [
+      'example',
+      'expression',
+      'alt_reading',
+      'meaning',
+      'example_translation',
+      'reading',
+      'unknown',
+    ],
+    'example_translation' : [
+      'example_translation',
+      'example',
+      'meaning',
+      'expression',
+      'alt_reading',
+      'reading',
+      'unknown',
+    ],
+  },
+
   kanaExcl: [
     '〜',
     '！',

@@ -84,7 +84,7 @@
 
   --tagTextColor: white;
   --tagBg: #bab1c7;
-  --paleBorder:#9c9cbb;
+  --paleBorder:#c9c9dc;
 
   --dataItemBorder : var(--paleBorder);
 }
@@ -146,7 +146,7 @@ body.night {
   --tagTextColor: #9a9797;
   --tagBg: #64203c;
 
-  --paleBorder:#765f67;
+  --paleBorder:#5f4951;
 
   --dataItemBorder : var(--paleBorder);
 }
@@ -243,7 +243,7 @@ button {
 }
 
 .tagsLegend [data-tag] {
-  padding: 10px;
+  padding: 5px;
   flex: 1 1 auto;
   border-right: 1px solid var(--tableCellBorder);
   border-bottom: 1px solid var(--tableCellBorder);
