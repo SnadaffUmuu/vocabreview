@@ -68,6 +68,12 @@ export const BoardView = function () {
     },
   };
 
+  this.setBoardLayout = function() {
+    const el = this.element.querySelector('#boardColsContainerOuter');
+    const top = el.getBoundingClientRect().top;
+    el.style.minHeight = 'calc(100dvh - ' + top + 'px)';
+  }
+
   this.isStudyMode = function (e) {
     return this.studyModeEl.checked ? true : false;
   }
@@ -495,32 +501,68 @@ export const BoardView = function () {
   };
 
   this.renderItem = function (entry, mode, stateLapses) {
-    const lines = entry.lines;
+    let lines = entry.lines;
     const lRoles = DataFactory.LINE_ROLE;
-    let currentIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
     const reading = lines.find(line => line.role == lRoles.reading);
+    if (reading) {
+      lines = entry.lines.filter(l => l.role != DataFactory.LINE_ROLE.reading);
+    }
+    let currentIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
+    let reorderedLines = null;
     if (currentIndex == null) {
+      let theOrder = null;
+      const transArr = [];
       switch (mode) {
-        case lRoles.expression:
-          currentIndex = lines.find(line => line.role == lRoles.expression)?.originalIndex
-          break;
-        case lRoles.meaning:
-          currentIndex = lines.find(line => line.role == lRoles.meaning)?.originalIndex
-          break;
-        case lRoles.example:
-          const examples = lines.filter(line => line.role == lRoles.example);
-          currentIndex = examples.length ? shuffleArray(examples)[0]?.originalIndex : null;
-          break;
+        case 'expression':
+        case 'meaning':
+        case 'example':
+          theOrder = DataFactory.lineOrders[mode];
+          reorderedLines = theOrder.flatMap(role => {
+            const subArr = lines.filter(line => line.role == role);
+            if (!subArr.length) return [null];
+
+            if (['example', 'example_translation'].includes(role)) {
+              return shuffleArray(subArr)
+            } else {
+              return subArr
+            }
+          }).filter(o => o != null);
+          break; 
+          case 'example_translation':
+            theOrder = DataFactory.lineOrders[mode];
+            reorderedLines = theOrder.flatMap(role => {
+              const subArr = lines.filter(line => line.role == role);
+              if (!subArr.length) return [null];
+              
+              if ('example_translation' == role) {
+                shuffleArray(subArr).forEach(line => {
+                  transArr.push(line);
+                  const orig = lines.find(ll => ll.translationLineIndex 
+                    == line.originalIndex);
+                  if (orig) {
+                    transArr.push(orig);
+                  }
+                });
+                return transArr;
+              } else if ('example' == role) {
+                const untranslatedExamples = subArr.filter(line => !transArr.includes(line));
+                return shuffleArray(untranslatedExamples);
+              } else {
+                return subArr;
+              }
+            }).filter(o => o != null);
+          break;                 
         case 'random':
-          currentIndex = shuffleArray(lines)[0].originalIndex;
+          reorderedLines = shuffleArray(sides);
         case 'original':
         default:
-          currentIndex = lines[0].originalIndex ?? lines[0].originalIndex;
+          reorderedLines = lines;
       }
     }
     if (currentIndex == null) {
-      currentIndex = lines[0].originalIndex;
+      currentIndex = reorderedLines[0].originalIndex;
     }
+    const finalLines = reorderedLines || lines;
     const entryActions = `
     <div class="itemActions">
       <div class="itemAction removeItem">✖</div>
@@ -542,9 +584,9 @@ export const BoardView = function () {
         data-upper-line-index="${currentIndex}" 
         data-original-index="${entry.originalIndex}">
         ${entry.info ? ' <div class="itemInfo">ⓘ&nbsp;' + entry.info + '</div><div class="infoMark">i</div>' : ''}
-        <div class="lineCounter">${entry.lines.length}</div>
+        <div class="lineCounter">${finalLines.length}</div>
         <div class="tapZone"></div>
-        ${lines.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines, entry)).join('')}
+        ${finalLines.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines, entry)).join('')}
         ${entryActions}
       </div>
     `;
@@ -612,6 +654,7 @@ export const BoardView = function () {
     this.state.removedItems ??= [];
     this.state.lapses ??= {};
     this.renderBoard();
+    this.setBoardLayout();
 
     if (!this.renderedEventSet) {
       this.setRenderedEvents([

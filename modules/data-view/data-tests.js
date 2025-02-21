@@ -46,7 +46,9 @@ export const DataTests = {
           templ = `<span data-review-level="${rl}" class="revLevel" style="${style}">${line.text}</span>`;
         }
         if (line.role) {
-          templ += '<span class="lineRole"> ......' + line.role + '</span>';
+          templ += '<span class="lineRole"> ......' 
+            + line.role + (line.translationLineIndex ? ' (trans.l.index: ' + line.translationLineIndex + ')' : '') 
+            + '</span>';
         }
         const compact = line.isCompact ? 'font-size:15px;' : '';
         return '<li' 

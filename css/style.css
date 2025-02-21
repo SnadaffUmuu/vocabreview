@@ -151,10 +151,23 @@ body.night {
   --dataItemBorder : var(--paleBorder);
 }
 
+html {
+  /* min-height: 100%; */
+  min-height: 100dvh;
+}
+
+html, body, #appBody, .appView {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+body, #appBody, .appView {
+  flex: 1 0 auto;
+}
+
 body {
   margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   font-size: 30px;
   background: var(--bg);
   font-family: sans-serif;
@@ -162,17 +175,10 @@ body {
 }
 
 #appBody {
-  box-sizing: border-box;
   padding-top:40px;
-  min-height: 100vh;
-  display: flex;
-  flex-flow: column nowrap;
+  box-sizing: border-box;
   align-items:stretch;
   position: relative;
-}
-
-.appView {
-  flex: 1 0 auto;
 }
 
 select {
@@ -233,7 +239,7 @@ button {
 }
 
 .tagsLegend {
-  margin-top:20px;
+  margin-top:10px;
   border-left: 1px solid var(--tableCellBorder);
   border-top: 1px solid var(--tableCellBorder);
   display:flex;

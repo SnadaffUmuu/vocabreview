@@ -1,3 +1,4 @@
+import { DataFactory } from "../data.js";
 import { Element } from "../element.js";
 
 export const SlideSide = function () {
@@ -18,6 +19,9 @@ SlideSide.prototype = Object.assign(Object.create(Element.prototype), {
     element.dataset.index = line.originalIndex;
     if (line.speakable) {
       element.dataset.reading = line.text;
+    }
+    if (line.translationLineIndex) {
+      element.dataset.translationLineIndex = line.translationLineIndex;
     }
     /*
     if (line.reading) {

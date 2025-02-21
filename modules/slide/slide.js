@@ -40,13 +40,13 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
     let upperSide = currentSideIndex ? sides.find(s => s.dataset.index == currentSideIndex) : null;
     let reoderedSides = null;
     if (!upperSide) {
+      let theOrder = null;
+      const transArr = [];
       switch (mode) {
         case 'expression':
         case 'meaning':
         case 'example':
-        case 'example_translation':
-          const theOrder = DataFactory.lineOrders[mode];
-          //upperSide = sides.find(side => side.dataset.role == lRoles.expression)
+          theOrder = DataFactory.lineOrders[mode];
           reoderedSides = theOrder.flatMap(role => {
             const subArr = sides.filter(side => side.dataset.role == role);
             if (!subArr.length) return [null];
@@ -56,36 +56,37 @@ Slide.prototype = Object.assign(Object.create(Element.prototype), {
               return subArr
             }
           }).filter(o => o != null);
-          upperSide = reoderedSides[0];
           break;
-          /*
-        case 'meaning':
-          reoderedSides = theOrder.map(role => sides.find(side => side.dataset.role == role) || null);
-          //upperSide = sides.find(side => side.dataset.role == lRoles.meaning)
-          upperSide = reoderedSides[0];
+          case 'example_translation':
+            theOrder = DataFactory.lineOrders[mode];
+            reoderedSides = theOrder.flatMap(role => {
+              const subArr = sides.filter(side => side.dataset.role == role);
+              if (!subArr.length) return [null];
+              
+              if ('example_translation' == role) {
+                shuffleArray(subArr).forEach(side => {
+                  transArr.push(side);
+                  const orig = sides.find(ss => ss.dataset.translationLineIndex 
+                    == side.dataset.index);
+                  if (orig) {
+                    transArr.push(orig);
+                  }
+                });
+                return transArr;
+              } else if ('example' == role) {
+                const untranslatedExamples = subArr.filter(side => !transArr.includes(side));
+                return shuffleArray(untranslatedExamples);
+              } else {
+                return subArr;
+              }
+            }).filter(o => o != null);
           break;
-        case 'examples':
-          reoderedSides = theOrder.map(role => sides.find(side => side.dataset.role == role) || null);
-          const examples = sides.filter(side => side.dataset.role == lRoles.example);
-          if (examples.length) {
-            upperSide = examples[0];
-          } else {
-
-            upperSide = null;
-          }
-          break;
-        case 'example_translations':
-          //TODO
-          break;
-          */
         case 'random':
           reoderedSides = shuffleArray(sides);
-          upperSide = reoderedSides[0];
           break;
         case 'original':
         default:
           reoderedSides = sides;
-          upperSide = reoderedSides[0];
       }
     }
     const finalSides = reoderedSides || sides;

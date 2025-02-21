@@ -93,10 +93,10 @@ export const DataFactory = {
     ],
     'meaning' : [
       'meaning',
+      'example_translation',
       'expression',
       'alt_reading',
       'example',
-      'example_translation',
       'reading',
       'unknown',
     ],
@@ -110,9 +110,9 @@ export const DataFactory = {
       'unknown',
     ],
     'example_translation' : [
+      'meaning',
       'example_translation',
       'example',
-      'meaning',
       'expression',
       'alt_reading',
       'reading',

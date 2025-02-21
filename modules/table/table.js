@@ -368,14 +368,13 @@ export const TableView = function () {
       + '"'
       + (line.role ? ' data-role="' + line.role + '"' : '')
       + (entry.reviewLevel && line.originalIndex == 0 ? ' data-review-level="' + entry.reviewLevel + '"' : '')
-       + (line.role && line.role == DataFactory.LINE_ROLE.reading ? ' data-is-reading' : '')
        + '>'
-      //  + (line.speakable ? '<span data-reading="'
-      //    + line.text
-      //    + '" class="speakme"></span>' : '')
         + '<span class="line-text"'
-          + (line.speakable ? ' data-reading="' + line.text+ '"' : '')
+          //+ (line.speakable ? ' data-reading="' + line.text+ '"' : '')
         + '>' 
+          + (line.speakable ? '<span data-reading="'
+          + line.text
+          + '" class="speakme"></span>' : '')
           + line.text 
         + '</span>'
         + '</div>'

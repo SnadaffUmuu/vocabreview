@@ -222,9 +222,15 @@
   background: var(--tableDragOverCellBg)
 }
 
+/* 
 #table td.hidden .cellContentDraggable {
-  opacity: 0 !important;
+  opacity: 0 !important; 
   pointer-events: none;
+}
+*/
+
+#table td.hidden .line-text {
+  filter:blur(20px)
 }
 
 #table td .cellContentDraggable.dragging,
@@ -299,14 +305,13 @@
 }
 
 #table .speakme {
-  float: right;
   cursor: pointer;
-  height:15px;
-  width:50%px;
-  /* position: absolute;
+  height:100%;
+  width:25px;
+  position: absolute;
   top:0;
-  right:0;
-  z-index:100; */
+  left:0;
+  z-index:100;
 }
 
 #table [data-review-level] .line-text {
@@ -361,7 +366,9 @@
 
 #table .line-text {
   display:inline-block;
-  margin: 0 20px 0 5px;
+  margin-right: 20px;
+  position: relative;
+  padding-left:15px;
 }
 
 #table [data-role="example"]:before {
