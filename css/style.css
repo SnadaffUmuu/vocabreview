@@ -33,12 +33,12 @@
   --boardItemBorder:#bfbfbf;
   --boardItemPlaceholder: rgba(130, 200, 205, 0.3);
   --boardItem:var(--button-primary);
-  --boardItemLapsedBorder:rgba(159, 0, 0, 0.26);
+  --boardItemLapsedBorder:#ff3a80;
   --boardItemLapsedLineTextColor:rgb(90, 30, 78);
   --boardRemoveItemTextColor:#e6004d;
   --boardItemMenuExpandedBorder: #a6cecf;
   --boardInfoShadow:#a6cecf; 
-  --boardGlobalItemShadow: #a07fff;
+  --boardGlobalItemShadow: #0034ff;
 
   --slideInfoBg: #c4bfca;
   --slideInfoColor: var(--text-color);
@@ -105,11 +105,11 @@ body.night {
   --boardLearnColBorder: #adb8c5;
   --boardItemBorder:#00031b;
   --boardItem:var(--button-primary);
-  --boardItemLapsedBorder:rgb(159 0 0 / 66%);
+  --boardItemLapsedBorder:#b5000e;
   --boardItemLapsedLineTextColor:rgba(255, 255, 255, 0.798);
   --boardItemMenuExpandedBorder: #6b526d;
   --boardInfoShadow:rgb(22 0 36); 
-  --boardGlobalItemShadow: #bc77dd;
+  --boardGlobalItemShadow: white;
 
   --currentSlideIndexTextColor: var(--text-color);
 

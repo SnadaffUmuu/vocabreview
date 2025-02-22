@@ -4,7 +4,7 @@
 }
 
 #boardActionsBlock {
-  padding: 10px 5px;
+  padding: 10px 5px 5px;
   flex: 0 1 auto;
   font-size: 13px;
   display: flex;
@@ -14,7 +14,7 @@
 
 #boardActionsBlock select {
   flex:0 2 auto;
-  max-width: 90px;
+  max-width: 65px;
 }
 
 [for="markGlobal"] {
@@ -66,7 +66,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 
 #boardSourceCards {
   flex: 1 0 calc(100vw - 40px);
-  padding: 0 40px 10px 10px;
+  padding: 7px 40px 10px 10px;
   box-sizing: border-box;
   display: flex;
   flex-flow: row wrap;
@@ -107,11 +107,13 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 }
 
 #boardGoodCol {
+  flex:1 0 60vw;
   justify-content: flex-start;
   border-color: var(--boardGoodColBorder)
 }
 
 #boardFailedCol {
+  flex: 1 0 60vw;
   justify-content: flex-end;
   border-color: var(--boardFailedColBorder);
 }
@@ -284,8 +286,18 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   border-color: var(--boardItemLapsedBorder);
 }
 
+.boardItem:has([data-current][lapsed]) {
+  /* box-shadow: -3px -3px 7px -3px var(--boardItemLapsedBorder); */
+  box-shadow: -2px -2px 3px -2px var(--boardItemLapsedBorder);
+}
+
 .boardItem[data-global] {
   box-shadow: 3px 3px 7px -3px var(--boardGlobalItemShadow);
+}
+
+.boardItem[data-global]:has([data-current][lapsed]) {
+  box-shadow: 2px 2px 5px -2px var(--boardGlobalItemShadow),
+  -2px -2px 3px -2px var(--boardItemLapsedBorder);
 }
 
 .boardItem .itemLine {
@@ -322,57 +334,54 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   font-size: 15px;
 }
 
+/*
 .boardItem .itemLine[lapsed] {
+  text-decoration-color: var(--boardItemLapsedBorder);
   color: var(--boardItemLapsedLineTextColor);
 }
-
-.boardItem .itemLine[data-review-level] {
-  /* text-decoration: underline; */
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
-}
+*/
 
 .boardItem .itemLine[data-review-level="1"],
 .boardItem .itemLine[data-review-level="2"],
 .boardItem .itemLine[data-review-level="3"] {
-  text-decoration-color: var(--text-color);
+  /* text-decoration-color: var(--text-color); */
   font-size: 21px;
 }
 
 .boardItem .itemLine[data-review-level="100"],
 .boardItem .itemLine[data-review-level="200"],
 .boardItem .itemLine[data-review-level="300"] {
-  text-decoration-color: white;
+  /* text-decoration-color: white; */
   font-size: 25px;
 }
 
 .boardItem .itemLine[data-review-level="1"] {
-  text-decoration-style: dotted;
+  /* text-decoration-style: dotted; */
   color:var(--revLevelMinorTextColor);
 }
 
 .boardItem .itemLine[data-review-level="2"] {
-  text-decoration-style: dashed;
+  /* text-decoration-style: dashed; */
   color:var(--revLevelTextColor);
 }
 
 .boardItem .itemLine[data-review-level="3"] {
-  text-decoration-style: solid;
+  /* text-decoration-style: solid; */
   color:var(--revLevelExtraTextColor);
 }
 
 .boardItem .itemLine[data-review-level="100"] {
-  text-decoration-style: dotted;
+  /* text-decoration-style: dotted; */
   color:var(--revLevelMinorTextColor);
 }
 
 .boardItem .itemLine[data-review-level="200"] {
-  text-decoration-style: dashed;
+  /* text-decoration-style: dashed; */
   color:var(--revLevelTextColor);
 }
 
 .boardItem .itemLine[data-review-level="300"] {
-  text-decoration-style: solid;
+  /* text-decoration-style: solid; */
   color:var(--revLevelExtraTextColor);
 }
 

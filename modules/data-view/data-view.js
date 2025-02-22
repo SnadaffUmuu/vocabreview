@@ -38,7 +38,7 @@ export const DataView = function () {
         e.preventDefault();
         let res = [];
         for (let source in Application.data) {
-          if (source = DataFactory.globalPool) continue;
+          if (source == DataFactory.globalPool) continue;
           
           const matchingEntries = structuredClone(Application.data[source]?.allEntries?.filter(en =>
             en.lines.some(l => l.text.indexOf(e.target.value) != -1)));
