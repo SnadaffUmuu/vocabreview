@@ -55,8 +55,8 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 }
 
 #sourceItemsCounter {
-  position: absolute;
-  top:-8px; 
+  position: fixed;
+  top:80px; 
   right:10px;
   z-index:100;
   width:23px;

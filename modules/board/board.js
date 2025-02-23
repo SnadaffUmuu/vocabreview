@@ -693,7 +693,7 @@ BoardView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#appBody',
   templatePath: 'modules/board/board.html',
   templateSelector: '#boardView',
-  longtouchTimeout: 0,
+  longtouchTimeout: 100,
 });
 
 BoardView.prototype.constructor = BoardView;

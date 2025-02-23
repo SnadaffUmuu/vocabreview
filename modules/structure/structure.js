@@ -68,7 +68,6 @@ export const StructureView = function () {
         this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
       ).map(ch => parseInt(ch.value))
       Application.filter(checkedSections);
-      Application.views.MenuView.toggleMenu();
     });
   }
 
