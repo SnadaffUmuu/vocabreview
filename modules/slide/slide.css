@@ -86,6 +86,11 @@
   font-family: sans-serif;
 }
 
+.keen-slider__slide[data-role="example"] {
+  font-size: 23px;
+  font-family: sans-serif;
+}
+
 .keen-slider__slide[data-tag] {
   box-shadow: inset 0px 0px 49px 63px var(--bg);
 }

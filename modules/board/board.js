@@ -25,9 +25,9 @@ export const BoardView = function () {
     'click .itemDroppableContainer': 'collapseAllItems',
     'click #setLapses': 'setLapses',
     'click #fixLapses': 'fixLapses',
-    'change #boardActions' : 'executeFunction',
-    'change #markGlobal' : 'toggleMarkGlobal'
-  };
+    'change #boardActions': 'executeFunction',
+    'change #markGlobal': 'toggleMarkGlobal'
+  }
 
   this.renderedEvents = {
     click: {
@@ -66,9 +66,9 @@ export const BoardView = function () {
     touchend: {
       '.boardItem': 'setTouchEnd true',
     },
-  };
+  }
 
-  this.setBoardLayout = function() {
+  this.setBoardLayout = function () {
     const el = this.element.querySelector('#boardColsContainerOuter');
     const top = el.getBoundingClientRect().top;
     el.style.minHeight = 'calc(100dvh - ' + top + 'px)';
@@ -78,19 +78,26 @@ export const BoardView = function () {
     return this.studyModeEl.checked ? true : false;
   }
 
+  this.filterStateObjByCurrentEntries = function (stateObj) {
+    return Object.fromEntries(
+      Object.entries(stateObj).filter(([key, value]) =>
+        !this.data.entries.find(entry => entry.originalIndex == key))
+    );
+  }
+
   this.toggleStudyMode = function (e) {
     this.collapseAllItems(e);
-  };
+  }
 
   this.executeFunction = function (e) {
     if (e.target.value == '') return;
     this[e.target.value]();
-  },
+  }
 
   this.setGlobal = function () {
     const candidates = [...this.learnCol.querySelectorAll('.boardItem')];
-    const entriesToAdd = candidates.map(el => 
-      this.data.entries.find(entry => 
+    const entriesToAdd = candidates.map(el =>
+      this.data.entries.find(entry =>
         entry.originalIndex == el.dataset.originalIndex))
 
     Application.setGlobal(structuredClone(entriesToAdd));
@@ -100,9 +107,9 @@ export const BoardView = function () {
     });
     this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
-  },
+  }
 
-  this.toggleMarkGlobal  = function (e) {
+  this.toggleMarkGlobal = function (e) {
     const items = this.element.querySelectorAll('.boardItem');
     if (e.target.checked) {
       const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
@@ -123,7 +130,7 @@ export const BoardView = function () {
         delete el.dataset.global
       })
     }
-  };
+  }
 
   this.collapseAllItems = function (e) {
     if (!e.target.classList.contains('itemDroppableContainer')
@@ -146,22 +153,22 @@ export const BoardView = function () {
       item.style.top = 'unset';
       item.parentNode.querySelector('.expandPlaceholder')?.remove();
     });
-  };
+  }
 
   this.toggleExpandLine = function (e) {
     if (!this.isStudyMode()) return;
     this.getDragItem(e.target).classList.toggle('lineExpanded');
-  };
+  }
 
   this.toggleInfo = function (e) {
     if (!this.isStudyMode()) return;
     this.getDragItem(e.target).classList.toggle('infoShown');
-  };
+  }
 
   this.removeItem = function (e) {
     const item = this.getDragItem(e.target);
     if (Application.state.currentSource == DataFactory.globalPool) {
-      Application.getCurrentSourceData().allEntries = Application.getCurrentSourceData().allEntries.filter(entry => 
+      Application.getCurrentSourceData().allEntries = Application.getCurrentSourceData().allEntries.filter(entry =>
         entry.hash !== parseInt(item.dataset.hash));
     } else {
       this.state.removedItems.push(parseInt(item.dataset.originalIndex));
@@ -171,7 +178,7 @@ export const BoardView = function () {
       item.remove();
       this.element.querySelector('.expandPlaceholder')?.remove();
     }
-  };
+  }
 
   this.toggleItemMenu = function (e) {
     if (!this.isStudyMode()) return;
@@ -527,31 +534,31 @@ export const BoardView = function () {
               return subArr
             }
           }).filter(o => o != null);
-          break; 
-          case 'example_translation':
-            theOrder = DataFactory.lineOrders[mode];
-            reorderedLines = theOrder.flatMap(role => {
-              const subArr = lines.filter(line => line.role == role);
-              if (!subArr.length) return [null];
-              
-              if ('example_translation' == role) {
-                shuffleArray(subArr).forEach(line => {
-                  transArr.push(line);
-                  const orig = lines.find(ll => ll.translationLineIndex 
-                    == line.originalIndex);
-                  if (orig) {
-                    transArr.push(orig);
-                  }
-                });
-                return transArr;
-              } else if ('example' == role) {
-                const untranslatedExamples = subArr.filter(line => !transArr.includes(line));
-                return shuffleArray(untranslatedExamples);
-              } else {
-                return subArr;
-              }
-            }).filter(o => o != null);
-          break;                 
+          break;
+        case 'example_translation':
+          theOrder = DataFactory.lineOrders[mode];
+          reorderedLines = theOrder.flatMap(role => {
+            const subArr = lines.filter(line => line.role == role);
+            if (!subArr.length) return [null];
+
+            if ('example_translation' == role) {
+              shuffleArray(subArr).forEach(line => {
+                transArr.push(line);
+                const orig = lines.find(ll => ll.translationLineIndex
+                  == line.originalIndex);
+                if (orig) {
+                  transArr.push(orig);
+                }
+              });
+              return transArr;
+            } else if ('example' == role) {
+              const untranslatedExamples = subArr.filter(line => !transArr.includes(line));
+              return shuffleArray(untranslatedExamples);
+            } else {
+              return subArr;
+            }
+          }).filter(o => o != null);
+          break;
         case 'random':
           reorderedLines = shuffleArray(sides);
         case 'original':
@@ -614,7 +621,6 @@ export const BoardView = function () {
   };
 
   this.reset = function (resetAll) {
-    this.data = {};
     this.sourceCardsContainer.innerHTML = '';
     this.sourceItemCounter.innerHTML = '';
     this.goodCol.innerHTML = '';
@@ -622,13 +628,25 @@ export const BoardView = function () {
     this.learnCol.innerHTML = '';
     this.element.querySelector('#markGlobal').removeAttribute('checked');
     setSelectOption(this.boardActions, '');
+
     if (resetAll) {
+      this.state.removedItems = this.state.removedItems.filter(index =>
+        !this.data.entries.find(entry => entry.originalIndex == index)
+      );
+
+      this.state.itemsInCols = this.filterStateObjByCurrentEntries(this.state.itemsInCols);
+      this.state.lapses = this.filterStateObjByCurrentEntries(this.state.lapses);
+      this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
+
+      /*
       this.state.removedItems = [];
       this.state.itemsInCols = {};
       this.state.lapses = {};
       this.state.lineIndexes = {};
+      */
       this.studyModeEl.checked = false;
     }
+    this.data = {};
   };
 
   this.render = function (resetAll) {

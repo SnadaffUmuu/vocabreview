@@ -8,7 +8,7 @@ SlideSide.prototype = Object.assign(Object.create(Element.prototype), {
   templatePath : 'modules/slide/slide-side.html',
   
   setClasses : function(line, element) {
-    if (line.isCompact) {
+    if (line.isCompact || line.role == 'example') {
       element.classList.add('compact')
     }
   },

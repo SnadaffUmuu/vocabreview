@@ -3,6 +3,17 @@
 ::source::SR_Kona2
 ====
 
+[61] In Search of Help
+
+кончились силы
+力が尽きた
+つきる
+
+半信半疑
+はんしんはんぎ
+то верить, то нет, колебаться
+::yojijukugo
+
 [60] Thanks For Your Cooperation
 
 捕らえる

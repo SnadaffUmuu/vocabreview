@@ -313,7 +313,8 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   padding:0px 1px;
 }
 
-#boardView:has(#cardMode option[value="meaning"]:checked) .boardItem .itemLine {
+.boardItem .itemLine[data-current][role="example_translation"],
+.boardItem .itemLine[data-current][role="meaning"] {
   -webkit-line-clamp: 2;
 }
 
