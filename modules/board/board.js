@@ -134,7 +134,7 @@ export const BoardView = function () {
 
   this.collapseAllItems = function (e) {
     if (!e.target.classList.contains('itemDroppableContainer')
-      && (!e.target.id || !e.target.id == 'studyMode')) return;
+      /*&& (!e.target.id || !e.target.id == 'studyMode')*/) return;
     [...this.element.querySelectorAll('.menuExpanded')].forEach(item => {
       /*
       item.querySelectorAll('.itemLine').forEach(line => {
@@ -156,12 +156,12 @@ export const BoardView = function () {
   }
 
   this.toggleExpandLine = function (e) {
-    if (!this.isStudyMode()) return;
+    //if (!this.isStudyMode()) return;
     this.getDragItem(e.target).classList.toggle('lineExpanded');
   }
 
   this.toggleInfo = function (e) {
-    if (!this.isStudyMode()) return;
+    //if (!this.isStudyMode()) return;
     this.getDragItem(e.target).classList.toggle('infoShown');
   }
 
@@ -181,7 +181,7 @@ export const BoardView = function () {
   }
 
   this.toggleItemMenu = function (e) {
-    if (!this.isStudyMode()) return;
+    //if (!this.isStudyMode()) return;
     const item = this.getDragItem(e.target);
     const container = item.closest('.itemDroppableContainer');
     if (!item || !container) return;
@@ -232,7 +232,7 @@ export const BoardView = function () {
   };
 
   this.rotateCard = function (e) {
-    if (!this.isStudyMode()) return;
+    //if (!this.isStudyMode()) return;
     e.stopPropagation();
     e.preventDefault();
     const item = this.getDragItem(e.target);
@@ -711,7 +711,7 @@ BoardView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#appBody',
   templatePath: 'modules/board/board.html',
   templateSelector: '#boardView',
-  longtouchTimeout: 100,
+  longtouchTimeout: 200,
 });
 
 BoardView.prototype.constructor = BoardView;

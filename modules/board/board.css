@@ -305,7 +305,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   overflow: hidden;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  margin-right: 15px;
+  margin-right: 17px;
   min-height: 23px;
   line-height: 140%;
   border-radius: 10px;
@@ -450,15 +450,15 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   visibility: hidden;
 }
 
-.boardItem:not(:has([data-current="true"][data-reading])) .speakLine,
-#boardView:not(:has(#studyMode:checked)) .itemActions,
-#boardView:not(:has(#studyMode:checked)) .menuExpanded .itemActions {
+.boardItem:not(:has([data-current="true"][data-reading])) .speakLine {
   display: none;
 }
 
+/*
 #boardView:not(:has(#studyMode:checked)) .toggleItemMenu {
   display: none;
 }
+*/
 
 /* .boardItem, .itemDroppableContainer {
   touch-action: none;
@@ -483,17 +483,19 @@ body:has(.menuExpanded) {
 
 .boardItem .infoMark {
   position: absolute;
-  right:12px;
-  top:0px;
+  right:11px;
+  top:-2px;
   font-size:12px;
-  display: none;
+  /* display: none; */
   backdrop-filter: blur(3px);
   padding:1px;
 }
 
+/*
 #boardView:has(#studyMode:checked) .infoMark {
   display:block;
 }
+*/
 
 .boardItem .itemInfo {
   position: absolute;
@@ -512,6 +514,6 @@ body:has(.menuExpanded) {
   box-shadow: 4px 5px 7px -2px var(--boardInfoShadow);
 }
 
-#boardView:has(#studyMode:checked) .infoShown .itemInfo {
+.boardItem .infoShown .itemInfo {
   display:block;
 }
