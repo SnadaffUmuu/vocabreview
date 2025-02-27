@@ -1,0 +1,35 @@
+<div id="PanelView"  class="appView">
+  <div id="panelActionsBlock">
+    <button id="resetPanel">Reset</button>
+    <select id="cardMode">
+      <option value="original">original</option>
+      <option value="expression">expression</option>
+      <option value="meaning">meaning</option>
+      <option value="example">examples</option>
+      <option value="example_translation">examples' translation</option>
+      <option value="random">random</option>
+    </select>
+    <select id="panelActions">
+      <option value="">actions</option>
+      <option value="setGlobal">Set as global</option>
+    </select>
+    <label for="markGlobal">
+      <input type="checkbox" id="markGlobal">
+    </label>
+    <button id="render">⟳</button>
+  </div>
+  <div id="panelContainer">
+    <div id="panelSourceContainer">
+      <div id="panelSources" class="itemDroppableContainer fastened"></div>
+    </div>
+    <div id="boxesContainerOuter">
+      <div id="boxesContainer">
+        <div id="box1" data-box="1" class="itemDroppableContainer"></div>
+        <div id="box2" data-box="2" class="itemDroppableContainer"></div>
+        <div id="box3" data-box="3" class="itemDroppableContainer"></div>
+        <div id="box4" data-box="4" class="itemDroppableContainer"></div>
+      </div>
+    </div>
+    <div id="panelLegend"></div>
+  </div>
+</div>

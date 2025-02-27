@@ -22,6 +22,9 @@ export const Router = {
       case 'board':
         this.currentView = Application.views.BoardView;
         break;
+      case 'panel':
+        this.currentView = Application.views.PanelView;
+        break;
     }
   },
 

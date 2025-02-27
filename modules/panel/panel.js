@@ -11,71 +11,56 @@ import {
 } from "../utils.js";
 import { Application } from "../app.js";
 
-export const BoardView = function () {
-  this.actionsContainer = null;
+export const PanelView = function () {
 
   this.namespaces = {
     'UserActionHandlers': UserActionHandlers
   }
 
   this.events = {
-    'click #resetBoard': 'resetBoard',
+    'click #resetPanel': 'resetPanel',
     'change #cardMode': 'setMode',
-    'change #studyMode': 'toggleStudyMode',
     'click .itemDroppableContainer': 'collapseAllItems',
-    'click #setLapses': 'setLapses',
-    'click #fixLapses': 'fixLapses',
-    'change #boardActions': 'executeFunction',
-    'change #markGlobal': 'toggleMarkGlobal'
+    'change #panelActions': 'executeFunction',
+    'change #markGlobal': 'toggleMarkGlobal',
+    'click #render' : 'render',
   }
 
   this.renderedEvents = {
     click: {
       '.tapZone': 'toggleItemMenu',
-      '.boardItem.menuExpanded .itemLine': 'rotateCard',
-      '.boardItem .reading': 'speakReading',
+      '.panelItem.menuExpanded .itemLine': 'rotateCard',
+      '.panelItem .reading': 'speakReading',
       '.itemActions .speakLine': 'speakLine',
       '.expandLine': 'toggleExpandLine',
       '.removeItem': 'removeItem',
       '.toggleInfo': 'toggleInfo',
     },
     contextmenu: {
-      '#boardSourceCards': 'UserActionHandlers.preventDefault',
-      '#boardGoodCol': 'UserActionHandlers.preventDefault',
-      '#boardFailedCol': 'UserActionHandlers.preventDefault',
-      '#boardLearnCol': 'UserActionHandlers.preventDefault',
+      '#panelSources': 'UserActionHandlers.preventDefault',
+      '#box1': 'UserActionHandlers.preventDefault',
+      '#box2': 'UserActionHandlers.preventDefault',
+      '#box3': 'UserActionHandlers.preventDefault',
+      '#box4': 'UserActionHandlers.preventDefault',
     },
     dragstart: {
-      '.boardItem': 'itemDragStart'
+      '.panelItem': 'itemDragStart'
     },
     dragend: {
-      '.boardItem': 'itemDragEnd'
+      '.panelItem': 'itemDragEnd'
     },
     dragover: {
-      '#boardSourceCards': 'setDragOver true',
-      '#boardGoodCol': 'setDragOver true',
-      '#boardFailedCol': 'setDragOver true',
-      '#boardLearnCol': 'setDragOver true',
+      '.itemDroppableContainer': 'setDragOver true',
     },
     touchstart: {
-      '.boardItem': 'setTouchStart true',
+      '.panelItem': 'setTouchStart true',
     },
     touchmove: {
-      '.boardItem': 'setTouchMove true',
+      '.panelItem': 'setTouchMove true',
     },
     touchend: {
-      '.boardItem': 'setTouchEnd true',
+      '.panelItem': 'setTouchEnd true',
     },
-  }
-
-  this.setBoardLayout = function () {
-    const el = this.element.querySelector('#boardColsContainerOuter');
-    const top = el.getBoundingClientRect().top;
-    el.style.minHeight = 'calc(100dvh - ' + top + 'px)';
-  }
-
-  this.isStudyMode = function (e) {
-    return this.studyModeEl.checked ? true : false;
   }
 
   this.filterStateObjByCurrentEntries = function (stateObj) {
@@ -85,17 +70,13 @@ export const BoardView = function () {
     );
   }
 
-  this.toggleStudyMode = function (e) {
-    this.collapseAllItems(e);
-  }
-
   this.executeFunction = function (e) {
     if (e.target.value == '') return;
     this[e.target.value]();
   }
 
   this.setGlobal = function () {
-    const candidates = [...this.learnCol.querySelectorAll('.boardItem')];
+    const candidates = [...this.learnCol.querySelectorAll('.panelItem')];
     const entriesToAdd = candidates.map(el =>
       this.data.entries.find(entry =>
         entry.originalIndex == el.dataset.originalIndex))
@@ -103,14 +84,14 @@ export const BoardView = function () {
     Application.setGlobal(structuredClone(entriesToAdd));
 
     candidates.forEach(el => {
-      delete this.state.itemsInCols[el.dataset.originalIndex];
+      delete this.state.itemsInBoxes[el.dataset.originalIndex];
     });
     this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
   }
 
   this.toggleMarkGlobal = function (e) {
-    const items = this.element.querySelectorAll('.boardItem');
+    const items = this.element.querySelectorAll('.panelItem');
     if (e.target.checked) {
       const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
       [...items].forEach(el => {
@@ -133,20 +114,8 @@ export const BoardView = function () {
   }
 
   this.collapseAllItems = function (e) {
-    if (!e.target.classList.contains('itemDroppableContainer')
-      /*&& (!e.target.id || !e.target.id == 'studyMode')*/) return;
+    if (!e.target.classList.contains('itemDroppableContainer')) return;
     [...this.element.querySelectorAll('.menuExpanded')].forEach(item => {
-      /*
-      item.querySelectorAll('.itemLine').forEach(line => {
-        if (!line.dataset.current 
-          && line.dataset.originalIndex == item.dataset.upperLineIndex) {
-            line.dataset.current = true;
-        } else if (line.dataset.current
-          && line.dataset.originalIndex != item.dataset.upperLineIndex) {
-            delete line.dataset.current
-        }
-      })
-      */
       item.classList.remove('lineExpanded');
       item.classList.remove('menuExpanded');
       item.classList.remove('infoShown');
@@ -156,32 +125,14 @@ export const BoardView = function () {
   }
 
   this.toggleExpandLine = function (e) {
-    //if (!this.isStudyMode()) return;
     this.getDragItem(e.target).classList.toggle('lineExpanded');
   }
 
   this.toggleInfo = function (e) {
-    //if (!this.isStudyMode()) return;
     this.getDragItem(e.target).classList.toggle('infoShown');
   }
 
-  this.removeItem = function (e) {
-    const item = this.getDragItem(e.target);
-    if (Application.state.currentSource == DataFactory.globalPool) {
-      Application.getCurrentSourceData().allEntries = Application.getCurrentSourceData().allEntries.filter(entry =>
-        entry.hash !== parseInt(item.dataset.hash));
-    } else {
-      this.state.removedItems.push(parseInt(item.dataset.originalIndex));
-      this.state.removedItems = this.state.removedItems;
-      delete this.state.itemsInCols[item.dataset.originalIndex];
-      this.state.itemsInCols = this.state.itemsInCols;
-      item.remove();
-      this.element.querySelector('.expandPlaceholder')?.remove();
-    }
-  }
-
   this.toggleItemMenu = function (e) {
-    //if (!this.isStudyMode()) return;
     const item = this.getDragItem(e.target);
     const container = item.closest('.itemDroppableContainer');
     if (!item || !container) return;
@@ -194,7 +145,7 @@ export const BoardView = function () {
       item.style.top = top + 'px';
       const expandPlaceholder = document.createElement('div');
       expandPlaceholder.classList.add('expandPlaceholder');
-      expandPlaceholder.classList.add('boardItem');
+      expandPlaceholder.classList.add('panelItem');
       expandPlaceholder.style.cssText = `
         width:${width}px;
         height:${height}px;
@@ -210,7 +161,7 @@ export const BoardView = function () {
 
   this.speakLine = function (e) {
     e.stopPropagation();
-    const expandedItem = e.target.closest('.boardItem');
+    const expandedItem = e.target.closest('.panelItem');
     if (!expandedItem) return;
     const line = expandedItem.querySelector('[data-current]');
     if (!line || !line.dataset?.reading) return;
@@ -223,16 +174,11 @@ export const BoardView = function () {
     speak(e.target.innerText)
   }
 
-  this.getDragItem = function (target) {
-    return target.classList.contains('boardItem') ? target : target.closest('.boardItem');
-  };
-
-  this.resetBoard = function (e) {
+  this.resetPanel = function (e) {
     this.render(true);
   };
 
   this.rotateCard = function (e) {
-    //if (!this.isStudyMode()) return;
     e.stopPropagation();
     e.preventDefault();
     const item = this.getDragItem(e.target);
@@ -269,102 +215,67 @@ export const BoardView = function () {
     this.state.selfUpdate = !this.state.selfUpdate;
   };
 
-  this.updateSourceItemsCount = function () {
-    this.sourceItemCounter.innerHTML = this.sourceCardsContainer.querySelectorAll('.boardItem').length;
-  };
-
   this.setMode = function (e) {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       this.state.mode = e.target.value;
       delete this.state.lineIndexes;
-      //this.state.itemsInCols = {};
       this.render();
     });
   };
 
-  this.setItemInCol = function (e, elementFromPoint) {
+  this.getDragItem = function (target) {
+    return target.classList.contains('panelItem') ? target : target.closest('.panelItem');
+  };
+
+  this.removeItem = function (e) {
+    const item = this.getDragItem(e.target);
+    if (Application.state.currentSource == DataFactory.globalPool) {
+      Application.getCurrentSourceData().allEntries = Application.getCurrentSourceData().allEntries.filter(entry =>
+        entry.hash !== parseInt(item.dataset.hash));
+    } else {
+      this.state.removedItems.push(parseInt(item.dataset.originalIndex));
+      this.state.removedItems = this.state.removedItems;
+      delete this.state.itemsInBoxes[item.dataset.originalIndex];
+      this.state.itemsInBoxes = this.state.itemsInBoxes;
+      item.remove();
+      this.element.querySelector('.expandPlaceholder')?.remove();
+    }
+  }
+
+  this.setItemInBox = function (e, elementFromPoint) {
     if (elementFromPoint) {
-      //const elFromPoint = document.elementFromPoint(x, y);
       if (Application.views.MenuView.element.contains(elementFromPoint)) {
-        console.log('remove from infobar');
         this.removeItem(e);
       } else {
         const item = this.getDragItem(e.target);
         if (!item) return;
         const container = item.closest('.itemDroppableContainer');
-        if (container?.dataset?.result) {
-          this.state.itemsInCols[item.dataset.originalIndex] = container.dataset.result;
+        if (container?.dataset?.box) {
+          this.state.itemsInBoxes[item.dataset.originalIndex] = container.dataset.box;
         } else {
-          delete this.state.itemsInCols[item.dataset.originalIndex];
+          delete this.state.itemsInBoxes[item.dataset.originalIndex];
         }
         this.state.selfUpdate = !this.state.selfUpdate
       }
     }
   };
 
-  this.setLapses = function (e) {
-    [...this.goodCol.querySelectorAll('.boardItem')].forEach(item => {
-      this.state.removedItems.push(parseInt(item.dataset.originalIndex));
-      delete this.state.itemsInCols[item.dataset.originalIndex];
-    });
-    const badItems = this.failedCol.querySelectorAll('.boardItem');
-    badItems.forEach(item => {
-      const index = parseInt(item.dataset.originalIndex);
-      const lapsedSideOfItem = parseInt(item.querySelector('[data-current]').dataset.originalIndex);
-      if (index in this.state.lapses) {
-        const lapsedSidesInState = this.state.lapses[index];
-        if (!lapsedSidesInState.includes(lapsedSideOfItem)) {
-          lapsedSidesInState.push(lapsedSideOfItem);
-        }
-      } else {
-        this.state.lapses[index] = [lapsedSideOfItem];
-      }
-      delete this.state.itemsInCols[item.dataset.originalIndex];
-    });
-    this.state.selfUpdate = !this.state.selfUpdate;
-    this.render();
-  };
-
-  this.fixLapses = function (e) {
-    [...this.goodCol.querySelectorAll('.boardItem:not(:has([lapsed]))')].forEach(item => {
-      this.state.removedItems.push(parseInt(item.dataset.originalIndex));
-      delete this.state.itemsInCols[item.dataset.originalIndex];
-    });
-    const lapsedItems = this.goodCol.querySelectorAll('.boardItem:has([lapsed])');
-    if (!lapsedItems.length) return;
-    [...lapsedItems].forEach(item => {
-      const itemIndex = item.dataset.originalIndex;
-      const lapsedSideOfItem = parseInt(item.querySelector('[data-current]').dataset.originalIndex);
-      if (itemIndex in this.state.lapses) {
-        let lapsedSidesInState = this.state.lapses[itemIndex];
-        if (lapsedSidesInState.includes(lapsedSideOfItem)) {
-          lapsedSidesInState = lapsedSidesInState.filter(o => o != lapsedSideOfItem);
-          if (!lapsedSidesInState.length) {
-            delete this.state.lapses[itemIndex];
-            this.state.removedItems.push(parseInt(item.dataset.originalIndex));
-          } else {
-            this.state.lapses[itemIndex] = lapsedSidesInState;
-          }
-          delete this.state.itemsInCols[item.dataset.originalIndex];
-        }
-      }
-    });
-    this.state.selfUpdate = !this.state.selfUpdate;
-    this.render();
-  };
+  /* Touch Drag */
 
   this.setTouchStart = function (e) {
-    //if (this.isStudyMode()) return;
     const item = this.getDragItem(e.target);
     if (!item) return;
     this.touchTimeout = setTimeout(() => {
       this.draggable = true;
       item.classList.add("dragging");
+      this.elevate(item);
+      const elementRect = item.getBoundingClientRect();
+      item.dataset.offsetX = e.clientX - elementRect.left;
+      item.dataset.offsetY = e.clientY - elementRect.top;
     }, this.longtouchTimeout);
   }
 
   this.setTouchMove = function (e) {
-    //if (this.isStudyMode()) return;
     if (this.draggable !== true) {
       e.stopPropagation();
       clearTimeout(this.touchTimeout)
@@ -372,96 +283,65 @@ export const BoardView = function () {
       const draggedItem = this.getDragItem(e.target);
       if (!draggedItem) return;
       this.draggedItem = draggedItem;
-      if (!this.placeholder) {
-        this.placeholder = createPlaceholder(this.draggedItem.querySelector('[data-current]'));
-      }
       const touch = e.touches[0];
       this.lastMove = touch;
       this.draggedItem.style.position = 'fixed';
       this.draggedItem.style.left = `${touch.clientX}px`;
       this.draggedItem.style.top = `${touch.clientY}px`;
-      const elFromPoint = document.elementFromPoint(touch.clientX, touch.clientY);
-      this.potentialContainer = elFromPoint.closest('.itemDroppableContainer');
-      if (this.potentialContainer && this.placeholder) {
-        /*
-        const outer = this.potentialContainer.closest('#boardColsContainerOuter');
-        if (outer) {
-          if (this.draggedItem
-            && !this.scrollInterval
-            && (touch.clientX > document.documentElement.clientWidth - 100
-              || touch.clientX < 100)) {
-            this.scrollInterval = setInterval(() => {
-              if (touch.clientX > (document.documentElement.clientWidth - 100)) {
-                outer.scroll(outer.scrollLeft + 20, outer.scrollTop);
-              } else if (touch.clientX < 100) {
-                outer.scroll(outer.scrollLeft - 20, outer.scrollTop);
-              }
-            }, 100)
-          }
-        }
-        */
-        const afterElement = getDragAfterElement(
-          this.potentialContainer,
-          touch.clientY,
-          touch.clientX
-        );
-        if (afterElement) {
-          this.potentialContainer.insertBefore(this.placeholder, afterElement);
-        } else {
-          this.potentialContainer.appendChild(this.placeholder);
-        }
-      }
       e.preventDefault();
     }
   }
 
   this.setTouchEnd = function (e) {
-    //if (this.isStudyMode()) return;
     this.touchTimeout && clearTimeout(this.touchTimeout);
     this.scrollInterval && clearInterval(this.scrollInterval);
     this.draggable = false;
-    this.draggedItem && this.draggedItem.classList.remove("dragging");
-    if (this.draggedItem && this.placeholder && this.placeholder.parentNode) {
-      this.placeholder.parentNode.insertBefore(this.draggedItem, this.placeholder);
-      this.setItemInCol(e, document.elementFromPoint(this.lastMove.clientX, this.lastMove.clientY));
-
-      this.placeholder.remove();
-      this.draggedItem.style.left = "";
-      this.draggedItem.style.top = "";
-      this.draggedItem.style.position = '';
+    if (this.draggedItem) {
+      this.draggedItem.classList.remove("dragging");
+      let targetContainer = document.elementFromPoint(this.lastMove.clientX, this.lastMove.clientY);
+      if (!targetContainer.classList.contains('itemDroppableContainer')) {
+        targetContainer = targetContainer.closest('.itemDroppableContainer');
+      }
+      targetContainer.appendChild(this.draggedItem);
+      this.draggedItem.left = (this.lastMove.clientX - parseInt(targetContainer.dataset.left) - parseInt(e.target.dataset.offsetX)) + 'px';
+      this.draggedItem.top = (this.lastMove.clientY - parseInt(targetContainer.dataset.top) - parseInt(e.target.dataset.offsetY)) + 'px';
+      this.draggedItem.style.position = 'absolute';
+      this.draggedItem.closest('.itemDroppableContainer').insertBefore(this.draggedItem, this.placeholder);
+      this.setItemInBox(e, targetContainer);
     }
     this.draggedItem = null;
-    this.placeholder = null;
     this.scrollInterval = null;
     this.lastMove = null;
-    this.updateSourceItemsCount();
   }
 
   this.itemDragStart = function (e) {
-    //if (this.isStudyMode()) return;
-    e.target.classList.add('dragging')
-  }
-
-  this.itemDragEnd = function (e) {
-    //if (this.isStudyMode()) return;
-    e.target.classList.remove('dragging');
-    this.setItemInCol(e, document.elementFromPoint(e.clientX, e.clientY));
-    this.updateSourceItemsCount();
+    e.target.classList.add('dragging');
+    this.elevate(e.target);
+    const elementRect = e.target.getBoundingClientRect();
+    e.target.dataset.offsetX = e.clientX - elementRect.left;
+    e.target.dataset.offsetY = e.clientY - elementRect.top;
   }
 
   this.setDragOver = function (e) {
-    //if (this.isStudyMode()) return;
     e.preventDefault();
-    const afterElement = getDragAfterElement(this.sourceCardsContainer, e.clientX, e.clientY);
-    const draggable = document.querySelector('.dragging');
-    if (afterElement == null) {
-      e.currentTarget.appendChild(draggable);
-    } else {
-      this.sourceCardsContainer.insertBefore(draggable, afterElement);
-    }
   }
 
-  this.renderLine = function (l, currentLineIndex, lapsedLines, entry) {
+  this.itemDragEnd = function (e) {
+    let targetContainer = document.elementFromPoint(e.clientX, e.clientY);
+    if (!targetContainer.classList.contains('itemDroppableContainer')) {
+      targetContainer = targetContainer.closest('.itemDroppableContainer');
+    }
+    targetContainer.appendChild(e.target);
+    e.target.style.left = (e.clientX - parseInt(targetContainer.dataset.left) - parseInt(e.target.dataset.offsetX)) + 'px';
+    e.target.style.top = (e.clientY - parseInt(targetContainer.dataset.top) - parseInt(e.target.dataset.offsetY)) + 'px';
+    
+    e.target.classList.remove('dragging');
+    this.setItemInBox(e, targetContainer);
+  }
+
+  /* eof Touch Drag */
+
+  this.renderLine = function (l, currentLineIndex, entry) {
     const dataset = {
       'original-index': l.originalIndex
     };
@@ -486,9 +366,6 @@ export const BoardView = function () {
     if (l.isCompact) {
       attrs.compact = true;
     }
-    if (lapsedLines.includes(l.originalIndex)) {
-      attrs.lapsed = true;
-    }
 
     let attrsParsed = '';
     for (let attr in attrs) {
@@ -507,7 +384,7 @@ export const BoardView = function () {
 `;
   };
 
-  this.renderItem = function (entry, mode, stateLapses) {
+  this.renderItem = function (entry, mode) {
     let lines = entry.lines;
     const lRoles = DataFactory.LINE_ROLE;
     const reading = lines.find(line => line.role == lRoles.reading);
@@ -579,12 +456,8 @@ export const BoardView = function () {
       <div class="itemAction reading">${reading ? reading.text : ''}</div>
     </div>
   `;
-    let lapsedLines = [];
-    if (stateLapses && (entry.originalIndex in stateLapses)) {
-      lapsedLines = stateLapses[entry.originalIndex];
-    }
     return `
-      <div class="boardItem" 
+      <div class="panelItem" 
         draggable="true"
         ${entry.tag ? ' data-tag="' + entry.tag + '"' : ''} 
         ${entry.hash ? ' data-hash="' + entry.hash + '"' : ''} 
@@ -593,25 +466,64 @@ export const BoardView = function () {
         ${entry.info ? ' <div class="itemInfo">ⓘ&nbsp;' + entry.info + '</div><div class="infoMark">i</div>' : ''}
         <div class="lineCounter">${finalLines.length}</div>
         <div class="tapZone"></div>
-        ${finalLines.map((l, i) => this.renderLine(l, parseInt(currentIndex), lapsedLines, entry)).join('')}
+        ${finalLines.map((l, i) => this.renderLine(l, parseInt(currentIndex), entry)).join('')}
         ${entryActions}
       </div>
     `;
   };
 
-  this.renderBoard = function () {
+  this.renderPanel = function () {
     const entries = this.data.entries;
     const mode = this.state.mode || 'original';
     const removedItems = this.state.removedItems || [];
-    const stateLapses = this.state.lapses;
     entries.filter(en => !removedItems.includes(en.originalIndex)).forEach(entry => {
-      const html = this.renderItem(entry, mode, stateLapses);
-      const stContainer = this.state.itemsInCols[entry.originalIndex] ? this.state.itemsInCols[entry.originalIndex] : null;
-      const container = stContainer ? this.cols[stContainer] : this.sourceCardsContainer;
+      const html = this.renderItem(entry, mode);
+      const stContainer = this.state.itemsInBoxes[entry.originalIndex] ? this.state.itemsInBoxes[entry.originalIndex] : null;
+      const container = stContainer ? this.boxes[stContainer] : this.panelSources;
       container.insertAdjacentHTML('beforeend', html);
-      this.updateSourceItemsCount();
     });
     this.tagsLegend.innerHTML = DataFactory.buildLegendHtml();
+    this.unFastenItems();
+  };
+
+  this.unFastenItems = function () {
+    [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
+      if (box.id == 'panelSources') {
+        box.style.width = box.offsetWidth + 'px';
+        box.style.height = box.offsetHeight + 'px';
+      }
+      const rectBox = box.getBoundingClientRect();
+      box.dataset.left = rectBox.left;
+      box.dataset.top = rectBox.top;
+      const items = box.querySelectorAll('.panelItem');
+      [...items].forEach(item => {
+        item.style.left = item.offsetLeft + 'px';
+        item.style.top = item.offsetTop + 'px';
+      });
+      box.classList.remove('fastened');
+      box.classList.add('unfastened');
+    })
+  };
+
+  this.resetBoxesDimensions = function () {
+    [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
+      delete box.dataset.left;
+      delete box.dataset.top;
+    })
+  };
+
+  this.resetItems = function () {
+    [...this.element.querySelectorAll('.panelItem')].forEach(item => {
+      item.removeAttribute('style');
+      delete item.dataset.offsetX;
+      delete item.dataset.offsetY;
+    })
+  }
+
+  this.elevate = function (theItem) {
+    [...theItem.closest('.itemDroppableContainer').querySelectorAll('.panelItem')].forEach(item => {
+      item.style.zIndex = item == theItem ? '100' : '0';
+    })
   };
 
   this.handleStateChange = function (newState, prop, value) {
@@ -621,30 +533,22 @@ export const BoardView = function () {
   };
 
   this.reset = function (resetAll) {
-    this.sourceCardsContainer.innerHTML = '';
-    this.sourceItemCounter.innerHTML = '';
-    this.goodCol.innerHTML = '';
-    this.failedCol.innerHTML = '';
-    this.learnCol.innerHTML = '';
+    this.panelSources.innerHTML = '';
+    this.panelSources.classList.remove('unfastened');
+    this.panelSources.classList.add('fastened');
+    this.box1.innerHTML = '';
+    this.box1.innerHTML = '';
+    this.box1.innerHTML = '';
+    this.resetBoxesDimensions();
+    //this.resetItems();
     this.element.querySelector('#markGlobal').removeAttribute('checked');
-    setSelectOption(this.boardActions, '');
-
-    if (resetAll) {
+    setSelectOption(this.panelActions, '');
+    if (resetAll == true) {
       this.state.removedItems = this.state.removedItems.filter(index =>
         !this.data.entries.find(entry => entry.originalIndex == index)
       );
-
-      this.state.itemsInCols = this.filterStateObjByCurrentEntries(this.state.itemsInCols);
-      this.state.lapses = this.filterStateObjByCurrentEntries(this.state.lapses);
+      this.state.itemsInBoxes = this.filterStateObjByCurrentEntries(this.state.itemsInBoxes);
       this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
-
-      /*
-      this.state.removedItems = [];
-      this.state.itemsInCols = {};
-      this.state.lapses = {};
-      this.state.lineIndexes = {};
-      */
-      //this.studyModeEl.checked = false;
     }
     this.data = {};
   };
@@ -668,18 +572,17 @@ export const BoardView = function () {
       })
     }
     this.state.lineIndexes ??= {};
-    this.state.itemsInCols ??= {};
+    this.state.itemsInBoxes ??= {};
     this.state.removedItems ??= [];
-    this.state.lapses ??= {};
-    this.renderBoard();
-    this.setBoardLayout();
+    this.renderPanel();
 
     if (!this.renderedEventSet) {
       this.setRenderedEvents([
-        this.sourceCardsContainer,
-        this.goodCol,
-        this.failedCol,
-        this.learnCol
+        this.sourceContainer,
+        this.box1,
+        this.box2,
+        this.box3,
+        this.box4
       ]);
       this.renderedEventSet = true;
     }
@@ -688,30 +591,32 @@ export const BoardView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
-    this.sourceCardsContainer = this.element.querySelector('#boardSourceCards');
-    this.goodCol = this.element.querySelector('#boardGoodCol');
-    this.failedCol = this.element.querySelector('#boardFailedCol');
-    this.learnCol = this.element.querySelector('#boardLearnCol');
-    this.cols = {
-      '1': this.goodCol,
-      '0': this.failedCol,
-      '2': this.learnCol,
+    this.panelSources = this.element.querySelector('#panelSources');
+    this.sourceContainer = this.element.querySelector('#panelSourceContainer');
+    this.box1 = this.element.querySelector('#box1');
+    this.box2 = this.element.querySelector('#box2');
+    this.box3 = this.element.querySelector('#box3');
+    this.box4 = this.element.querySelector('#box4');
+    this.boxes = {
+      '1': this.box1,
+      '2': this.box2,
+      '3': this.box3,
+      '4': this.box4,
     }
-    this.studyModeEl = this.element.querySelector('#studyMode');
     this.cardModeEl = this.element.querySelector('#cardMode');
-    this.sourceItemCounter = this.element.querySelector('#sourceItemsCounter');
-    this.boardActions = this.element.querySelector('#boardActions');
-    this.tagsLegend = this.element.querySelector('#boardLegend');
+    this.panelActions = this.element.querySelector("#panelActions");
+    this.tagsLegend = this.element.querySelector('#panelLegend');
+
     this.renderedEventSet = null;
     this.render();
   }
 }
 
-BoardView.prototype = Object.assign(Object.create(View.prototype), {
+PanelView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#appBody',
-  templatePath: 'modules/board/board.html',
-  templateSelector: '#boardView',
+  templatePath: 'modules/panel/panel.html',
+  templateSelector: '#PanelView',
   longtouchTimeout: 200,
 });
 
-BoardView.prototype.constructor = BoardView;
+PanelView.prototype.constructor = PanelView;

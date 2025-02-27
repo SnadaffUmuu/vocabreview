@@ -1,17 +1,18 @@
-import { View } from "./view.js";
-import { Router } from "./router.js";
-import { MenuView } from "./menu/menu.js";
-import { Slider } from "./slider/slider.js";
-import { DataView } from "./data-view/data-view.js";
-import { Element } from "./element.js";
+import { View } from "./view.js"
+import { Router } from "./router.js"
+import { MenuView } from "./menu/menu.js"
+import { Slider } from "./slider/slider.js"
+import { DataView } from "./data-view/data-view.js"
+import { Element } from "./element.js"
 import { DataFactory } from "./data.js"
 import { DataTests } from "./data-view/data-tests.js"
-import { TableView } from "./table/table.js";
-import { PreloaderView } from "./preloader/preloader.js";
-import { SlideSide } from "./slide/slide-side.js";
-import { Slide } from "./slide/slide.js";
-import { BoardView } from "./board/board.js";
-import { setDeep, stringToHash } from "./utils.js";
+import { TableView } from "./table/table.js"
+import { PreloaderView } from "./preloader/preloader.js"
+import { SlideSide } from "./slide/slide-side.js"
+import { Slide } from "./slide/slide.js"
+import { BoardView } from "./board/board.js"
+import { PanelView } from "./panel/panel.js"
+import { setDeep, stringToHash } from "./utils.js"
 
 export const Application = {
   views: null,
@@ -37,6 +38,7 @@ export const Application = {
       TableView: await View.create(TableView),
       DataView: await View.create(DataView),
       BoardView: await View.create(BoardView),
+      PanelView: await View.create(PanelView),
     };
   },
 
