@@ -31,7 +31,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   flex: 1 0 auto;
   display: flex;
   flex-flow: column nowrap;
-  font-size: 17px;
+  font-size: 15px;
   position: relative;
 }
 
@@ -40,7 +40,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   display: flex;
   flex-flow: row nowrap;
   overflow: auto;
-  max-height: 25vh;
+  max-height: 18vh;
 }
 
 #panelSources {
@@ -85,29 +85,12 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   align-content: flex-start;
 }
 
-.panelItem,
-.panelItem .placeholder {
-  padding: 5px 0 5px 5px; /* ??? */
-  border-radius: 5px;/*  ??? */
-  box-sizing: border-box;
-  min-height: 29px; /* ??? */
-  max-width: calc(100vw - 20px); /* ??? */
-  position: relative;
-  background: var(--boardItem);
-  border: 1px solid transparent;
-}
-
-.panelItem .placeholder {
-  background: var(--boardItemPlaceholder);
-  opacity: 0.7;
-  font-size: 15px;
-  overflow: hidden;
-  height: 29px;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-}
-
 .panelItem {
+  padding: 0 0 0 5px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  max-width: calc(100vw - 20px);
+  position: relative;
   background: var(--boardItem);
   border: 1px solid transparent;
 }
@@ -254,22 +237,8 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   z-index: 1000;
 }
 
-.panelItem:has([lapsed]) {
-  border-color: var(--boardItemLapsedBorder);
-}
-
-.panelItem:has([data-current][lapsed]) {
-  /* box-shadow: -3px -3px 7px -3px var(--boardItemLapsedBorder); */
-  box-shadow: -2px -2px 3px -2px var(--boardItemLapsedBorder);
-}
-
 .panelItem[data-global] {
   box-shadow: 3px 3px 7px -3px var(--boardGlobalItemShadow);
-}
-
-.panelItem[data-global]:has([data-current][lapsed]) {
-  box-shadow: 2px 2px 5px -2px var(--boardGlobalItemShadow),
-  -2px -2px 3px -2px var(--boardItemLapsedBorder);
 }
 
 .panelItem .itemLine {
@@ -284,16 +253,12 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   backdrop-filter: blur(3px);
   padding:0px 1px;
 }
-
+/*
 .panelItem .itemLine[data-current][role="example_translation"],
 .panelItem .itemLine[data-current][role="meaning"] {
   -webkit-line-clamp: 2;
 }
-
-/* .panelItem.menuExpanded .itemLine {
-  overflow: unset;
-  -webkit-line-clamp: unset;
-} */
+*/
 
 .panelItem .itemLine[data-current] {
   display: -webkit-box;
@@ -304,7 +269,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 }
 
 .panelItem .itemLine[compact] {
-  font-size: 15px;
+  font-size: 13px;
 }
 
 /*
@@ -317,50 +282,42 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 .panelItem .itemLine[data-review-level="1"],
 .panelItem .itemLine[data-review-level="2"],
 .panelItem .itemLine[data-review-level="3"] {
-  /* text-decoration-color: var(--text-color); */
-  font-size: 21px;
+  font-size: 17px;
 }
 
 .panelItem .itemLine[data-review-level="100"],
 .panelItem .itemLine[data-review-level="200"],
 .panelItem .itemLine[data-review-level="300"] {
-  /* text-decoration-color: white; */
-  font-size: 25px;
+  font-size: 19px;
 }
 
 .panelItem .itemLine[data-review-level="1"] {
-  /* text-decoration-style: dotted; */
   color:var(--revLevelMinorTextColor);
 }
 
 .panelItem .itemLine[data-review-level="2"] {
-  /* text-decoration-style: dashed; */
   color:var(--revLevelTextColor);
 }
 
 .panelItem .itemLine[data-review-level="3"] {
-  /* text-decoration-style: solid; */
   color:var(--revLevelExtraTextColor);
 }
 
 .panelItem .itemLine[data-review-level="100"] {
-  /* text-decoration-style: dotted; */
   color:var(--revLevelMinorTextColor);
 }
 
 .panelItem .itemLine[data-review-level="200"] {
-  /* text-decoration-style: dashed; */
   color:var(--revLevelTextColor);
 }
 
 .panelItem .itemLine[data-review-level="300"] {
-  /* text-decoration-style: solid; */
   color:var(--revLevelExtraTextColor);
 }
 
 .panelItem .itemActions {
   flex-flow: row nowrap;
-  gap: 10px 20px;
+  gap: 5px 20px;
   display: none;
   padding: 10px 1px 8px;
   align-items: center;
@@ -444,7 +401,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   position: fixed;
   left: 10px;
   right: 20px;
-  z-index: 1000;
+  z-index: 1000 !important;
   border: 1px solid var(--boardItemMenuExpandedBorder);
   padding: 7px 10px 0;
 }

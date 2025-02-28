@@ -3,8 +3,6 @@ import { View } from "../view.js";
 import {
   speak,
   UserActionHandlers,
-  getDragAfterElement,
-  createPlaceholder,
   shuffleArray,
   setSelectOption,
   stringToHash,
@@ -63,6 +61,12 @@ export const PanelView = function () {
     },
   }
 
+  this.setPanelLayout = function () {
+    const el = this.element.querySelector('#boxesContainerOuter');
+    const top = el.getBoundingClientRect().top;
+    el.style.minHeight = 'calc(100dvh - ' + top + 'px)';
+  }  
+
   this.filterStateObjByCurrentEntries = function (stateObj) {
     return Object.fromEntries(
       Object.entries(stateObj).filter(([key, value]) =>
@@ -76,7 +80,7 @@ export const PanelView = function () {
   }
 
   this.setGlobal = function () {
-    const candidates = [...this.learnCol.querySelectorAll('.panelItem')];
+    const candidates = [...this.box4.querySelectorAll('.panelItem')];
     const entriesToAdd = candidates.map(el =>
       this.data.entries.find(entry =>
         entry.originalIndex == el.dataset.originalIndex))
@@ -302,24 +306,20 @@ export const PanelView = function () {
       if (!targetContainer.classList.contains('itemDroppableContainer')) {
         targetContainer = targetContainer.closest('.itemDroppableContainer');
       }
+      const rectBefore = this.draggedItem.getBoundingClientRect();
       targetContainer.appendChild(this.draggedItem);
-      this.draggedItem.left = (this.lastMove.clientX - parseInt(targetContainer.dataset.left) - parseInt(e.target.dataset.offsetX)) + 'px';
-      this.draggedItem.top = (this.lastMove.clientY - parseInt(targetContainer.dataset.top) - parseInt(e.target.dataset.offsetY)) + 'px';
       this.draggedItem.style.position = 'absolute';
-      this.draggedItem.closest('.itemDroppableContainer').insertBefore(this.draggedItem, this.placeholder);
+      this.draggedItem.style.top = (rectBefore.top - parseInt(targetContainer.dataset.top)) + 'px';
+      this.draggedItem.style.left = (rectBefore.left - parseInt(targetContainer.dataset.left)) + 'px';
       this.setItemInBox(e, targetContainer);
     }
     this.draggedItem = null;
     this.scrollInterval = null;
-    this.lastMove = null;
   }
 
   this.itemDragStart = function (e) {
     e.target.classList.add('dragging');
     this.elevate(e.target);
-    const elementRect = e.target.getBoundingClientRect();
-    e.target.dataset.offsetX = e.clientX - elementRect.left;
-    e.target.dataset.offsetY = e.clientY - elementRect.top;
   }
 
   this.setDragOver = function (e) {
@@ -509,6 +509,8 @@ export const PanelView = function () {
     [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
       delete box.dataset.left;
       delete box.dataset.top;
+      box.classList.remove('unfastened');
+      box.classList.add('fastened');
     })
   };
 
@@ -534,13 +536,12 @@ export const PanelView = function () {
 
   this.reset = function (resetAll) {
     this.panelSources.innerHTML = '';
-    this.panelSources.classList.remove('unfastened');
-    this.panelSources.classList.add('fastened');
     this.box1.innerHTML = '';
-    this.box1.innerHTML = '';
-    this.box1.innerHTML = '';
+    this.box2.innerHTML = '';
+    this.box3.innerHTML = '';
+    this.box4.innerHTML = '';
     this.resetBoxesDimensions();
-    //this.resetItems();
+    this.resetItems();
     this.element.querySelector('#markGlobal').removeAttribute('checked');
     setSelectOption(this.panelActions, '');
     if (resetAll == true) {
@@ -575,6 +576,7 @@ export const PanelView = function () {
     this.state.itemsInBoxes ??= {};
     this.state.removedItems ??= [];
     this.renderPanel();
+    this.setPanelLayout();
 
     if (!this.renderedEventSet) {
       this.setRenderedEvents([
