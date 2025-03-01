@@ -123,8 +123,7 @@ export const PanelView = function () {
       item.classList.remove('lineExpanded');
       item.classList.remove('menuExpanded');
       item.classList.remove('infoShown');
-      item.style.top = 'unset';
-      item.parentNode.querySelector('.expandPlaceholder')?.remove();
+      //item.style.top = 'unset';
     });
   }
 
@@ -141,25 +140,18 @@ export const PanelView = function () {
     const container = item.closest('.itemDroppableContainer');
     if (!item || !container) return;
     if (!item.classList.contains('menuExpanded')) {
+      /*
       const top = item.getBoundingClientRect().top;
       const width = item.offsetWidth;
       const height = item.offsetHeight;
+      item.style.top = top + 'px';
+      */
       item.classList.add('menuExpanded');
       item.classList.add('lineExpanded');
-      item.style.top = top + 'px';
-      const expandPlaceholder = document.createElement('div');
-      expandPlaceholder.classList.add('expandPlaceholder');
-      expandPlaceholder.classList.add('panelItem');
-      expandPlaceholder.style.cssText = `
-        width:${width}px;
-        height:${height}px;
-      `;
-      container.insertBefore(expandPlaceholder, item);
     } else {
       item.classList.remove('lineExpanded')
       item.classList.remove('menuExpanded');
-      item.style.top = 'unset';
-      expandPlaceholder.remove();
+      //item.style.top = 'unset';
     }
   };
 
@@ -242,7 +234,6 @@ export const PanelView = function () {
       delete this.state.itemsInBoxes[item.dataset.originalIndex];
       this.state.itemsInBoxes = this.state.itemsInBoxes;
       item.remove();
-      this.element.querySelector('.expandPlaceholder')?.remove();
     }
   }
 
@@ -274,8 +265,9 @@ export const PanelView = function () {
       item.classList.add("dragging");
       this.elevate(item);
       const elementRect = item.getBoundingClientRect();
-      item.dataset.offsetX = e.clientX - elementRect.left;
-      item.dataset.offsetY = e.clientY - elementRect.top;
+      const touch = e.touches[0];
+      item.dataset.offsetX = touch.clientX - elementRect.left;
+      item.dataset.offsetY = touch.clientY - elementRect.top;
     }, this.longtouchTimeout);
   }
 
@@ -306,11 +298,14 @@ export const PanelView = function () {
       if (!targetContainer.classList.contains('itemDroppableContainer')) {
         targetContainer = targetContainer.closest('.itemDroppableContainer');
       }
-      const rectBefore = this.draggedItem.getBoundingClientRect();
       targetContainer.appendChild(this.draggedItem);
       this.draggedItem.style.position = 'absolute';
-      this.draggedItem.style.top = (rectBefore.top - parseInt(targetContainer.dataset.top)) + 'px';
-      this.draggedItem.style.left = (rectBefore.left - parseInt(targetContainer.dataset.left)) + 'px';
+      const containerOffsetTop = parseInt(targetContainer.dataset.top);
+      const containerOffsetLeft = parseInt(targetContainer.dataset.left);
+      const itemTop = this.lastMove.clientY - parseInt(this.draggedItem.dataset.offsetY) - containerOffsetTop;
+      const itemLeft = this.lastMove.clientX - parseInt(this.draggedItem.dataset.offsetX) - containerOffsetLeft;
+      this.draggedItem.style.top = Math.max(itemTop, 5) + 'px';
+      this.draggedItem.style.left = Math.max(itemLeft, 5) + 'px';
       this.setItemInBox(e, targetContainer);
     }
     this.draggedItem = null;

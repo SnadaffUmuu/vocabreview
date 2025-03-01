@@ -402,6 +402,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 .boardItem .itemAction,
 .boardItem .lineCounter {
   cursor: pointer;
+  min-width:0;
 }
 
 .boardItem > .lineCounter {

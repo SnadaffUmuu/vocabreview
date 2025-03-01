@@ -89,7 +89,9 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   padding: 0 0 0 5px;
   border-radius: 5px;
   box-sizing: border-box;
-  max-width: calc(100vw - 20px);
+  max-width: calc(25dvw - 15px);
+  /* max-width: calc(50dvw - 25px); */
+  width:max-content;
   position: relative;
   background: var(--boardItem);
   border: 1px solid transparent;
@@ -243,25 +245,20 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 
 .panelItem .itemLine {
   display: none;
-  overflow: hidden;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+  /* overflow: hidden; */
+  /* -webkit-line-clamp: 1; */
+  /* -webkit-box-orient: vertical; */
   margin-right: 17px;
-  min-height: 23px;
-  line-height: 140%;
+  /* min-height: 23px; */
+  /* line-height: 140%; */
   border-radius: 10px;
   backdrop-filter: blur(3px);
   padding:0px 1px;
 }
-/*
-.panelItem .itemLine[data-current][role="example_translation"],
-.panelItem .itemLine[data-current][role="meaning"] {
-  -webkit-line-clamp: 2;
-}
-*/
 
 .panelItem .itemLine[data-current] {
-  display: -webkit-box;
+  /* display: -webkit-box; */
+  display: block;
 }
 
 .panelItem.lineExpanded .itemLine[data-current] {
@@ -271,13 +268,6 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 .panelItem .itemLine[compact] {
   font-size: 13px;
 }
-
-/*
-.panelItem .itemLine[lapsed] {
-  text-decoration-color: var(--boardItemLapsedBorder);
-  color: var(--boardItemLapsedLineTextColor);
-}
-*/
 
 .panelItem .itemLine[data-review-level="1"],
 .panelItem .itemLine[data-review-level="2"],
@@ -321,6 +311,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   display: none;
   padding: 10px 1px 8px;
   align-items: center;
+  justify-content: flex-start;
   backdrop-filter: blur(3px);
 }
 
@@ -331,6 +322,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 .panelItem .itemAction,
 .panelItem .lineCounter {
   cursor: pointer;
+  min-width:0;
 }
 
 .panelItem > .lineCounter {
@@ -383,24 +375,15 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   display: none;
 }
 
-/*
-#panelView:not(:has(#studyMode:checked)) .toggleItemMenu {
-  display: none;
-}
-*/
-
-/* .panelItem, .itemDroppableContainer {
-  touch-action: none;
-} */
-
 .itemDroppableContainer {
   position: relative;
 }
 
 .panelItem.menuExpanded {
-  position: fixed;
-  left: 10px;
-  right: 20px;
+  width:auto;
+  max-width: unset;
+  left: 5px !important;
+  right: 5px !important;
   z-index: 1000 !important;
   border: 1px solid var(--boardItemMenuExpandedBorder);
   padding: 7px 10px 0;
