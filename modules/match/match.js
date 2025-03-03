@@ -29,6 +29,10 @@ export const MatchView = function () {
     this.data = {};
   };
 
+  this.renderMatcher = function() {
+
+  };
+
   this.render = function (resetAll) {
     this.reset(resetAll);
     this.initState();
