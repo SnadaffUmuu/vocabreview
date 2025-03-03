@@ -45,17 +45,13 @@
   right: 10px;
   left:75px;
   top: 8px;
-  /* display: flex;
-  flex-flow:row nowrap;
-  justify-content: flex-end;
-  gap: 10px; */
 }
 
 #dataActions {
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-end;
-  gap: 15px;
+  gap: 15px 10px;
   margin-bottom:15px;
 }
 

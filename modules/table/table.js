@@ -525,9 +525,12 @@ export const TableView = function () {
     this.draggedRow = null;
   };
 
-  this.reset = function () {
+  this.reset = function (resetAll) {
     this.data = {};
     this.tableContainer.innerHTML = '';
+    if(resetAll) {
+      this.state.order = [];
+    }
   };
 
   this.render = function () {

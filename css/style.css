@@ -8,6 +8,7 @@
 @import url("../modules/preloader/preloader.css");
 @import url("../modules/board/board.css");
 @import url("../modules/panel/panel.css");
+@import url("../modules/match/match.css");
 /* @import url("./theme.css"); */
 
 :root {

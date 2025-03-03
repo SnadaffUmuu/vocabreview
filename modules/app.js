@@ -12,6 +12,7 @@ import { SlideSide } from "./slide/slide-side.js"
 import { Slide } from "./slide/slide.js"
 import { BoardView } from "./board/board.js"
 import { PanelView } from "./panel/panel.js"
+import { MatchView } from "./match/match.js"
 import { setDeep, stringToHash } from "./utils.js"
 
 export const Application = {
@@ -39,6 +40,7 @@ export const Application = {
       DataView: await View.create(DataView),
       BoardView: await View.create(BoardView),
       PanelView: await View.create(PanelView),
+      MatchView: await View.create(MatchView),
     };
   },
 
