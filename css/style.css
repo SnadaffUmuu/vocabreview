@@ -88,6 +88,11 @@
   --paleBorder:#c9c9dc;
 
   --dataItemBorder : var(--paleBorder);
+
+  --panelBox1Bg: #ffefef;
+  --panelBox2Bg: #ecfffb;
+  --panelBox3Bg: #fff;
+  --panelBox4Bg: #fff5fe;
 }
 
 body.night {
@@ -150,6 +155,11 @@ body.night {
   --paleBorder:#5f4951;
 
   --dataItemBorder : var(--paleBorder);
+
+  --panelBox1Bg: #4a4435;
+  --panelBox2Bg: #35493e;
+  --panelBox3Bg: #3d4551;
+  --panelBox4Bg: #553f4c;
 }
 
 html {
@@ -230,13 +240,22 @@ button {
 }
 
 .example:before,
+[role="example"]:before,
+[role="example_translation"]:before,
 [data-role="example"]:before,
-#table [data-role="example"] .line-text:before,
-[role="example"]:before {
-  content: '✦';
+[data-role="example_translation"]:before,
+[data-role="example"] .line-text:before,
+[data-role="example_translation"] .line-text:before {
+  content: '✦ ';
   font-size: 14px;
   opacity: 0.6;
   vertical-align: middle;
+}
+
+#table [data-role="example"]:before,
+#table [data-role="example_translation"]:before {
+  content:'';
+  display: none;
 }
 
 .tagsLegend {

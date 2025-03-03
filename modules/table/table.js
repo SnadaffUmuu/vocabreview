@@ -17,7 +17,8 @@ export const TableView = function () {
   this.draggedRow = null;
 
   this.events = {
-    'click #addColumn': 'addColumn'
+    'click #addColumn': 'addColumn',
+    'click #reset': 'resetOrder',
   };
 
   this.namespaces = {
@@ -32,6 +33,8 @@ export const TableView = function () {
       // '.speakme': 'speakCell',
       '[data-reading]': 'speakCell',
       '.expand': 'toggleExpand',
+      '.moveToTop' : 'moveRowToTop',
+      '.moveToBottom' : 'moveRowToBottom',
     },
     contextmenu: {
       'tbody': 'UserActionHandlers.preventDefault',
@@ -117,6 +120,27 @@ export const TableView = function () {
         }
       }
     }
+  };
+
+  this.moveRowToTop = function (e) {
+    this.tbody.prepend(this.tbody.removeChild(e.target.closest('tr')));
+    this.updateStateOrder();
+  };
+  
+  this.moveRowToBottom = function (e) {
+    this.tbody.appendChild(this.tbody.removeChild(e.target.closest('tr')));
+    this.updateStateOrder();
+  };
+
+  this.resetOrder = function () {
+    this.data.orderedEntries = null;
+    this.state.order && delete this.state.order;
+    this.render();
+  };
+
+  this.updateStateOrder = function () {
+    this.state.order = [...this.tbody.querySelectorAll('tr')].map(row => 
+      parseInt(row.dataset.originalIndex));
   };
 
   this.toggleColumn = function (e) {
@@ -311,6 +335,7 @@ export const TableView = function () {
 
     this.draggedCellContent = null;
     this.placeholder = null;
+    this.updateStateOrder();
   };
 
   this.setRowDragStart = function (e) {
@@ -337,10 +362,12 @@ export const TableView = function () {
   this.setRowDragDrop = function (e) {
     e.preventDefault();
     this.draggedRow = null;
+    this.updateStateOrder();
   };
 
   this.setRowDragEnd = function () {
     this.draggedRow = null;
+    this.updateStateOrder();
   };
 
   this.setCellIndex = function (cell, i) {
@@ -383,7 +410,8 @@ export const TableView = function () {
 
   this.buildTableHtml = function () {
     const model = [];
-    this.data.entries.forEach(entry => {
+    const entries = this.data.orderedEntries || this.data.entries;
+    entries.forEach(entry => {
       const row = [];
       const lines = entry.lines;
       this.colRoles.forEach(role => {
@@ -429,12 +457,12 @@ export const TableView = function () {
     const resHTML = '<table id="table"><thead><tr><th draggable="false" data-index="0"></th>'
       + (Array.from({ length: this.columnsCount }).map((_, i) =>
         '<th draggable="true" data-index="' + (i + 1) + '">'
-        + '<div class="drag">↔️</div><!--<div class="colName">' + this.remainingColRoles[i] + '</div>-->' 
+        + '<div class="drag">↔</div><!--<div class="colName">' + this.remainingColRoles[i] + '</div>-->' 
         + '<div class="toggle">toggle</div>' 
       + '</th>').join(''))
       + '</tr></thead><tbody>'
       + model.reduce((resHTML, row, i) => {
-        const entry = this.data.entries[i];
+        const entry = entries[i];
         let cells = [];
         row.forEach((cell, ii) => {
           if (cell == 1000) {
@@ -464,7 +492,10 @@ export const TableView = function () {
             `)
           }
         });
-        return resHTML += '<tr' + (entry.tag ? ' data-tag="' + entry.tag + '"' : '') + '><td><div draggable="true" class="rowDrag">↕️</div></td>'
+        return resHTML += '<tr data-original-index="' + entry.originalIndex + '" ' + (entry.tag ? ' data-tag="' + entry.tag + '"' : '') + '><td>'
+          + '<div draggable="true" class="rowDrag">↕</div>' 
+          + '<div class="moveToTop">↑</div><div class="moveToBottom">↓</div>' 
+          + '</td>'
           + cells.join('')
           + (cells.length == this.columnsCount ? '' : 
             Array.from({length: this.columnsCount - cells.length}).map((_, i) => 
@@ -485,7 +516,6 @@ export const TableView = function () {
     if (this.tableEl.querySelector('[data-tag]')) {
       this.tableEl.insertAdjacentHTML('afterend', DataFactory.buildLegendHtml())
     }
-
     this.draggedCellContent = null;
     this.cells = this.tableEl.querySelectorAll('td:not(:first-child)');
     this.cells.forEach((cell, i) => {
@@ -510,6 +540,10 @@ export const TableView = function () {
     }
     this.data.entries = structuredClone(
       Application.getCurrentSourceData().currentEntries);
+
+    if (this.state.order?.length) {
+      this.data.orderedEntries = this.state.order.map(i => this.data.entries[i]);
+    }
     this.renderTable();
     this.setRenderedEvents(this.tableEl);
     Application.views.PreloaderView.hidePreloader();

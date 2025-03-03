@@ -86,15 +86,44 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 }
 
 .panelItem {
-  padding: 0 0 0 5px;
+  padding: 1px 0 2px 5px;
   border-radius: 5px;
   box-sizing: border-box;
-  max-width: calc(25dvw - 15px);
+  /* max-width: calc(25dvw - 15px); */
   /* max-width: calc(50dvw - 25px); */
   width:max-content;
   position: relative;
   background: var(--boardItem);
   border: 1px solid transparent;
+}
+
+.panelItem:has([data-current][role="meaning"]):not(.menuExpanded) {
+  max-width: calc(50dvw - 15px);
+  display:-webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  width:min-content;
+}
+
+#box1 .panelItem {
+  background-color: var(--panelBox1Bg);
+  border:1px solid var(--paleBorder);
+}
+
+#box2 .panelItem {
+  background-color: var(--panelBox2Bg);
+  border:1px solid var(--paleBorder);
+}
+
+#box3 .panelItem {
+  border:1px solid var(--paleBorder);
+  background-color: var(--panelBox3Bg);
+}
+
+#box4 .panelItem {
+  border:1px solid var(--paleBorder);
+  background-color: var(--panelBox4Bg);
 }
 
 .fastened .panelItem {
@@ -426,6 +455,6 @@ body:has(.menuExpanded) {
   box-shadow: 4px 5px 7px -2px var(--boardInfoShadow);
 }
 
-.panelItem .infoShown .itemInfo {
+.panelItem.infoShown .itemInfo {
   display:block;
 }

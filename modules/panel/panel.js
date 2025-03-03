@@ -304,8 +304,8 @@ export const PanelView = function () {
       const containerOffsetLeft = parseInt(targetContainer.dataset.left);
       const itemTop = this.lastMove.clientY - parseInt(this.draggedItem.dataset.offsetY) - containerOffsetTop;
       const itemLeft = this.lastMove.clientX - parseInt(this.draggedItem.dataset.offsetX) - containerOffsetLeft;
-      this.draggedItem.style.top = Math.max(itemTop, 5) + 'px';
-      this.draggedItem.style.left = Math.max(itemLeft, 5) + 'px';
+      this.draggedItem.style.top = Math.max(itemTop, 0) + 'px';
+      this.draggedItem.style.left = Math.max(itemLeft, 0) + 'px';
       this.setItemInBox(e, targetContainer);
     }
     this.draggedItem = null;
@@ -613,7 +613,7 @@ PanelView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#appBody',
   templatePath: 'modules/panel/panel.html',
   templateSelector: '#PanelView',
-  longtouchTimeout: 200,
+  longtouchTimeout: 100,
 });
 
 PanelView.prototype.constructor = PanelView;
