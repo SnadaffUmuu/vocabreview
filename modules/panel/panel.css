@@ -85,6 +85,17 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   align-content: flex-start;
 }
 
+#boxesContainer [data-box] .clear {
+  position: absolute;
+  z-index: 500;
+  left:-5px;
+  top:-5px;
+  width:15px;
+  height:15px;
+  border-radius: 10px;
+  background: var(--button-primary);
+}
+
 .panelItem {
   padding: 1px 0 2px 5px;
   border-radius: 5px;
@@ -195,6 +206,16 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 .tagsLegend [data-tag="term"] {
   background: 
     radial-gradient(var(--tagBgTerm) 1px, transparent 0px),
+    var(--boardItem);
+  background-repeat: repeat;
+  background-size: 10px 10px, auto;
+  background-position: center center;
+}
+
+.panelItem[data-tag="dialect"],
+.tagsLegend [data-tag="dialect"] {
+  background: 
+    radial-gradient(var(--tagBgDialect) 1px, transparent 0px),
     var(--boardItem);
   background-repeat: repeat;
   background-size: 10px 10px, auto;

@@ -215,6 +215,16 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   background-position: center center;
 }
 
+.boardItem[data-tag="dialect"],
+.tagsLegend [data-tag="dialect"] {
+  background: 
+    radial-gradient(var(--tagBgDialect) 1px, transparent 0px),
+    var(--boardItem);
+  background-repeat: repeat;
+  background-size: 10px 10px, auto;
+  background-position: center center;
+}
+
 .boardItem[data-tag="pattern"],
 .tagsLegend [data-tag="pattern"] {
   background: 

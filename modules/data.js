@@ -39,6 +39,7 @@ export const DataFactory = {
     pattern: 'pattern',
     counter: 'counter',
     suffix: 'suffix',
+    dialect: 'dialect',
   },
 
   buildLegendHtml() {
@@ -47,28 +48,6 @@ export const DataFactory = {
       return res;
     }, '');
     return `<div class="tagsLegend">${tagsHtml}</div>`;
-  },
-
-  ENTRY_TYPE: {
-    ALT_READING: 'ALT_READING',
-    DEFAULT: 'DEFAULT',
-    DEFAULT_EXAMPLES: 'DEFAULT_EXAMPLES',
-    EXAMPLES_TRANSLATION: 'EXAMPLES_TRANSLATION',
-    NON_STANDARD: 'NON_STANDARD',
-    READING: 'READING',
-    REMINDER: 'REMINDER',
-    SIMPLE: 'SIMPLE',
-    SIMPLE_EXAMPLES: 'SIMPLE_EXAMPLES',
-  },
-
-  LINE_TYPE: {
-    HIRAGANA_ONLY: 'HIRAGANA_ONLY',
-    KATAKANA_ONLY: 'KATAKANA_ONLY',
-    KANA_ONLY: 'KANA_ONLY',
-    WITH_KANJI: 'WITH_KANJI',
-    JAPANESE_ONLY: 'JAPANESE_ONLY',
-    MIXED: 'MIXED',
-    NON_JAPANESE: 'NON_JAPANESE'
   },
 
   LINE_ROLE: {

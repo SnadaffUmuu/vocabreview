@@ -77,6 +77,7 @@
   --tagBgPattern: #f6ceff;
   --tagBgCounter: #afeed4;
   --tagBgSuffix: #a7e3ec;
+  --tagBgDialect:#8274ff;
 
   --input-bg:#dfd8e7;
 
@@ -142,6 +143,7 @@ body.night {
   --tagBgPattern: #590280;
   --tagBgCounter: #17597a;
   --tagBgSuffix: #064d5b;
+  --tagBgDialect:#3e43ea;
 
   --input-bg:#aebdcc;
 
@@ -222,13 +224,16 @@ input[type="search"] {
   border: 1px solid #767676;
 }
 
-button {
+button,
+.viewMenu {
   height:25px;
+  line-height: 19px;
   border:0;
   border-radius: 5px;
   padding: 3px 10px;
   background:var(--button-secondary);
   white-space:nowrap;
+  box-sizing: border-box;
 }
 
 .tag {
@@ -279,4 +284,36 @@ button {
 
 .tagsLegend [data-tag] > span {
   display: inline-block;
+}
+
+.viewMenu {
+  width:100px;
+  position: relative;
+}
+
+.viewMenu > ul {
+  padding:0;
+  margin:0;
+  list-style: none;
+  display: none;
+  position: absolute;
+  left:0;
+  top:100%;
+  z-index: 1000;
+  min-width: 100%;
+}
+
+.viewMenu:hover ul {
+  display:block;
+}
+
+.viewMenu li {
+  padding:5px;
+  cursor:pointer;
+  background: var(--bg);
+  border: 1px dashed var(--paleBorder);
+  margin-top:-1px;
+}
+
+.viewMenu:hover li {
 }

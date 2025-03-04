@@ -54,3 +54,8 @@ PATTERN
 こうちょう
 SUFFIX
 ::suffix
+
+校長
+こうちょう
+DIALECT
+::dialect

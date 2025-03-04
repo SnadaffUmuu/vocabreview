@@ -16,12 +16,12 @@ export const PanelView = function () {
   }
 
   this.events = {
-    'click #resetPanel': 'resetPanel',
+    // 'click #resetPanel': 'resetPanel',
     'change #cardMode': 'setMode',
     'click .itemDroppableContainer': 'collapseAllItems',
-    'change #panelActions': 'executeFunction',
+    'click .viewMenu li': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
-    'click #render' : 'render',
+    // 'click #render' : 'render',
   }
 
   this.renderedEvents = {
@@ -33,6 +33,7 @@ export const PanelView = function () {
       '.expandLine': 'toggleExpandLine',
       '.removeItem': 'removeItem',
       '.toggleInfo': 'toggleInfo',
+      '.clear' : 'clearBox',
     },
     contextmenu: {
       '#panelSources': 'UserActionHandlers.preventDefault',
@@ -75,8 +76,20 @@ export const PanelView = function () {
   }
 
   this.executeFunction = function (e) {
-    if (e.target.value == '') return;
-    this[e.target.value]();
+    this[e.target.id]();
+  }
+
+  this.updateSourceItemsCount = function () {
+    this.sourceItemCounter.innerHTML = this.sourceContainer.querySelectorAll('.panelItem').length;
+  };
+
+  this.clearBox = function (e) {
+    const theBox = e.target.closest('.itemDroppableContainer');
+    [...theBox.querySelectorAll('.panelItem')].forEach(item => {
+      delete this.state.itemsInBoxes[parseInt(item.dataset.originalIndex)];
+    });
+    this.state.selfUpdate = !this.state.selfUpdate;
+    this.render();
   }
 
   this.setGlobal = function () {
@@ -307,6 +320,7 @@ export const PanelView = function () {
       this.draggedItem.style.top = Math.max(itemTop, 0) + 'px';
       this.draggedItem.style.left = Math.max(itemLeft, 0) + 'px';
       this.setItemInBox(e, targetContainer);
+      this.updateSourceItemsCount();
     }
     this.draggedItem = null;
     this.scrollInterval = null;
@@ -332,6 +346,7 @@ export const PanelView = function () {
     
     e.target.classList.remove('dragging');
     this.setItemInBox(e, targetContainer);
+    this.updateSourceItemsCount();
   }
 
   /* eof Touch Drag */
@@ -393,7 +408,6 @@ export const PanelView = function () {
       const transArr = [];
       switch (mode) {
         case 'expression':
-        case 'meaning':
         case 'example':
           theOrder = DataFactory.lineOrders[mode];
           reorderedLines = theOrder.flatMap(role => {
@@ -408,6 +422,7 @@ export const PanelView = function () {
           }).filter(o => o != null);
           break;
         case 'example_translation':
+        case 'meaning':
           theOrder = DataFactory.lineOrders[mode];
           reorderedLines = theOrder.flatMap(role => {
             const subArr = lines.filter(line => line.role == role);
@@ -477,9 +492,19 @@ export const PanelView = function () {
       const container = stContainer ? this.boxes[stContainer] : this.panelSources;
       container.insertAdjacentHTML('beforeend', html);
     });
+    this.updateSourceItemsCount();
     this.tagsLegend.innerHTML = DataFactory.buildLegendHtml();
     this.unFastenItems();
+    this.renderPanelBoxControls();
   };
+
+  this.renderPanelBoxControls = function () {
+    [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
+      box.insertAdjacentHTML('afterbegin', `
+        <div class="clear"></div>
+      `)
+    })
+  }
 
   this.unFastenItems = function () {
     [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
@@ -504,6 +529,7 @@ export const PanelView = function () {
     [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
       delete box.dataset.left;
       delete box.dataset.top;
+      box.removeAttribute('style');
       box.classList.remove('unfastened');
       box.classList.add('fastened');
     })
@@ -535,6 +561,7 @@ export const PanelView = function () {
     this.box2.innerHTML = '';
     this.box3.innerHTML = '';
     this.box4.innerHTML = '';
+    this.sourceItemCounter.innerHTML = '';
     this.resetBoxesDimensions();
     this.resetItems();
     this.element.querySelector('#markGlobal').removeAttribute('checked');
@@ -590,6 +617,7 @@ export const PanelView = function () {
     View.prototype.show.call(this);
     this.panelSources = this.element.querySelector('#panelSources');
     this.sourceContainer = this.element.querySelector('#panelSourceContainer');
+    this.sourceItemCounter = this.element.querySelector('#sourceItemsCounter');
     this.box1 = this.element.querySelector('#box1');
     this.box2 = this.element.querySelector('#box2');
     this.box3 = this.element.querySelector('#box3');
@@ -601,7 +629,7 @@ export const PanelView = function () {
       '4': this.box4,
     }
     this.cardModeEl = this.element.querySelector('#cardMode');
-    this.panelActions = this.element.querySelector("#panelActions");
+    this.panelActions = this.element.querySelector(".viewMenu");
     this.tagsLegend = this.element.querySelector('#panelLegend');
 
     this.renderedEventSet = null;
@@ -613,7 +641,7 @@ PanelView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#appBody',
   templatePath: 'modules/panel/panel.html',
   templateSelector: '#PanelView',
-  longtouchTimeout: 100,
+  longtouchTimeout: 200,
 });
 
 PanelView.prototype.constructor = PanelView;

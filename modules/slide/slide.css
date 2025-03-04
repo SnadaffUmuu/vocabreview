@@ -143,6 +143,13 @@
   background-position: center;
 }
 
+.keen-slider__slide[data-tag="dialect"] {
+  background-image: radial-gradient(var(--tagBgDialect) 1px, transparent 0px);
+  background-repeat: repeat;
+  background-size: 10px 10px;
+  background-position: center;
+}
+
 .keen-slider__slide[data-tag="pattern"] {
   background-image: radial-gradient(var(--tagBgPattern) 3px, transparent 0px);
   background-repeat: repeat;

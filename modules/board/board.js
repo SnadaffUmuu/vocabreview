@@ -521,7 +521,6 @@ export const BoardView = function () {
       const transArr = [];
       switch (mode) {
         case 'expression':
-        case 'meaning':
         case 'example':
           theOrder = DataFactory.lineOrders[mode];
           reorderedLines = theOrder.flatMap(role => {
@@ -536,6 +535,7 @@ export const BoardView = function () {
           }).filter(o => o != null);
           break;
         case 'example_translation':
+        case 'meaning':
           theOrder = DataFactory.lineOrders[mode];
           reorderedLines = theOrder.flatMap(role => {
             const subArr = lines.filter(line => line.role == role);
