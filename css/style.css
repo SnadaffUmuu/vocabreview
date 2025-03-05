@@ -227,13 +227,16 @@ input[type="search"] {
 button,
 .viewMenu {
   height:25px;
-  line-height: 19px;
   border:0;
   border-radius: 5px;
-  padding: 3px 10px;
   background:var(--button-secondary);
   white-space:nowrap;
   box-sizing: border-box;
+}
+
+button {
+  padding: 3px 10px;
+  line-height: 19px;
 }
 
 .tag {
@@ -291,6 +294,11 @@ button,
   position: relative;
 }
 
+.viewMenu__trigger {
+  padding: 3px 10px;
+  line-height: 19px;
+}
+
 .viewMenu > ul {
   padding:0;
   margin:0;
@@ -303,7 +311,7 @@ button,
   min-width: 100%;
 }
 
-.viewMenu:hover ul {
+.viewMenu.active ul {
   display:block;
 }
 

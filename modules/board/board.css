@@ -475,7 +475,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   touch-action: none;
 } */
 
-.itemDroppableContainer {
+#boardView .itemDroppableContainer {
   position: relative;
 }
 
