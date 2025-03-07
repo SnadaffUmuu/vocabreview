@@ -24,6 +24,7 @@ export const PanelView = function () {
     'click #render' : 'render',
     'touchstart #toggleViewMenu' : 'toggleViewMenu',
     'mouseenter #toggleViewMenu' : 'toggleViewMenu',
+    'mouseleave #toggleViewMenu' : 'toggleViewMenu',
   }
 
   this.renderedEvents = {
