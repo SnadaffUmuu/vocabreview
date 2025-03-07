@@ -186,6 +186,9 @@ export const PanelView = function () {
       item.classList.remove('infoShown');
       item.style.top = item.dataset.prevTop;
       delete item.dataset.prevTop;
+      //this.state.lineIndexes = [];
+      //this.state.selfUpdate = !this.state.selfUpdate;
+
     });
   }
 
@@ -262,9 +265,10 @@ export const PanelView = function () {
     if (current && current.dataset) {
       delete current.dataset.current;
     }
-    this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
+    //this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
   };
 
+  /*
   this.setCurrentLineIndex = function (itemIndex, lineIndex) {
     if (this.state.lineIndexes[itemIndex] !== undefined) {
       this.state.lineIndexes[itemIndex] = lineIndex;
@@ -273,11 +277,12 @@ export const PanelView = function () {
     }
     this.state.selfUpdate = !this.state.selfUpdate;
   };
-
+  */
   this.setMode = function (e) {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       this.state.mode = e.target.value;
-      delete this.state.lineIndexes;
+      //this.state.lineIndexes = [];
+      this.state.selfUpdate = !this.state.selfUpdate;
       this.render();
     });
   };
@@ -455,7 +460,8 @@ export const PanelView = function () {
     if (reading) {
       lines = entry.lines.filter(l => l.role != DataFactory.LINE_ROLE.reading);
     }
-    let currentIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
+    //let currentIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
+    let currentIndex = null;
     let reorderedLines = null;
     if (currentIndex == null) {
       let theOrder = null;
@@ -603,13 +609,13 @@ export const PanelView = function () {
       item.style.zIndex = item == theItem ? '100' : '0';
     })
   };
-
+/*
   this.handleStateChange = function (newState, prop, value) {
     if (prop == 'mode') {
       this.state.lineIndexes = [];
     }
   };
-
+*/
   this.reset = function (resetAll) {
     this.panelSources.innerHTML = '';
     this.box1.innerHTML = '';
@@ -626,7 +632,7 @@ export const PanelView = function () {
         !this.data.entries.find(entry => entry.originalIndex == index)
       );
       this.state.itemsInBoxes = this.filterStateObjByCurrentEntries(this.state.itemsInBoxes);
-      this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
+      //this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
       Application.views.StructureView.render();
     }
     this.data = {};
@@ -650,7 +656,7 @@ export const PanelView = function () {
         op.selected = op.value == this.state.mode;
       })
     }
-    this.state.lineIndexes ??= {};
+    //this.state.lineIndexes ??= {};
     this.state.itemsInBoxes ??= {};
     this.state.removedItems ??= [];
     this.renderPanel();
