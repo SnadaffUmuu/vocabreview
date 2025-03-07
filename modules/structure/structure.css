@@ -15,7 +15,7 @@ label[for="toggleAll"] {
 }
 
 #structure ul {
-  padding:0 0 10px 10px;
+  padding:0 0 10px 20px;
   list-style-type: none;
   line-height: 180%;
 }
@@ -28,6 +28,20 @@ label[for="toggleAll"] {
   display:flex;
   flex-flow: row wrap;
   gap: 5px;
+}
+
+#structure [data-tree-id] {
+  position: relative;
+}
+
+#structure [data-tree-id] .inProgress {
+  position: absolute;
+  top:0;
+  left:-45px;
+  width:40px;
+  text-align: right;
+  font-size:12px;
+  opacity: 0.5;
 }
 
 #structureTree .treeCheckbox {

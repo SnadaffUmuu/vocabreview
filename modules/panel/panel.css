@@ -70,7 +70,8 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   flex: 1 1 auto;
 }
 
-#boxesContainer .itemDroppableContainer {
+#boxesContainer .itemDroppableContainer,
+#boxesContainer .boxPlaceholder {
   flex: 1 0 49%;
   padding: 5px;
   box-sizing: border-box;
@@ -88,21 +89,92 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 #boxesContainer [data-box] .clear {
   position: absolute;
   z-index: 500;
-  left:-5px;
-  top:-5px;
-  width:15px;
-  height:15px;
-  border-radius: 10px;
+  width:20px;
+  height:20px;
   background: var(--button-primary);
+}
+
+#boxesContainer #box1 .clear,
+#boxesContainer #box3 .clear {
+  right:0px;
+  bottom:0px;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+#boxesContainer #box2 .clear,
+#boxesContainer #box4 .clear {
+  left: 0;
+  bottom:0;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+#boxesContainer [data-box] .focus {
+  position: absolute;
+  z-index: 500;
+  width:20px;
+  height:20px;
+  bottom:0px;
+  background: var(--icon-speakable-bg);
+}
+
+#boxesContainer #box1 .focus {
+  left:0px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+#boxesContainer #box2 .focus {
+  right:0px;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+#boxesContainer #box3 .focus {
+  left:0px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+#boxesContainer #box4 .focus {
+  right:0px;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+#boxesContainer [data-box].focused {
+  width:70vw;
+  position: fixed;
+  background: var(--bg);
+  box-shadow: -4px 4px 13px 6px var(--panelFocusedBoxShadow);
+  z-index:800;
+}
+
+#boxesContainer #box1.focused,
+#boxesContainer #box3.focused {
+  left: 5px;
+}
+
+#boxesContainer #box2.focused,
+#boxesContainer #box4.focused {
+  right: 5px;
+}
+
+#boxesContainer .focused .clear {
+  display: none;
+}
+
+body:has(.focused) {
+  overflow: hidden;
 }
 
 .panelItem {
   padding: 1px 0 2px 5px;
   border-radius: 5px;
   box-sizing: border-box;
-  /* max-width: calc(25dvw - 15px); */
-  /* max-width: calc(50dvw - 25px); */
   width:max-content;
+  min-width:50px;
   position: relative;
   background: var(--boardItem);
   border: 1px solid transparent;
@@ -286,7 +358,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 .panelItem.dragging {
   cursor: grabbing;
   opacity: 0.7;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .panelItem[data-global] {
@@ -295,19 +367,13 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 
 .panelItem .itemLine {
   display: none;
-  /* overflow: hidden; */
-  /* -webkit-line-clamp: 1; */
-  /* -webkit-box-orient: vertical; */
   margin-right: 17px;
-  /* min-height: 23px; */
-  /* line-height: 140%; */
   border-radius: 10px;
   backdrop-filter: blur(3px);
   padding:0px 1px;
 }
 
 .panelItem .itemLine[data-current] {
-  /* display: -webkit-box; */
   display: block;
 }
 
@@ -425,11 +491,12 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   display: none;
 }
 
-.itemDroppableContainer {
+#panelView .itemDroppableContainer {
   position: relative;
 }
 
 .panelItem.menuExpanded {
+  position: fixed;
   width:auto;
   max-width: unset;
   left: 5px !important;
@@ -446,11 +513,11 @@ body:has(.menuExpanded) {
 .panelItem .infoMark {
   position: absolute;
   right:11px;
-  top:-2px;
-  font-size:12px;
+  top:1px;
+  font-size:11px;
   /* display: none; */
   backdrop-filter: blur(3px);
-  padding:1px;
+  padding: 1px 1px;
 }
 
 /*

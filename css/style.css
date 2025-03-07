@@ -95,6 +95,7 @@
   --panelBox2Bg: #ecfffb;
   --panelBox3Bg: #fff;
   --panelBox4Bg: #fff5fe;
+  --panelFocusedBoxShadow: #c5b8d0;
 }
 
 body.night {
@@ -163,6 +164,7 @@ body.night {
   --panelBox2Bg: #35493e;
   --panelBox3Bg: #3d4551;
   --panelBox4Bg: #553f4c;
+  --panelFocusedBoxShadow: #300000;
 }
 
 html {
@@ -321,7 +323,4 @@ button {
   background: var(--bg);
   border: 1px dashed var(--paleBorder);
   margin-top:-1px;
-}
-
-.viewMenu:hover li {
 }

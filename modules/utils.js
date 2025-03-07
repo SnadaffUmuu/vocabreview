@@ -16,7 +16,6 @@ export function setDeep(obj, path, value) {
     if (index === path.length - 1) {
       acc[key] = value; 
     } else {
-      //acc[key] = { ...acc[key] };
       if (!(key in acc)) {
         acc[key] = {};
       }

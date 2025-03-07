@@ -71,9 +71,26 @@ export const StructureView = function () {
     });
   }
 
+  this.getInProgressMarks = function(sectionEntries) {
+    let ids = sectionEntries.map(entry => entry.originalIndex)
+    let letters = new Set();
+    const stateViews = Application.state.views[Application.state.currentSource];
+    for (let stateViewName in stateViews) {
+      const viewParams = stateViews[stateViewName];
+      for (let viewParam in viewParams) {
+        if(['itemsInBoxes','itemsInCols','lapses'].includes(viewParam)
+          && Object.keys(viewParams[viewParam]).some(k => ids.includes(parseInt(k)))) {
+            letters.add(stateViewName.slice(0,1));
+        }
+      }
+    }
+    return letters.size ? `<span class="inProgress">${Array.from(letters).join('&nbsp;')}</span>` : '';
+  }
+
   this.getCheckboxHtml = function (value) {
-    const isChecked = !this.nonChecked && this.data.filteredEntries.find(e => e.section == value);
-    return `<input class="treeCheckbox" ${isChecked ? 'checked' : ''} type="checkbox" value="${value}">`
+    const isChecked = !this.nonChecked && this.data.filteredEntries.filter(e => e.section == value).length;
+    const sectionEntries = Application.getCurrentSourceData().allEntries.filter(e => e.section == value);
+    return `${this.getInProgressMarks(sectionEntries)}<input class="treeCheckbox" ${isChecked ? 'checked' : ''} type="checkbox" value="${value}">`
   }
 
   this.getListNameHtml = function (name, value) {

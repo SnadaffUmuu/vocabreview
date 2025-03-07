@@ -21,7 +21,9 @@ export const PanelView = function () {
     'click .itemDroppableContainer': 'collapseAllItems',
     'click .viewMenu li': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
-    // 'click #render' : 'render',
+    'click #render' : 'render',
+    'touchstart #toggleViewMenu' : 'toggleViewMenu',
+    'mouseenter #toggleViewMenu' : 'toggleViewMenu',
   }
 
   this.renderedEvents = {
@@ -34,6 +36,7 @@ export const PanelView = function () {
       '.removeItem': 'removeItem',
       '.toggleInfo': 'toggleInfo',
       '.clear' : 'clearBox',
+      '.focus' : 'toggleFocusBox',
     },
     contextmenu: {
       '#panelSources': 'UserActionHandlers.preventDefault',
@@ -77,19 +80,54 @@ export const PanelView = function () {
 
   this.executeFunction = function (e) {
     this[e.target.id]();
+    this.panelActions.classList.remove("active"); 
   }
 
   this.updateSourceItemsCount = function () {
     this.sourceItemCounter.innerHTML = this.sourceContainer.querySelectorAll('.panelItem').length;
-  };
+  }
 
   this.clearBox = function (e) {
     const theBox = e.target.closest('.itemDroppableContainer');
     [...theBox.querySelectorAll('.panelItem')].forEach(item => {
       delete this.state.itemsInBoxes[parseInt(item.dataset.originalIndex)];
     });
+    Application.views.StructureView.render();
     this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
+  }
+
+  this.toggleFocusBox = function (e) {
+    const theBox = e.target.closest('.itemDroppableContainer');
+    const placeholder = this.element.querySelector('.boxPlaceholder');
+    const parent = theBox.parentElement;
+    if (placeholder) {
+      placeholder.remove();
+      theBox.classList.remove('focused');
+      theBox.removeAttribute('style');
+      this.render();
+    } else {
+      const rect = theBox.getBoundingClientRect();
+      const boxPlaceholder = document.createElement('DIV');
+      boxPlaceholder.classList.add('boxPlaceholder');
+      parent.insertBefore(boxPlaceholder, theBox);
+      theBox.classList.add('focused');
+      theBox.style.height = (rect.height * 2) + 'px';
+      switch (theBox.id.slice(-1)) {
+        case '1':
+        case '2':
+          theBox.style.top = (rect.top - 5) + 'px';
+          break;
+        case '3':
+        case '4':
+          theBox.style.bottom = (window.innerHeight - rect.bottom) + 'px'
+          break;
+      }
+    }
+  }
+
+  this.toggleViewMenu = function (e) {
+    e.target.closest('.viewMenu').classList.add("active");
   }
 
   this.setGlobal = function () {
@@ -103,6 +141,7 @@ export const PanelView = function () {
     candidates.forEach(el => {
       delete this.state.itemsInBoxes[el.dataset.originalIndex];
     });
+    Application.views.StructureView.render();
     this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
   }
@@ -133,10 +172,20 @@ export const PanelView = function () {
   this.collapseAllItems = function (e) {
     if (!e.target.classList.contains('itemDroppableContainer')) return;
     [...this.element.querySelectorAll('.menuExpanded')].forEach(item => {
+      item.querySelectorAll('.itemLine').forEach(line => {
+        if (!line.dataset.current 
+          && line.dataset.originalIndex == item.dataset.upperLineIndex) {
+            line.dataset.current = true;
+        } else if (line.dataset.current
+          && line.dataset.originalIndex != item.dataset.upperLineIndex) {
+            delete line.dataset.current
+        }
+      })
       item.classList.remove('lineExpanded');
       item.classList.remove('menuExpanded');
       item.classList.remove('infoShown');
-      //item.style.top = 'unset';
+      item.style.top = item.dataset.prevTop;
+      delete item.dataset.prevTop;
     });
   }
 
@@ -153,17 +202,18 @@ export const PanelView = function () {
     const container = item.closest('.itemDroppableContainer');
     if (!item || !container) return;
     if (!item.classList.contains('menuExpanded')) {
-      /*
+      item.dataset.prevTop = item.style.top;
       const top = item.getBoundingClientRect().top;
-      const width = item.offsetWidth;
-      const height = item.offsetHeight;
+      // const width = item.offsetWidth;
+      // const height = item.offsetHeight;
       item.style.top = top + 'px';
-      */
       item.classList.add('menuExpanded');
       item.classList.add('lineExpanded');
     } else {
       item.classList.remove('lineExpanded')
       item.classList.remove('menuExpanded');
+      item.style.top = item.dataset.prevTop;
+      delete item.dataset.prevTop;
       //item.style.top = 'unset';
     }
   };
@@ -247,6 +297,7 @@ export const PanelView = function () {
       delete this.state.itemsInBoxes[item.dataset.originalIndex];
       this.state.itemsInBoxes = this.state.itemsInBoxes;
       item.remove();
+      Application.views.StructureView.render();
     }
   }
 
@@ -263,6 +314,7 @@ export const PanelView = function () {
         } else {
           delete this.state.itemsInBoxes[item.dataset.originalIndex];
         }
+        Application.views.StructureView.render();
         this.state.selfUpdate = !this.state.selfUpdate
       }
     }
@@ -272,7 +324,7 @@ export const PanelView = function () {
 
   this.setTouchStart = function (e) {
     const item = this.getDragItem(e.target);
-    if (!item) return;
+    if (!item || item.classList.contains('menuExpanded')) return;
     this.touchTimeout = setTimeout(() => {
       this.draggable = true;
       item.classList.add("dragging");
@@ -290,7 +342,7 @@ export const PanelView = function () {
       clearTimeout(this.touchTimeout)
     } else {
       const draggedItem = this.getDragItem(e.target);
-      if (!draggedItem) return;
+      if (!draggedItem || draggedItem.classList.contains('menuExpanded')) return;
       this.draggedItem = draggedItem;
       const touch = e.touches[0];
       this.lastMove = touch;
@@ -312,7 +364,8 @@ export const PanelView = function () {
         targetContainer = targetContainer.closest('.itemDroppableContainer');
       }
       targetContainer.appendChild(this.draggedItem);
-      this.draggedItem.style.position = 'absolute';
+      //this.draggedItem.style.position = 'absolute';
+      this.draggedItem.style.position = '';
       const containerOffsetTop = parseInt(targetContainer.dataset.top);
       const containerOffsetLeft = parseInt(targetContainer.dataset.left);
       const itemTop = this.lastMove.clientY - parseInt(this.draggedItem.dataset.offsetY) - containerOffsetTop;
@@ -327,6 +380,7 @@ export const PanelView = function () {
   }
 
   this.itemDragStart = function (e) {
+    if(e.target.classList.contains('menuExpanded')) return;
     e.target.classList.add('dragging');
     this.elevate(e.target);
   }
@@ -502,6 +556,7 @@ export const PanelView = function () {
     [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
       box.insertAdjacentHTML('afterbegin', `
         <div class="clear"></div>
+        <div class="focus"></div>
       `)
     })
   }
@@ -572,6 +627,7 @@ export const PanelView = function () {
       );
       this.state.itemsInBoxes = this.filterStateObjByCurrentEntries(this.state.itemsInBoxes);
       this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
+      Application.views.StructureView.render();
     }
     this.data = {};
   };
@@ -640,7 +696,7 @@ export const PanelView = function () {
 PanelView.prototype = Object.assign(Object.create(View.prototype), {
   containerSelector: '#appBody',
   templatePath: 'modules/panel/panel.html',
-  templateSelector: '#PanelView',
+  templateSelector: '#panelView',
   longtouchTimeout: 200,
 });
 

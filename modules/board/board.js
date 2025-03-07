@@ -105,6 +105,7 @@ export const BoardView = function () {
     candidates.forEach(el => {
       delete this.state.itemsInCols[el.dataset.originalIndex];
     });
+    Application.views.StructureView.render();
     this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
   }
@@ -177,6 +178,7 @@ export const BoardView = function () {
       this.state.itemsInCols = this.state.itemsInCols;
       item.remove();
       this.element.querySelector('.expandPlaceholder')?.remove();
+      Application.views.StructureView.render();
     }
   }
 
@@ -277,16 +279,13 @@ export const BoardView = function () {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       this.state.mode = e.target.value;
       delete this.state.lineIndexes;
-      //this.state.itemsInCols = {};
       this.render();
     });
   };
 
   this.setItemInCol = function (e, elementFromPoint) {
     if (elementFromPoint) {
-      //const elFromPoint = document.elementFromPoint(x, y);
       if (Application.views.MenuView.element.contains(elementFromPoint)) {
-        console.log('remove from infobar');
         this.removeItem(e);
       } else {
         const item = this.getDragItem(e.target);
@@ -297,7 +296,8 @@ export const BoardView = function () {
         } else {
           delete this.state.itemsInCols[item.dataset.originalIndex];
         }
-        this.state.selfUpdate = !this.state.selfUpdate
+        this.state.selfUpdate = !this.state.selfUpdate;
+        Application.views.StructureView.render();
       }
     }
   };
@@ -321,6 +321,7 @@ export const BoardView = function () {
       }
       delete this.state.itemsInCols[item.dataset.originalIndex];
     });
+    Application.views.StructureView.render();
     this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
   };
@@ -349,6 +350,7 @@ export const BoardView = function () {
         }
       }
     });
+    Application.views.StructureView.render();
     this.state.selfUpdate = !this.state.selfUpdate;
     this.render();
   };
@@ -637,14 +639,7 @@ export const BoardView = function () {
       this.state.itemsInCols = this.filterStateObjByCurrentEntries(this.state.itemsInCols);
       this.state.lapses = this.filterStateObjByCurrentEntries(this.state.lapses);
       this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
-
-      /*
-      this.state.removedItems = [];
-      this.state.itemsInCols = {};
-      this.state.lapses = {};
-      this.state.lineIndexes = {};
-      */
-      //this.studyModeEl.checked = false;
+      Application.views.StructureView.render();
     }
     this.data = {};
   };

@@ -157,9 +157,7 @@ export const Slider = function () {
   this.handleStateChange = function (newState, prop, value) {
     if (prop == 'mode') {
       this.state.sideIndexes = {};
-    } else if (prop == 'order') {
-      //this.render();
-    }
+    } 
   };
 
   this.handleFilter = function() {

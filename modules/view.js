@@ -113,7 +113,6 @@ View.prototype = {
     this.state = new Proxy(initialState, {
       set(target, property, value) {
         target[property] = value;
-        //console.log(`View state: Set triggered for ${property}:`, value);
         Application.setViewState(instance);
         if (instance.handleStateChange) {
           instance.handleStateChange(target, property, value);
