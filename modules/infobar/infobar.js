@@ -10,9 +10,7 @@ export const InfobarView = function () {
 
   this.toggleNightMode = function () {
     document.body.classList.toggle('night');
-    console.log(Application.state);
     Application.state.nightMode = document.body.classList.contains('night');
-    console.log(localStorage.getItem('review-state'));
   }  
   
   this.setCount = function(count) {
@@ -30,14 +28,13 @@ export const InfobarView = function () {
 
   this.render = function () {
     this.reset();
-    if (Application.state?.source) {
-      this.setSource(Application.state.source)
+    if (Application.state?.currentSource) {
+      this.setSource(Application.state.currentSource)
     }
-    if (!Application.data.currentEntries?.length) {
+    if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       return
     }
-    this.setCount(Application.data.currentEntries.length);
-    console.log('count updated', Application.data.currentEntries.length)
+    this.setCount(Application.getCurrentSourceData().currentEntries.length);
   }
 
   this.show = function () {

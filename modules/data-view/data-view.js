@@ -1,50 +1,125 @@
 import { View } from "../view.js";
 import { Application } from "../app.js";
 import { DataTests } from "./data-tests.js";
+import { DataFactory } from "../data.js";
 
 export const DataView = function () {
 
   this.events = {
-    'click #run' : 'executeFromEditor'
-  },
+    'click #run': 'executeFromEditor',
+    'keyup #search': 'doSearch',
+    'change #filtered': 'trigerDataTest',
+  }
+
+  this.getBreadcrumbs = function(entry) {
+    const theStructure = Application.data[entry.source].structure;
+    let structureNode = theStructure.find(o => o.id == entry.section);
+    if (structureNode) {
+      return structureNode.name
+    } else {
+      let res = '';
+      for (let node of theStructure) {
+        const childNode = node.children?.find(n => n.id == entry.section);
+        if (childNode) {
+          res = theStructure.find(n => n.id == childNode.parentId).name + ' / ' + childNode.name;
+          break
+        }
+      }
+      return res;
+    }
+  }
+
+  this.doSearch = function (e) {
+    if (e.keyCode === 13) {
+      this.outputEl.innerHTML = '';
+      if (e.target.value == '') {
+        this.trigerDataTest()
+      } else {
+        e.preventDefault();
+        let res = [];
+        for (let source in Application.data) {
+          if (source == DataFactory.globalPool) continue;
+          
+          const matchingEntries = structuredClone(Application.data[source]?.allEntries?.filter(en =>
+            en.lines.some(l => l.text.indexOf(e.target.value) != -1)));
+          matchingEntries.forEach(entry => {
+            entry.source = source;
+            entry.breadcrumbs = this.getBreadcrumbs(entry, source);
+          });
+  
+          if (matchingEntries.length) {
+            res = [...res, ...matchingEntries]
+          }
+        }
+        res.forEach(entry => {
+          this.outputEl.insertAdjacentHTML(
+            'beforeend',
+            DataTests.entryFormatters.getEntryShortInfoString2(entry, e.target.value))
+        });
+        this.resultCounter.innerHTML = res.length
+      }
+    }
+  }
+
+  this.trigerDataTest = function () {
+    this.testsSelect.dispatchEvent(new Event('change'));
+  }
 
   this.executeFromEditor = function () {
     const action = new Function('entries', this.editor.getValue());
-    this.outputEl.innerHTML = action(this.getData());
-  },
+    const entries = this.getData().map(entry => {
+      entry.source = Application.state.currentSource;
+      entry.breadcrumbs = this.getBreadcrumbs(entry);
+      return entry
+    });
+    this.outputEl.innerHTML = action(entries);
+  }
 
   this.buildTestsMenu = function () {
-    this.testsEl.querySelector('select').innerHTML 
-      = '<option value="">none</option>' 
-        + Object.keys(DataTests.tests).map(test => 
-          `<option value="${test}">${test}</option>`
-        ).join('');
-    this.testsEl.querySelector('select').addEventListener('change', (e) => {
+    this.testsSelect.innerHTML
+      = '<option value="">none</option>'
+      + Object.keys(DataTests.tests).map(test =>
+        `<option value="${test}">${test}</option>`
+      ).join('');
+    this.testsSelect.addEventListener('change', (e) => {
       if (e.target.value !== '') {
-        this.outputEl.innerHTML = DataTests.tests[e.target.value](this.getData());
+        const entries = this.getData().map(entry => {
+          entry.source ??= Application.state.currentSource;
+          entry.breadcrumbs = this.getBreadcrumbs(entry, Application.state.currentSource);
+          return entry
+        });        
+        const res = DataTests.tests[e.target.value](entries);
+        this.resultCounter.innerHTML = res.length;
+        this.outputEl.innerHTML = res.join('');
       }
     })
   }
-  
+
   this.getData = function () {
-    return structuredClone(this.element.querySelector('#filtered').checked 
-    && Application.data.currentEntries?.length ? Application.data.currentEntries : Application.data.allEntries);
-  },
+    return structuredClone(
+      this.element.querySelector('#filtered').checked
+        && Application.getCurrentSourceData()?.currentEntries?.length ?
+        Application.getCurrentSourceData().currentEntries
+        : Application.getCurrentSourceData().allEntries
+    );
+  }
 
   this.reset = function () {
     this.data = {};
     this.outputEl.innerHTML = '';
-    this.inputEl.innerHTMl = '';
-  };
+    this.resultCounter.innerHTML = '';
+    //this.inputEl.innerHTMl = '';
+  }
 
   this.render = function () {
     this.reset();
     if (Application.views.PreloaderView.isShown()) {
-        Application.views.PreloaderView.hide();
-      }
-    if (!Application.data.allEntries?.length) {
+      Application.views.PreloaderView.hide();
+    }
+    if (!Application.getCurrentSourceData()?.allEntries?.length) {
       return
     }
+    /*
     this.editor = ace.edit("input");
     this.editor.setTheme("ace/theme/github_dark");
     this.editor.session.setMode("ace/mode/javascript");
@@ -58,16 +133,20 @@ export const DataView = function () {
     });
     this.editor.focus();
     this.editor.navigateFileEnd();
+    */
     this.buildTestsMenu();
+    this.testsSelect.value = 'all';
+    this.trigerDataTest();
   }
 
   this.show = function () {
     View.prototype.show.call(this);
-    this.inputEl = this.element.querySelector('#input');
+    //this.inputEl = this.element.querySelector('#input');
+    //this.runEl = this.element.querySelector('#run');
     this.outputEl = this.element.querySelector('#output');
-    this.testsEl = this.element.querySelector('#tests');
-    this.runEl = this.element.querySelector('#run');
-    //this.onlyFilteredEl = this.element.querySelector('#filtered');
+    this.testsSelect = this.element.querySelector('#theTests');
+    this.searchFieldEl = this.element.querySelector('#search');
+    this.resultCounter = this.element.querySelector('#resCounter');
     this.render();
   }
 }

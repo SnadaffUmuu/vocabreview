@@ -1,7 +1,3 @@
-#tableView {
-  /* position: relative; */
-}
-
 #tableActions {
   box-sizing: border-box;
   padding: 0 7px 10px;
@@ -9,36 +5,23 @@
   display:flex;
   flex-flow: row wrap;
   font-size:13px;
-}
-
-#hideModeContainer {
-  display: flex;
-  flex-flow: row nowrap;
-  padding:0 10px;
-  align-items: stretch;
-}
-
-#hideModeContainer > label {
-  align-self: center;
-}
-
-#tableActions [type=checkbox] {
-  margin: 0 0 0 5px;
+  gap: 10px;
+  align-items: center;
 }
 
 #addColumn {
   padding:5px 7px;
   border-radius: 5px;
-  border:1px solid gray;
+  border:1px solid var(--tableAddColBorder);
   cursor: pointer;
 }
 
 #addColumn:hover {
-  border-color: red
+  border-color: var(--tableAddColBorderHover);
 }
 
 #addColumn:active {
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--tableAddColBorderActive);
 }
 
 #table {
@@ -48,47 +31,186 @@
   height:1px;
 }
 
+#table tbody {
+  background-color: var(--bg);
+}
+
+#table tr[data-tag] .line-text,
+.tagsLegend [data-tag] > span {
+  backdrop-filter: blur(4px);
+  border-radius: 15px;
+}
+
+#table tr[data-tag="grammar"],
+.tagsLegend [data-tag="grammar"] {
+   background: repeating-linear-gradient(
+    30deg,
+    var(--tagBgGrammar),
+    var(--tagBgGrammar) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+
+#table tr[data-tag="onomatopoeia"],
+.tagsLegend [data-tag="onomatopoeia"] {
+  background: repeating-linear-gradient(
+    150deg,
+    var(--tagBgOnoma),
+    var(--tagBgOnoma) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+
+#table tr[data-tag="geo"],
+.tagsLegend [data-tag="geo"] {
+  background: repeating-linear-gradient(
+    0deg,
+    var(--tagBgGeo),
+    var(--tagBgGeo) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+
+#table tr[data-tag="name"],
+.tagsLegend [data-tag="name"] {
+    background: repeating-linear-gradient(
+    90deg,
+    var(--tagBgName),
+    var(--tagBgName) 1px,
+    transparent 1px,
+    transparent 7px
+  );
+}
+
+#table tr[data-tag="term"],
+.tagsLegend [data-tag="term"] {
+  background-image: radial-gradient(var(--tagBgTerm) 1px, transparent 0px);
+  background-repeat: repeat;
+  background-size: 10px 10px;
+  background-position: center;
+}
+
+#table tr[data-tag="dialect"],
+.tagsLegend [data-tag="dialect"] {
+  background-image: radial-gradient(var(--tagBgDialect) 1px, transparent 0px);
+  background-repeat: repeat;
+  background-size: 10px 10px;
+  background-position: center;
+}
+
+#table tr[data-tag="pattern"],
+.tagsLegend [data-tag="pattern"] {
+  background-image: radial-gradient(var(--tagBgPattern) 3px, transparent 0px);
+  background-repeat: repeat;
+  background-size: 15px 15px;
+  background-position: center;
+}
+
+#table tr[data-tag="counter"],
+.tagsLegend [data-tag="counter"] {
+  background-image: radial-gradient(var(--tagBgCounter) 2px, transparent 0px);
+  background-repeat: repeat;
+  background-size: 13px 13px;
+  background-position: center;
+}
+
+#table tr[data-tag="suffix"],
+.tagsLegend [data-tag="suffix"] {
+  background: repeating-linear-gradient(
+    0deg,
+    var(--tagBgSuffix),
+    var(--tagBgSuffix) 1px,
+    transparent 1px,
+    transparent 7px
+  );
+}
+
+#table tr[data-tag="yojijukugo"],
+.tagsLegend [data-tag="yojijukugo"] {
+  background: repeating-linear-gradient(
+    30deg,
+    var(--tagBgYoji),
+    var(--tagBgYoji) 1px,
+    transparent 1px,
+    transparent 10px
+  ),
+  repeating-linear-gradient(
+    150deg,
+    var(--tagBgYoji),
+    var(--tagBgYoji) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+
 #table th {
   position: sticky;
-  top:0;
+  top:40px;
   background: var(--bg);
+  z-index:500;
 }
 
 #table td, #table th {
-  border:1px solid gray;
+  border:1px solid var(--tableCellBorder);
+
 }
 
-#table th > div,
-#table td .cellContentDraggable {
+#table th .colName,
+#table th .drag {
   box-sizing: border-box;
-  padding: 5px;
-  min-height:30px;
-  min-width:150px;
-  max-width:250px;
+  padding: 10px 5px;
+  display: inline-block;
+  width:48%;
+  vertical-align: top;
+}
+
+#table th .drag {
+  margin-right:5px;
+  cursor:move;
+}
+
+#table th .toggle {
+  width:100%;
+  box-sizing: border-box;
+  padding:3px 5px 7px;
 }
 
 #table td .rowDrag {
   cursor: move;
-  max-width:30px;
   width:40px;
-  height:100%;
+  height:60%;
   box-sizing: border-box;
-  padding-top:20px;
   text-align: center;
+  display:flex;
+  flex-flow:column nowrap;
+  justify-content: center;
+}
+
+#table .moveToTop,
+#table .moveToBottom {
+  display: inline-block;
+  height:40%;
+  width: 20px;
+  text-align: center;
+  display: inline-flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  box-sizing: border-box;
+  border-top: 1px solid var(--paleBorder);
 }
 
 #table td .cellContentDraggable {
   cursor: grab;
+  box-sizing: border-box;
+  padding:3px 0 10px;
   height:100%;
-  display: flex;
-  align-items: center;
-  position:relative;
-  padding-right:20px;
-  padding-top:15px;
-  padding-bottom:10px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  overflow: hidden;  
+  min-height:30px;
+  min-width:150px;
+  max-width:250px;
+  flex:1 1 auto;
 }
 
 #table td.hidden > .cellContentDraggable {
@@ -99,35 +221,34 @@
   cursor:crosshair;
 }
 
-#table td .cellContentDraggable.speakable {
-  color: var(--text-color-speakable);
-  font-size: 17px;
+#table td .cellContentDraggable[data-role="expression"] {
+  font-size: 19px;
 }
 
-#table td .cellContentDraggable.speakable + #table td .cellContentDraggable.speakable {
-  border-top:1px solid var(--text-color-speakable);
+#table td .cellContentDraggable + .cellContentDraggable {
+  border-top:1px solid var(--paleBorder);
 }
 
-#table td.over,
-#table td.over > div {
-  background: rgba(154, 255, 154, 0.5);
+#table .over,
+#table .over {
+  background: var(--tableDragOverCellBg)
 }
 
+/* 
 #table td.hidden .cellContentDraggable {
-  opacity: 0 !important;
+  opacity: 0 !important; 
+  pointer-events: none;
 }
+*/
 
-#table th .drag {
-  margin-right:5px;
-  display: inline-block;
-  cursor:move;
-  padding:10px;
+#table td.hidden .line-text {
+  filter:blur(20px)
 }
 
 #table td .cellContentDraggable.dragging,
 #table td .rowDrag.dragging {
   opacity: 0.8;
-  background-color: rgba(135, 207, 235, 0.63) !important;
+  background-color: var(--tableDraggingBg) !important;
   cursor: grabbing;
   height: 50px !important;
   width:100px !important;
@@ -136,33 +257,30 @@
 }
 
 .draggableContainer {
-  /* position: relative; */
+  vertical-align: top;
+}
+
+.draggableContainerInner {
+  /* height:100%;
+  display:flex; */
+  flex-flow: column nowrap;
+  position:relative;
+  padding:0 0 10px;
+  box-sizing: border-box;
+  justify-content: flex-start;
+}
+
+.draggableContainer.hidden:has(.cellContentDraggable) {  
+  background: var(--tableHiddenContentBg);
 }
 
 .draggableContainer.hidden:has([data-reading]) {  
-  background: rgba(128, 128, 128, 0.178);
-}
-
-.speakme {
-  position: absolute;
-  cursor: pointer;
-  width:20px;
-  height:20px;
-  border-bottom-left-radius: 10px;
-  background: var(--icon-speakable-bg);
-  top:0;
-  right:0;
-  z-index:100;
-  opacity:0.5;
-}
-
-.cellContentDraggable, .draggableContainer {
-  /*touch-action: none;*/
+  background: var(--tableHiddenReadableContentBg);
 }
 
 #table .placeholder {
-  border: 2px dashed #666;
-  background-color: #f0f0f0;
+  border: 2px dashed var(--tablePlaceholderBorder);
+  background-color: var(--tablePlaceholderBg);
   opacity: 0.5;
   padding:10px;
 }
@@ -174,105 +292,107 @@
 }
 
 #table .ellipsis {
-  display: -webkit-box;
+  /* display: -webkit-box;
   -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;  
+  -webkit-box-orient: vertical;   */
   overflow: hidden;
-}
-
-#table .entry-info .ellipsis {
-  -webkit-line-clamp: 4;
+  max-height: 80px;
 }
 
 #table .expand,
 #table .expand.expanded {
-  position: absolute;
-  right:2px;
-  bottom:0;
-  font-size: 20px;
-  text-align: center;
-  vertical-align: middle;
-  opacity:0.2;
-}
-
-.entry-info {
-  font-size:12px;
-  padding:5px;
-  position:relative;
-}
-
-.entry-info > div {
-  box-sizing: border-box;
-  min-height: 30px;
-  min-width: 150px;
-  max-width: 250px;  
-}
-
-.info-popup {
-  position: fixed;
-  padding:10px;
-  z-index: 1000;
-  background:#c5c5c5;
-  width:250px;
-  font-size:14px;
-  color:#00005a;
-}
-
-.info-popup .close {
-  width:8px;
-  height:8px;
-  top:2px;
-  right:2px;
-  background: gray;
+  /* position: absolute;
+  right:0;
+  top:0;
+  left:0;
+  padding-left:2px; */
+  /*font-size: 17px;
+   text-align: left;
+  vertical-align: middle; 
+  backdrop-filter: sepia(90%);
+  opacity:0.3;
+  */
+  height:15px;
   cursor: pointer;
+}
+
+#table .speakme {
+  cursor: pointer;
+  height:100%;
+  width:25px;
   position: absolute;
+  top:0;
+  left:0;
+  z-index:100;
 }
 
-#table td .cellContentDraggable[data-review-level] {
-  font-size:20px;
+#table [data-review-level] .line-text {
+  /* border-radius: 5px; */
+  /* border-bottom-style: solid; */
+  padding-bottom:2px;
 }
 
-#table [data-review-level]::after {
-  content: '•';
-  opacity: .5;
-  display:inline-block;
-  padding-left:5px;
+#table [data-review-level="100"] .line-text,
+#table [data-review-level="200"] .line-text,
+#table [data-review-level="300"] .line-text {
+  color:var(--revLevelTextColor);
+  border-bottom-color:var(--revLevelTextColor);
+  font-size:25px !important;
 }
 
-#table [data-review-level="100"]::after {
-  color: #ffffcb;
-  opacity: 1;
+#table [data-review-level="1"] .line-text,
+#table [data-review-level="2"] .line-text,
+#table [data-review-level="3"] .line-text {
+  color:var(--revLevelMinorTextColor);
+  border-bottom-color:var(--revLevelMinorTextColor);
+  font-size:22px !important;
 }
 
-#table [data-review-level="200"]::after {
-  color: #ffffcb;
-  opacity: 1;
-  content: '••'
+#table [data-review-level="1"] .line-text {
+  border-bottom-width:0px;
 }
 
-#table [data-review-level="300"]::after {
-  color: #ffffcb;
-  opacity: 1;
-  content: '•••'
+#table [data-review-level="100"] .line-text {
+  border-bottom-width:1px;
 }
 
-#table [data-review-level="1"]::after {
-  opacity: 1;
-  color:whitesmoke;
+#table [data-review-level="2"] .line-text {
+  border-bottom-width:1px;
 }
 
-#table [data-review-level="2"]::after {
-  opacity: 1;
-  color:whitesmoke;
+#table [data-review-level="200"] .line-text {
+  border-bottom-width:2px;
 }
 
-#table [data-review-level="3"]::after {
-  opacity: 1;
-  color:whitesmoke;
+#table [data-review-level="3"] .line-text {
+  border-bottom-width:2px;
+}
+
+#table [data-review-level="300"] .line-text {
+  border-bottom-width:3px;
 }
 
 #table [data-is-reading] {
-  box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 0.158) inset;
-  -webkit-box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 0.158) inset;
-  color: var(--text-color-reading) !important;
+  color: var(--table-text-color-reading) !important;
 }
+
+#table .line-text {
+  display:inline-block;
+  margin-right: 20px;
+  position: relative;
+  padding-left:15px;
+}
+
+/*
+#table [data-role="example"]:before {
+  content: '';
+  display:none;
+}
+
+#table [data-role="example"] .line-text:before {
+  content: '✦';
+  font-size: 14px;
+  opacity: 0.6;
+  vertical-align: middle;
+}
+*/

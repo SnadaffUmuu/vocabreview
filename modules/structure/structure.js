@@ -1,17 +1,21 @@
 
 import { View } from "../view.js";
 import { Application } from "../app.js"
-import { DataFactory } from "../data.js"
 
 export const StructureView = function () {
   this.toggleEl = null;
   this.treeEl = null;
   this.resetTreeEl = null;
   this.events = {
-    'click #structureTrigger': 'toggleTree',
-    'click #resetTree': 'resetTreeFilters',
+    'click #toggleAll': 'toggleAll',
     'click #filterCollection': 'filterCollection',
+    'click #flushGlobal' : 'flushGlobal',
   };
+
+  this.flushGlobal = function() {
+    Application.flushGlobal();
+  };
+
   this.trueCheckboxesSelector = '.treeCheckbox';
 
   this.toggleTreeCheckboxes = function (e) {
@@ -52,13 +56,10 @@ export const StructureView = function () {
     })
   }
 
-  this.resetTreeFilters = function () {
-    Application.views.PreloaderView.showPreloaderAndRun(() => {
-      Array.from(
-        this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
-      ).forEach(ch => ch.checked = false)
-      Application.filter(null)
-    });
+  this.toggleAll = function (e) {
+    Array.from(
+      this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]')
+    ).forEach(ch => ch.checked = e.target.checked)
   }
 
   this.filterCollection = function () {
@@ -66,17 +67,32 @@ export const StructureView = function () {
       const checkedSections = Array.from(
         this.treeEl.querySelectorAll('.treeCheckbox[type=checkbox]:checked')
       ).map(ch => parseInt(ch.value))
-      Application.filter(checkedSections)
+      Application.filter(checkedSections);
     });
   }
 
-  this.toggleTree = function () {
-    this.treeEl.style.display = this.treeEl.style.display == 'none' ? '' : 'none'
+  this.getInProgressMarks = function(sectionEntries) {
+    let ids = sectionEntries.map(entry => entry.originalIndex)
+    let letters = new Set();
+    const stateViews = Application.state.views[Application.state.currentSource];
+    for (let stateViewName in stateViews) {
+      const viewParams = stateViews[stateViewName];
+      for (let viewParam in viewParams) {
+        if('removedItems' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
+          || ['itemsInBoxes','itemsInCols','lapses'].includes(viewParam)
+            && Object.keys(viewParams[viewParam]).some(k => ids.includes(parseInt(k)))) {
+          
+          letters.add(stateViewName.slice(0,1));
+        }
+      }
+    }
+    return letters.size ? `<span class="inProgress">${Array.from(letters).join('&nbsp;')}</span>` : '';
   }
 
   this.getCheckboxHtml = function (value) {
-    const isChecked = this.data.filteredEntries.find(e => e.section == value);
-    return `<input class="treeCheckbox" ${isChecked ? 'checked' : ''} type="checkbox" value="${value}">`
+    const isChecked = !this.nonChecked && this.data.filteredEntries.filter(e => e.section == value).length;
+    const sectionEntries = Application.getCurrentSourceData().allEntries.filter(e => e.section == value);
+    return `${this.getInProgressMarks(sectionEntries)}<input class="treeCheckbox" ${isChecked ? 'checked' : ''} type="checkbox" value="${value}">`
   }
 
   this.getListNameHtml = function (name, value) {
@@ -84,17 +100,6 @@ export const StructureView = function () {
     <input class="collapsibleListCheckbox" id="${value}" type="checkbox">
     <label for="${value}">${name}</label>
     `
-  }
-
-  this.checkAndSetMinimum = function(checkboxes) {
-    const minLevel = checkboxes.filter(el => !el.closest('li').querySelector('ul'));
-    if (!this.data.filteredEntries.length) {
-      minLevel[0].checked = true;
-      setTimeout(() => {
-        this.filterCollection();
-        this.checkFilteredCheckboxes(checkboxes);
-      }, 0)
-    }
   }
 
   this.reset = function () {
@@ -106,18 +111,19 @@ export const StructureView = function () {
 
   this.render = function () {
 
-    const startTime = performance.now();
-
     this.reset();
-    if (!Application.data.currentEntries?.length) {
+    if (!Application.getCurrentSourceData()?.currentEntries?.length) {
       return;
     }
-    this.data.filteredEntries = Application.getFilteredEntries();
-    const resItems = Application.data.structure.reduce((resItems, entry) => {
+    this.data.filteredEntries = structuredClone(Application.getCurrentSourceData().currentEntries);
+    this.nonChecked = this.data.filteredEntries.length 
+      == Application.getCurrentSourceData().allEntries.length;
+    const resItems = Application.getCurrentSourceData().structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
         ${this.getCheckboxHtml(entry.id)}&nbsp;
-        ${this.getListNameHtml(entry.name, entry.id)}${children.length ? '<ul>' + children.join('') + '</ul>' : ''}
+        ${this.getListNameHtml(entry.name, entry.id)}
+        ${children.length ? '<ul>' + children.join('') + '</ul>' : ''}
       </li>`)
       return resItems;
     }, []);
@@ -131,17 +137,13 @@ export const StructureView = function () {
         this.toggleTreeCheckboxes(e)
       })
     });
-    //this.checkAndSetMinimum(treeCheckboxes);
-
-    const duration = performance.now() - startTime;
-    console.log(`renderStructureView took ${duration}ms`);    
   }
 
   this.show = function () {
     View.prototype.show.call(this);
-    this.toggleEl = document.getElementById('structureTrigger');
     this.treeEl = document.getElementById('structureTree');
-    this.resetTreeEl = document.getElementById('resetTree');
+    this.toggleAll = document.getElementById('toggleAll');
+    this.flashGlobal = document.getElementById('flushGlobal');
     this.render();
   }
 };

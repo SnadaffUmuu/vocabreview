@@ -1,4 +1,3 @@
-
 @import url("../modules/menu/menu.css");
 @import url("../modules/slider/slider.css");
 @import url("../modules/slide/slide.css");
@@ -7,51 +6,321 @@
 @import url("../modules/table/table.css");
 @import url("../modules/data-view/data-view.css");
 @import url("../modules/preloader/preloader.css");
+@import url("../modules/board/board.css");
+@import url("../modules/panel/panel.css");
+@import url("../modules/match/match.css");
+/* @import url("./theme.css"); */
 
 :root {
+
   --bg: #f1e6e8;
-  --text-color-speakable: #2525c2;
-  --text-color-reading: #2525c293;
-  --icon-speakable-bg: #ffffde;
-  --icon-expand-border: #ffffff;
-  --appheader-title-color: #1e20c0;
+  --text-color: #141f76;
+  --table-text-color-speakable: #2525c2;
+  --table-text-color-reading: #2525c293;
+  --icon-speakable-bg: #e6deee;
+  --appheader-title-text-color: #1e20c0;
   --preloader-color: #2525c2;
   --preloader-bg: #9899c244;
+
+  --button-primary: #fbf2f2;
+  --button-secondary: #c4bfca;
+
+  --menuOpenedBg: rgba(85, 74, 123, 0.24);
+  --menuBg: #8a2134;
+  --menuTextColor: white;
+
+  --boardGoodColBorder: #92ccb3;
+  --boardFailedColBorder: #db9292;
+  --boardLearnColBorder: #92b4db;
+  --boardItemBorder:#bfbfbf;
+  --boardItemPlaceholder: rgba(130, 200, 205, 0.3);
+  --boardItem:var(--button-primary);
+  --boardItemLapsedBorder:#ff3a80;
+  --boardItemLapsedLineTextColor:rgb(90, 30, 78);
+  --boardRemoveItemTextColor:#e6004d;
+  --boardItemMenuExpandedBorder: #a6cecf;
+  --boardInfoShadow:#a6cecf; 
+  --boardGlobalItemShadow: #0034ff;
+
+  --slideInfoBg: #c4bfca;
+  --slideInfoColor: var(--text-color);
+  --slideTagGrammarBg: #dcfeff;
+  --slideTagOnomatBg: #f1f0e6;
+  --slideTagTermShadow: #b1a9aa;
+  --slideReadableTextBorder: #7b9bff;
+  --slideSpeakableLineBg: #c4bfca;
+  --currentSlideIndexTextColor: var(--text-color);
+
+  --tableAddColBorder: gray;
+  --tableAddColBorderHover: #e6004d;
+  --tableAddColBorderActive: rgba(255, 255, 255, 0.5);
+  --tableCellBorder: gray;
+  --tableReadableCellShadow: rgba(255, 0, 0, 0.158);
+  --tableHiddenContentBg:#d9d2dd;
+  --tableHiddenReadableContentBg:#ddd4d6;
+  --tableDragOverCellBg: rgba(154, 255, 154, 0.5);
+  --tableDraggingBg: rgba(135, 207, 235, 0.63);
+  --tablePlaceholderBorder: #666;
+  --tablePlaceholderBg: #f0f0f0;
+  --tableInfoPopupBg:#c5c5c5;
+  --tableInfoPopupTextColor:#00005a;
+  --tableInfoPopupCloseElBg:gray;
+  --tableRevewLevelTextColor:#ffffcb;
+  --tableRevewLevelTextColor1:whitesmoke;
+
+  --tagBgYoji:#d0cbff;
+  --tagBgOnoma:#a7e3ec;
+  --tagBgGrammar:#e5c1e9;
+  --tagBgGeo:#ddd4d6;
+  --tagBgName: #cde0bb;
+  --tagBgTerm: plum;
+  --tagBgPattern: #f6ceff;
+  --tagBgCounter: #afeed4;
+  --tagBgSuffix: #a7e3ec;
+  --tagBgDialect:#8274ff;
+
+  --input-bg:#dfd8e7;
+
+  --revLevelMinorTextColor:#142CE6;
+  --revLevelTextColor:#5800bc;
+  --revLevelExtraTextColor:#8A009B;
+
+  --tagTextColor: white;
+  --tagBg: #bab1c7;
+  --paleBorder:#c9c9dc;
+
+  --dataItemBorder : var(--paleBorder);
+
+  --panelBox1Bg: #ffefef;
+  --panelBox2Bg: #ecfffb;
+  --panelBox3Bg: #fff;
+  --panelBox4Bg: #fff5fe;
+  --panelFocusedBoxShadow: #c5b8d0;
 }
 
 body.night {
   --bg: #4d000e;
   --text-color: #a6cecf;
-  --text-color-speakable: #f7d4ff;
-  --text-color-reading: #f7d4ff6e;
-  --icon-speakable-bg: #712e52;
-  --icon-expand-border: #6b526d;
-  --appheader-title-color: #daa7e5;
+  --table-text-color-speakable: #f7d4ff;
+  --table-text-color-reading: #f7d4ff6e;
+  --icon-speakable-bg: #5e1730;
+  --appheader-title-text-color: var(--text-color);
+
+  --button-primary:#320008;
+  --button-secondary:#7b848e;
+
+  --boardGoodColBorder: #338d86;
+  --boardFailedColBorder: #9f0000;
+  --boardLearnColBorder: #adb8c5;
+  --boardItemBorder:#00031b;
+  --boardItem:var(--button-primary);
+  --boardItemLapsedBorder:#b5000e;
+  --boardItemLapsedLineTextColor:rgba(255, 255, 255, 0.798);
+  --boardItemMenuExpandedBorder: #6b526d;
+  --boardInfoShadow:rgb(22 0 36); 
+  --boardGlobalItemShadow: white;
+
+  --currentSlideIndexTextColor: var(--text-color);
+
+  --slideReadableTextBorder: #0049ff;
+  --slideInfoBg: #3b0000;
+  --slideInfoColor: var(--text-color);
+  --slideTagGrammarBg: #005266;
+  --slideTagOnomatBg: #5a5100;
+  --slideTagTermShadow: #a1001e;
+  --slideSpeakableLineBg: #3b0000;
+
+  --slideReview1TextColor:#0000d9;
+
+  --tableHiddenContentBg:#492037;
+  --tableHiddenReadableContentBg:#561723;
+
+  --tagBgYoji:#06096b;
+  --tagBgOnoma:#00687d;
+  --tagBgGrammar:#6c0079;
+  --tagBgGeo:#6d202f;
+  --tagBgName: #760000;
+  --tagBgTerm: #8e008e;
+  --tagBgPattern: #590280;
+  --tagBgCounter: #17597a;
+  --tagBgSuffix: #064d5b;
+  --tagBgDialect:#3e43ea;
+
+  --input-bg:#aebdcc;
+
+  --revLevelMinorTextColor:#B8D8D9;
+  --revLevelTextColor:#E9E9E9;
+  /* --revLevelExtraTextColor:#82a6e2; */
+  --revLevelExtraTextColor:#ffe7bf;
+
+  --tagTextColor: #9a9797;
+  --tagBg: #64203c;
+
+  --paleBorder:#5f4951;
+
+  --dataItemBorder : var(--paleBorder);
+
+  --panelBox1Bg: #4a4435;
+  --panelBox2Bg: #35493e;
+  --panelBox3Bg: #3d4551;
+  --panelBox4Bg: #553f4c;
+  --panelFocusedBoxShadow: #300000;
+}
+
+html {
+  /* min-height: 100%; */
+  min-height: 100dvh;
+}
+
+html, body, #appBody, .appView {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+body, #appBody, .appView {
+  flex: 1 0 auto;
 }
 
 body {
   margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   font-size: 30px;
   background: var(--bg);
   font-family: sans-serif;
-}
-
-.night {
-  background: var(--bg);
   color: var(--text-color);
 }
 
 #appBody {
-  box-sizing: border-box;
   padding-top:40px;
-  min-height: 100vh;
-  display: flex;
-  flex-flow: column nowrap;
+  box-sizing: border-box;
   align-items:stretch;
+  position: relative;
 }
 
-.appView {
-  flex: 1 0 auto;
+select {
+  height: 23px;
+  box-sizing: border-box;
+  background:var(--input-bg);
+  border-radius: 5px;
+}
+
+input[type="checkbox"] {
+  margin: 0;
+  width: 23px;
+  height:23px;
+  vertical-align: middle;
+  
+}
+
+.night input[type="checkbox"] {
+  filter: sepia(50%) brightness(70%) hue-rotate(170deg) saturate(70%) contrast(100%);
+  accent-color:var(--input-bg);
+}
+
+input[type="text"],
+input[type="search"] {
+  height:23px;
+  box-sizing: border-box;
+  background:var(--input-bg);
+  border-radius: 5px;
+  border: 1px solid #767676;
+}
+
+button,
+.viewMenu {
+  height:25px;
+  border:0;
+  border-radius: 5px;
+  background:var(--button-secondary);
+  white-space:nowrap;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 3px 10px;
+  line-height: 19px;
+}
+
+.tag {
+  font-size: 12px;
+  border-radius: 5px;
+  background: var(--tagBg);
+  color: var(--tagTextColor);
+  width: fit-content;
+  padding: 1px 4px;
+}
+
+.example:before,
+[role="example"]:before,
+[role="example_translation"]:before,
+[data-role="example"]:before,
+[data-role="example_translation"]:before,
+[data-role="example"] .line-text:before,
+[data-role="example_translation"] .line-text:before {
+  content: '✦ ';
+  font-size: 14px;
+  opacity: 0.6;
+  vertical-align: middle;
+}
+
+#table [data-role="example"]:before,
+#table [data-role="example_translation"]:before {
+  content:'';
+  display: none;
+}
+
+.tagsLegend {
+  margin-top:10px;
+  border-left: 1px solid var(--tableCellBorder);
+  border-top: 1px solid var(--tableCellBorder);
+  display:flex;
+  flex-flow:row wrap;
+  align-items: stretch;
+  font-size:14px;
+}
+
+.tagsLegend [data-tag] {
+  padding: 5px;
+  flex: 1 1 auto;
+  border-right: 1px solid var(--tableCellBorder);
+  border-bottom: 1px solid var(--tableCellBorder);
+  text-align: center;
+}
+
+.tagsLegend [data-tag] > span {
+  display: inline-block;
+}
+
+.viewMenu {
+  width:100px;
+  position: relative;
+}
+
+.viewMenu__trigger {
+  padding: 3px 10px;
+  line-height: 19px;
+}
+
+.viewMenu > ul {
+  padding:0;
+  margin:0;
+  list-style: none;
+  display: none;
+  position: absolute;
+  left:0;
+  top:100%;
+  z-index: 1000;
+  min-width: 100%;
+}
+
+.viewMenu.active ul {
+  display:block;
+}
+
+.viewMenu li {
+  padding:5px;
+  cursor:pointer;
+  background: var(--bg);
+  border: 1px dashed var(--paleBorder);
+  margin-top:-1px;
 }

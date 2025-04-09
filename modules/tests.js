@@ -9,8 +9,8 @@ const getEntryShortInfoString2 = (entry, forHtml) => {
       templ = `<span style="text-decoration:underline">${line.text}</span>`
     }
     return templ + lineBreak
-  }).join('')
-  + entry.entryType + lineBreak;
+  }).join('') + lineBreak;
+  //+ entry.entryType + lineBreak;
   return entryInfo;
 }
 
@@ -42,5 +42,5 @@ const numOfLinesLess = (lines, num) => {
 return entries.filter(en => 
   numOfLinesEq(en.lines, 3)
 ).map(en => 
-  getEntryShortInfoString2(en, true)
+  getEntryShortInfoString2(en)
 ).join('<br>')

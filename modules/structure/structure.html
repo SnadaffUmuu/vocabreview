@@ -1,8 +1,14 @@
 <div id="structure">
-  <button id="structureTrigger" style="display: none;">toggle structure</button>
-  <br>
   <div id="structureTree">
-    <button id="resetTree">reset</button><button id="filterCollection">filter</button>
+    <div id="structureActions">
+      <button id="filterCollection">filter</button>
+      <label for="toggleAll" style="padding-left:5px">All:<br>
+        <input type="checkbox" id="toggleAll">
+      </label>
+    </div>
     <ul></ul>
+  </div>
+  <div id="globalPoolActions">
+    <button id="flushGlobal">flush global</button>
   </div>
 </div>

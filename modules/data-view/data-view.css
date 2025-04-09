@@ -1,38 +1,114 @@
 #dataView {
-  padding:0 10px;
+  padding:10px;
 }
 
 #input {
   width: calc(100% - 10px);
   height:150px;
-  font-size:11px;
+  font-size:15px;
 }
 
 #output {
   font-size:17px;
-  padding:20px;
+  padding:25px 5px 10px;
 }
 
-#tests {
-  padding-bottom: 10px;
-}
-
-#tests select {
-  height: 30px;
-  width: 150px;
-}
-
+/*
 #run {
   height: 30px;
   padding:0 20px; 
   display: inline-block;
 }
+*/
 
 #filtered {
-  height: 30px;
-  width: 30px;
-  display: inline-block;
-  margin-left: 10px;
-  margin-bottom: 0;
-  vertical-align: bottom;
+  flex: 0 0 auto;
+}
+
+#dataViewActions {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 10px;
+  align-items: stretch;
+  position: relative;
+}
+
+#theTests,
+#search {
+  flex: 1 1 40%;
+  min-width: 0;
+}
+
+#resCounter {
+  position: absolute;
+  top:30px;
+  right:5px;
+}
+
+#dataView .dataEntry {
+  padding:10px 0;
+  border-bottom:1px dashed var(--dataItemBorder);
+  position: relative;
+}
+
+#dataView .dataEntry .reviewLevel {
+  position: absolute;
+  right: 0;
+  top: 5px;
+}
+
+#dataView .dataEntry .linesList {
+  margin:0;
+  padding-left:0;
+  list-style:none;
+}
+
+#dataView .dataEntry .lineRole {
+  opacity:0.5;
+  font-size:13px;
+  color: var(--text-color)
+}
+
+#dataView .dataEntry [data-role="reading"] {
+  color:var(--table-text-color-reading);
+  font-size:15px;
+}
+
+#dataView .dataEntry [data-role="example_translation"] {
+  font-size:14px !important;
+  padding-left:13px;
+}
+
+#dataView .dataEntry li[data-role="info"],
+#dataView .dataEntry li[data-role="info"].compact {
+  font-size:13px;
+  padding-left:10px;
+}
+
+#dataView .dataEntry li.compact {
+  font-size:15px;
+}
+
+#dataView .dataEntry li .revLevel {
+  display:inline-block;
+  border-radius:5px; 
+  padding-bottom:3px;
+  font-size:25px;
+}
+
+#dataView .dataEntry .entryInfo {
+  font-size:13px;
+  padding:2px 5px 5px;
+  border:1px dotted var(--paleBorder);
+  border-radius:5px;
+  width:fit-content;
+  margin-top:5px;
+}
+
+#dataView .dataEntry .section {
+  font-size:13px;
+  text-align: right;
+  font-style: italic;
+  opacity: 0.7;
+  padding-top:3px;
 }

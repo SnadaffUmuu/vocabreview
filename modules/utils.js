@@ -1,18 +1,77 @@
 ﻿export const regex = {
-  //japaneseRegex: /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u,
-  //hiraganaRegex: /[\p{Script_Extensions=Hiragana}]/u,
-  //katakanaRegex: /[\p{Script_Extensions=Katakana}]/u,
-  //kanjiRegex: /^[\p{Script=Han}]$/u,
-  //nonJapaneseRegex: /[\p{Script=Cyrillic}\p{Script=Latin}]/u,
-  hasKanji: /^[\p{Script=Han}]+$/u,
+  hasKanji: /[\p{Script=Han}]+/u,
   kanaOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   hiraganaOnly: /^[\p{Script=Hiragana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   katakanaOnly: /^[\p{Script=Katakana}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   nonJapanese: /^[\p{Script=Cyrillic}\p{Script=Latin}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   japaneseOnly: /^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
   mixed: /^(?=.*[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])(?=.*[\p{Script=Latin}\p{Script=Cyrillic}])[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}\p{Script=Latin}\p{Script=Cyrillic}\p{N}\p{P}\s\p{S}\p{Z}ー]+$/u,
+  nonChars: /[\p{N}\p{P}\s\p{S}\p{Z}ー]+/u,
   upperSectionTitle: /~~\n(.*)\n~~/u,
   pageLevelSection: /\[(.*)\]((.*))?/u,
+}
+
+export function setDeep(obj, path, value) {
+  path.reduce((acc, key, index) => {
+    if (index === path.length - 1) {
+      acc[key] = value; 
+    } else {
+      if (!(key in acc)) {
+        acc[key] = {};
+      }
+    } 
+    return acc[key];
+  }, obj);
+  obj.selfUpdate = !obj.selfUpdate; 
+}
+
+export function createPlaceholder (el) {
+    const placeholder = document.createElement("div");
+    placeholder.classList.add("placeholder");
+    if (el) {
+      placeholder.innerHTML = el.innerHTML;
+    } else {
+      placeholder.textContent = "Drop here";
+    }
+    return placeholder;
+};
+
+export function getDragAfterElement(container, x, y) {
+  const draggableElements = [
+    ...container.querySelectorAll("[draggable]:not(.dragging)")
+  ];
+  return draggableElements.reduce(
+    (closest, child, index) => {
+      const box = child.getBoundingClientRect();
+      const nextBox = draggableElements[index + 1] && draggableElements[index + 1].getBoundingClientRect();
+      const inRow = y - box.bottom <= 0 && y - box.top >= 0; // check if this is in the same row
+      const offset = x - (box.left + box.width / 2);
+      if (inRow) {
+        if (offset < 0 && offset > closest.offset) {
+          return {
+            offset: offset,
+            element: child
+          };
+        } else {
+          if ( // handle row ends, 
+            nextBox && // there is a box after this one. 
+            y - nextBox.top <= 0 && // the next is in a new row
+            closest.offset === Number.NEGATIVE_INFINITY // we didn't find a fit in the current row.
+          ) {
+            return {
+              offset: 0,
+              element: draggableElements[index + 1]
+            };
+          }
+          return closest;
+        }
+      } else {
+        return closest;
+      }
+    }, {
+      offset: Number.NEGATIVE_INFINITY
+    }
+  ).element;
 }
 
 export function speak(text) {
@@ -20,16 +79,13 @@ export function speak(text) {
   utterThis.lang = DeviceUtils.isAndroid() ? "ja_JP" : "ja-JP";
   setTimeout(() => {
     window.speechSynthesis.speak(utterThis);
-    console.log('speak', text)
+    console.log('speak: ', text);
   }, 0);
 
   let r = setInterval(() => {
-   console.log('!', speechSynthesis.speaking);
     if (!speechSynthesis.speaking) {
-      console.log('no speaking, clear interval', r);
       clearInterval(r);
     } else {
-      console.log('was speaking, but stoped, resuming');
       speechSynthesis.resume();
   }
 }, 14000);
@@ -43,6 +99,25 @@ export function shuffleArray(array) {
     array[j] = temp;
   }
   return array;
+}
+
+export function shuffleArraySaveOrder (array) {
+  let indexedArray = array.map((o, i) => {
+    return {
+      i : i,
+      o : o
+    }
+  });
+  for (let i = indexedArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = indexedArray[i];
+    indexedArray[i] = indexedArray[j];
+    indexedArray[j] = temp;
+  }
+  return {
+    order : indexedArray.map(o => o.i),
+    array : indexedArray.map(o => o.o),
+  };
 }
 
 export function stringToHash(string) {
@@ -89,7 +164,7 @@ export const UserActionHandlers = {
   preventDefault : (e) => {
     e.preventDefault();
   },
-
+/*
   handleSingleClick : () => {
     console.log('Single click or tap');
   },
@@ -101,6 +176,7 @@ export const UserActionHandlers = {
   handleLongTouch : () => {
     console.log('Long touch');
   },
+*/
 } 
 
 export function isOverflow(el, maxWidth, maxHeight) {

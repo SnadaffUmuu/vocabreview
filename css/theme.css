@@ -1,0 +1,22 @@
+:root {
+
+  --color1: #F3F2F4;
+  --color2: #720842;
+  --color3: #C6D8DE;
+  --color4: #75919C;
+  --color5: #521320;
+  --color6: #220E24;
+
+  --bg: var(--color1);
+  --text-color: var(--color2);
+
+  --button-secondary: var(--color3);
+}
+
+body.night {
+
+  --bg: var(--color6);
+  --text-color: var(--color4);
+
+  --button-secondary: var(--color5);
+}

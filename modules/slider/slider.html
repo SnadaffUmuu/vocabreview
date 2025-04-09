@@ -1,12 +1,22 @@
 <div id="sliderView" class="appView">
-  <div id="currentSlideIndex"></div>
   <div id="sliderActions">
-    <select id="cardMode">
-      <option value="random">random</option>
-      <option value="default">default</option>
-      <option value="reverse">reverse</option>
-      <option value="examples">examples</option>
-    </select>
+    <label for="cardMode">
+      Mode
+      <select id="cardMode">
+        <option value="original">original</option>
+        <option value="random">random</option>
+        <option value="expression">expression</option>
+        <option value="meaning">meaning</option>
+        <option value="example">examples</option>
+        <option value="example_translation">examples' translations</option>
+      </select>
+    </label>
+    <label for="randomSlidesOrder">
+      Rand.
+      <input type="checkbox" id="randomSlidesOrder">
+    </label>
+    <button id="resetSlider">Reset</button>
+    <div id="currentSlideIndex"></div>
   </div>
   <div id="js-slider-outer">
     <div id="my-keen-slider" class="keen-slider js-slider"></div>

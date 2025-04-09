@@ -1,27 +1,23 @@
 <div id="menuContainer">
   <button id="menuTrigger">>></button>
   <div id="menu">
+    <select id="globalActions">
+      <option value="">--global actions</option>
+      <option value="reloadCurrentSource">reload current source</option>
+      <option value="resetSpeech">reset speech</option>
+      <option value="loadAllSources">load all sources</option>
+      <option value="resetApp">reset App</option>
+    </select>
     <div id="dataActions">
-      <button type="button" id="clearLocalStorage">❌</button>
-      <button type="button" id="reloadCurrentSource">🔄</button>
+      <select id="vocabSources">
+        <option value="">--select--</option>
+      </select>
+      <button type="button" class="switchView" data-app-type="board">B</button>
+      <button type="button" class="switchView" data-app-type="slider">S</button>
+      <button type="button" class="switchView" data-app-type="table">T</button>
+      <button type="button" class="switchView" data-app-type="data">D</button>
+      <button type="button" class="switchView" data-app-type="panel">P</button>
+      <button type="button" class="switchView" data-app-type="match">M</button>
     </div>
-    <select id="vocabSources">
-      <option value="">--select--</option>
-    </select>
-    <select id="viewSelect">
-      <option value="">--select view--</option>
-      <option value="slider">Slider</option>
-      <option value="table">Table</option>
-      <option value="data">Data</option>
-      <!--
-        <option value="typesBoard">card types board</option>
-        <option value="answerBoard">answer board</option>
-        -->
-    </select>
-    <!--
-      <form enctype="multipart/form-data">
-        <input type="file" id="myfile">
-      </form>
-    -->
   </div>
 </div>

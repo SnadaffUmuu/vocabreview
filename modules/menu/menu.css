@@ -1,44 +1,77 @@
 #menuContainer {
-  position: relative;
+  position: absolute;
+  left:0;
+  top:0;
+  z-index: 1000;
+}
+
+#menuContainer:has(#menu.isOpened) {
+  right:0;
+  bottom:0;
+  background: var(--menuOpenedBg)
 }
 
 #menuTrigger {
   position: fixed;
   top: 0;
   z-index: 400;
-  height:40px;
-  width:60px;
+  width:65px;
+  height:38px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 #menu {
   z-index: 300;
-  max-width: 70%;
+  max-width: 75vw;
   transition: transform 0.5s;
   position: fixed;
   top:0;
   bottom:0;
-  overflow:scroll;
+  overflow:auto;
   transform: translateX(-100%);
-  padding:50px 5px 5px;
-  background: #8a2134;
+  padding:50px 10px 5px;
+  background: var(--menuBg);
   font-size:13px;
-  color:#ffffff;
+  color:var(--menuTextColor);
 }
 
 #menu.isOpened {
   transform: translateX(0%);
 }
 
-#vocabSources {
-  margin-right: 10px;
+#globalActions {
+  position: absolute;
+  right: 10px;
+  left:75px;
+  top: 8px;
 }
 
 #dataActions {
-  position: absolute;
-  right: 5px;
-  left:65px;
-  top: 5px;
   display: flex;
-  flex-flow:row wrap;
-  justify-content: space-evenly;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  gap: 15px 8px;
+  margin-bottom:15px;
+}
+
+#dataActions select {
+  flex:1 1 100%;
+}
+
+#dataActions #vocabSources {
+  height: 30px;
+}
+
+#dataActions .switchView {
+  flex:0 1 auto;
+  padding:3px 9px;
+}
+
+#dataActions .switchView.active {
+  background-color: red;
+}
+
+body:has(#menu option[value="global"]:checked) #reloadCurrentSource {
+  display: none;
 }

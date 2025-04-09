@@ -1,3 +1,5 @@
+import { Application } from "./app.js";
+
 export const View = function () { };
 
 View.prototype = {
@@ -22,6 +24,8 @@ View.prototype = {
   renderedEvents: null,
 
   data: null,
+
+  state: null,
 
   getContainer() {
     if (this.containerElement != null) {
@@ -56,8 +60,8 @@ View.prototype = {
     for (var k in this.events) {
       var spaceIdx = k.indexOf(' ');
       if (spaceIdx != -1) {
-        this.element.querySelector(k.substring(spaceIdx + 1))
-          .addEventListener(k.substring(0, spaceIdx), this[this.events[k]].bind(this));
+        [...this.element.querySelectorAll(k.substring(spaceIdx + 1))].forEach(el =>
+          el.addEventListener(k.substring(0, spaceIdx), this[this.events[k]].bind(this)))
       } else {
         this.element.addEventListener(k, this[this.events[k]].bind(this));
       }
@@ -66,38 +70,85 @@ View.prototype = {
 
   setRenderedEvents(targetEl) {
     const target = targetEl ? targetEl : this.element;
-    for (let event in this.renderedEvents) {
-      target.addEventListener(event, (e) => {
-        const entry = this.renderedEvents[event];
-        for (let selector in entry) {
-          if (e.target.matches && e.target.matches(selector)) {
-            if (entry[selector].indexOf('.') < 0) {
-              this[entry[selector]].bind(this).call(this, e);
-            } else {
-              const parts = entry[selector].split('.');
-              if (this.namespaces[parts[0]] && this.namespaces[parts[0]][parts[1]]) {
-                this.namespaces[parts[0]][parts[1]].bind(this).call(this, e)
-              }
+
+    const handler = function (e, event) {
+      const entry = this.renderedEvents[event];
+      for (let selector in entry) {
+        const pp = entry[selector].split(' ');
+        const skipSelectorCheck = pp.length > 1 && pp[1] == 'true';
+        const method = skipSelectorCheck ? pp[0] : entry[selector];
+        if (skipSelectorCheck || e.target.matches && e.target.matches(selector)) {
+          if (method.indexOf('.') < 0) {
+            this[method].bind(this).call(this, e);
+          } else {
+            const parts = method.split('.');
+            if (this.namespaces[parts[0]] && this.namespaces[parts[0]][parts[1]]) {
+              this.namespaces[parts[0]][parts[1]].bind(this).call(this, e)
             }
           }
         }
-      })
+      }
+    };
+    for (let event in this.renderedEvents) {
+      if (target.length) {
+        target.forEach(el => {
+          el.addEventListener(event, (e) => {
+            handler.bind(this).call(this, e, event);
+          })
+        })
+      } else {
+        target.addEventListener(event, (e) => {
+          handler.bind(this).call(this, e, event);
+        })
+      }
     }
+  },
+
+  initState() {
+    const initialState = Application.getViewState(this) || {
+      selfUpdate : false,
+    };
+    this.initialState = initialState;
+    const instance = this;
+    this.state = new Proxy(initialState, {
+      set(target, property, value) {
+        target[property] = value;
+        Application.setViewState(instance);
+        if (instance.handleStateChange) {
+          instance.handleStateChange(target, property, value);
+        }
+        return true;
+      },
+      get(target, property) {
+        return target[property]
+      },
+      deleteProperty(target, property) {
+        if (!(property in target)) {
+          console.log(`property not found: ${property}`);
+          return false;
+        }
+        delete target[property];
+        Application.setViewState(instance);
+        if (instance.handleStatePropDelete) {
+          instance.handleStatePropDelete(target, property);
+        }
+        return true;
+      }
+    });
   },
 
   show() {
     if (this.element === null) {
       this.initElement();
+      this.initState();
       this.data = {};
     }
     this.getContainer().appendChild(this.element);
-    console.log('show view', this._class.name)
     this.checkContainer();
   },
 
   hide() {
     this.getContainer().removeChild(this.element);
-    console.log('hide view ', this._class.name);
     this.checkContainer();
   },
 
@@ -147,18 +198,6 @@ View.prototype = {
   },
 
   init: async function () {
-    /*
-    if (!View.prototype.templateHtmls[this._class.name]
-      || !View.prototype.templateHtmls[this._class.name]._templateHtmlPromise) {
-      View.prototype.templateHtmls[this._class.name] = {};
-      View.prototype.templateHtmls[this._class.name]._templateHtmlPromise = (async () => {
-        const response = await fetch(this.templatePath);
-        View.prototype.templateHtmls[this._class.name].templateHtml = await response.text();
-        return View.prototype.templateHtmls[this._class.name].templateHtml;
-      })()
-    }
-    await View.prototype.templateHtmls[this._class.name]._templateHtmlPromise;
-    */
     await this.initViewTemplateHtml();
 
     if (this.templatePath == null) {
@@ -168,6 +207,7 @@ View.prototype = {
       this.initTemplate();
       this.initElement();
       this.data = {};
+      this.initState();
     } catch (error) {
       console.error('Error during initialization:', error);
     }

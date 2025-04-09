@@ -1,0 +1,36 @@
+<div id="boardView" class="appView">
+  <div id="boardActionsBlock">
+    <button id="resetBoard">Reset</button>
+    <select id="cardMode">
+      <option value="original">original</option>
+      <option value="expression">expression</option>
+      <option value="meaning">meaning</option>
+      <option value="example">examples</option>
+      <option value="example_translation">examples' translation</option>
+      <option value="random">random</option>
+    </select>
+    <select id="boardActions">
+      <option value="">actions</option>
+      <option value="setLapses">Set</option>
+      <option value="fixLapses">Fix</option>
+      <option value="setGlobal">Set as global</option>
+    </select>
+    <label for="markGlobal">
+      <input type="checkbox" id="markGlobal">
+    </label>
+  </div>
+  <div id="boardContainer">
+    <div id="sourceItemsCounter" class="tag"></div>
+    <div id="boardSourceCardsOuter">
+      <div id="boardSourceCards" class="itemDroppableContainer"></div>
+    </div>
+    <div id="boardColsContainerOuter">
+      <div id="boardColsContainer">
+        <div id="boardFailedCol" data-result="0" class="itemDroppableContainer"></div>
+        <div id="boardLearnCol" data-result="2" class="itemDroppableContainer"></div>
+        <div id="boardGoodCol" data-result="1" class="itemDroppableContainer"></div>
+      </div>
+    </div>
+    <div id="boardLegend"></div>
+  </div>
+</div>

@@ -1,16 +1,19 @@
 <div id="dataView">
-  <div id="tests">
-    <select>
-    </select>
+  <div id="dataViewActions">
+    <select id="theTests"></select>
     <input type="checkbox" id="filtered" checked>
+    <input type="search" id="search" onfocus="this.select()">
+    <div id="resCounter" class="tag"></div>
   </div>
+  <!--
   <div id="input">
     
-return entries.map(en => 
-  DF.getEntryShortInfoString2(en, true, true)
-).join('<br>')
+return entries.map((en, i) => 
+  DT.entryFormatters.getEntryShortInfoString2(en)
+).join('<br/>')
     
   </div>
   <button id="run">Go</button>
+  -->
   <div id="output"></div>
 </div>
