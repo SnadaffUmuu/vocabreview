@@ -16,6 +16,7 @@ export const DataFactory = {
     'goshogun0',
     'shirobanba',
     'kokugo-osarai',
+    'osarai-nihonshi',
     'SR_Nutshell',
     'SR-subway-attack',
     'hp1',
