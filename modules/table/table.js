@@ -549,7 +549,7 @@ export const TableView = function () {
       Application.getCurrentSourceData().currentEntries);
 
     if (this.state.order?.length) {
-      this.data.orderedEntries = this.state.order.map(i => this.data.entries[i]);
+      this.data.orderedEntries = this.state.order.map(i => this.data.entries[i]).filter(o => typeof o !== 'undefined');
     }
     this.renderTable();
     this.setRenderedEvents(this.tableEl);

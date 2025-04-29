@@ -8,12 +8,7 @@ export const MenuView = function () {
   this.events = {
     'click #menuTrigger': 'toggleMenu',
     'change #vocabSources': 'changeSource',
-    // 'click #resetApp' : 'resetApp',
-    // 'click #reloadCurrentSource' : 'reloadCurrentSource',
-    // 'click #loadAllSources' : 'loadAllSources',
-    // 'click #resetSpeech' : 'resetSpeech',
     'change #globalActions': 'executeFunction',
-    // 'change #viewSelect' : 'switchView',
     'click .switchView': 'switchView'
   }
 

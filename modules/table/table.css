@@ -37,8 +37,10 @@
 
 #table tr[data-tag] .line-text,
 .tagsLegend [data-tag] > span {
-  backdrop-filter: blur(4px);
-  border-radius: 15px;
+  /* backdrop-filter: blur(4px);
+  border-radius: 15px; */
+  background: var(--bg);
+  box-shadow: 0px 0px 6px 4px var(--bg);
 }
 
 #table tr[data-tag="grammar"],
@@ -158,6 +160,10 @@
 
 }
 
+#table td:first-child {
+  vertical-align: top;
+}
+
 #table th .colName,
 #table th .drag {
   box-sizing: border-box;
@@ -180,8 +186,8 @@
 
 #table td .rowDrag {
   cursor: move;
-  width:40px;
-  height:60%;
+  width: 80px;
+  height: 40px;
   box-sizing: border-box;
   text-align: center;
   display:flex;
@@ -191,15 +197,19 @@
 
 #table .moveToTop,
 #table .moveToBottom {
+  box-sizing: border-box;
   display: inline-block;
-  height:40%;
-  width: 20px;
+  height:40px;
+  width: 40px;
   text-align: center;
   display: inline-flex;
   flex-flow: column nowrap;
   justify-content: center;
-  box-sizing: border-box;
   border-top: 1px solid var(--paleBorder);
+}
+
+#table .moveToBottom {
+  border-left: 1px solid var(--paleBorder);
 }
 
 #table td .cellContentDraggable {
@@ -208,8 +218,8 @@
   padding:3px 0 10px;
   height:100%;
   min-height:30px;
-  min-width:150px;
-  max-width:250px;
+  min-width:190px;
+  max-width:290px;
   flex:1 1 auto;
 }
 
@@ -292,43 +302,32 @@
 }
 
 #table .ellipsis {
-  /* display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;   */
   overflow: hidden;
   max-height: 80px;
 }
 
 #table .expand,
 #table .expand.expanded {
-  /* position: absolute;
-  right:0;
-  top:0;
-  left:0;
-  padding-left:2px; */
-  /*font-size: 17px;
-   text-align: left;
-  vertical-align: middle; 
-  backdrop-filter: sepia(90%);
-  opacity:0.3;
-  */
-  height:15px;
+  height:20px;
   cursor: pointer;
 }
 
 #table .speakme {
   cursor: pointer;
+  box-sizing: border-box;
   height:100%;
-  width:25px;
+  width:35px;
   position: absolute;
   top:0;
   left:0;
   z-index:100;
 }
 
+.hidden .speakme {
+  border:1px dotted var(--paleBorder)
+}
+
 #table [data-review-level] .line-text {
-  /* border-radius: 5px; */
-  /* border-bottom-style: solid; */
   padding-bottom:2px;
 }
 
@@ -378,21 +377,7 @@
 
 #table .line-text {
   display:inline-block;
-  margin-right: 20px;
+  margin-right: 35px;
   position: relative;
-  padding-left:15px;
+  padding-left:35px;
 }
-
-/*
-#table [data-role="example"]:before {
-  content: '';
-  display:none;
-}
-
-#table [data-role="example"] .line-text:before {
-  content: '✦';
-  font-size: 14px;
-  opacity: 0.6;
-  vertical-align: middle;
-}
-*/

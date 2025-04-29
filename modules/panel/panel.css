@@ -423,9 +423,9 @@ body:has(.focused) {
 
 .panelItem .itemActions {
   flex-flow: row nowrap;
-  gap: 5px 20px;
   display: none;
-  padding: 10px 1px 8px;
+  /* padding: 10px 1px 8px; */
+  padding: 10px 1px 0;
   align-items: center;
   justify-content: flex-start;
   backdrop-filter: blur(3px);
@@ -439,6 +439,17 @@ body:has(.focused) {
 .panelItem .lineCounter {
   cursor: pointer;
   min-width:0;
+}
+
+.panelItem .itemAction {
+  width: 35px;
+  height:40px;
+  margin-right:10px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
 }
 
 .panelItem > .lineCounter {
@@ -473,14 +484,17 @@ body:has(.focused) {
   font-weight: bold;
 }
 
-.panelItem .expandLine {
+/* .panelItem .expandLine {
   padding:0 7px;
-}
+} */
 
 .panelItem .reading {
   text-align: right;
   flex: 1 0 auto;
-  height: 25px;
+  width:auto;
+  margin-right:0;
+  flex: 1 1 auto;
+  justify-content: flex-end;
 }
 
 .panelItem:not(:has([data-current="true"][data-reading])) .reading {
