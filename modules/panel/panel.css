@@ -560,3 +560,8 @@ body:has(.menuExpanded) {
 .panelItem.infoShown .itemInfo {
   display:block;
 }
+
+#box4 {
+  background:url(../../assets/g.svg) 50% no-repeat;
+  background-size: 50px;
+}

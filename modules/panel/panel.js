@@ -16,15 +16,13 @@ export const PanelView = function () {
   }
 
   this.events = {
-    // 'click #resetPanel': 'resetPanel',
     'change #cardMode': 'setMode',
     'click .itemDroppableContainer': 'collapseAllItems',
+    'click .itemDroppableContainer': 'toggleViewMenu',
+    'click #toggleViewMenu' : 'toggleViewMenu',
     'click .viewMenu li': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
     'click #render' : 'render',
-    'touchstart #toggleViewMenu' : 'toggleViewMenu',
-    'mouseenter #toggleViewMenu' : 'toggleViewMenu',
-    'mouseleave #toggleViewMenu' : 'toggleViewMenu',
   }
 
   this.renderedEvents = {
@@ -128,7 +126,11 @@ export const PanelView = function () {
   }
 
   this.toggleViewMenu = function (e) {
-    e.target.closest('.viewMenu').classList.add("active");
+    if (e.target.id && e.target.id == 'toggleViewMenu') {
+      e.target.closest('.viewMenu').classList.toggle("active");
+    } else if (this.panelActions.classList.contains('active')) {
+      this.panelActions.classList.remove('active')
+    }
   }
 
   this.setGlobal = function () {
@@ -303,6 +305,7 @@ export const PanelView = function () {
       delete this.state.itemsInBoxes[item.dataset.originalIndex];
       this.state.itemsInBoxes = this.state.itemsInBoxes;
       item.remove();
+      this.updateSourceItemsCount();
       Application.views.StructureView.render();
     }
   }
