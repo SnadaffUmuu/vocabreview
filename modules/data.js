@@ -15,7 +15,6 @@ export const DataFactory = {
     'SR_yuyu',
     'goshogun0',
     'shirobanba',
-    'chernobyl',
     'kokugo-osarai',
     'osarai-nihonshi',
     'SR_Nutshell',
@@ -93,8 +92,8 @@ export const DataFactory = {
     ],
     'example_translation' : [
       'example_translation',
-      'example',
       'meaning',
+      'example',
       'expression',
       'alt_reading',
       'reading',

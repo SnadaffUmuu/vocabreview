@@ -17,8 +17,8 @@ export const PanelView = function () {
 
   this.events = {
     'change #cardMode': 'setMode',
-    'click .itemDroppableContainer': 'collapseAllItems',
-    'click .itemDroppableContainer': 'toggleViewMenu',
+    'click .itemDroppableContainer': 'collapseAllItems toggleViewMenu',
+    //'click .itemDroppableContainer': 'toggleViewMenu',
     'click #toggleViewMenu' : 'toggleViewMenu',
     'click .viewMenu li': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
