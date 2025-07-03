@@ -329,13 +329,17 @@
 
 #table [data-review-level] .line-text {
   padding-bottom:2px;
+  text-decoration: underline;
+  text-decoration-line: solid;
+  text-underline-offset: 5px;
 }
 
 #table [data-review-level="100"] .line-text,
 #table [data-review-level="200"] .line-text,
 #table [data-review-level="300"] .line-text {
   color:var(--revLevelTextColor);
-  border-bottom-color:var(--revLevelTextColor);
+  /* border-bottom-color:var(--revLevelTextColor); */
+  /* border-bottom-style: solid; */
   font-size:25px !important;
 }
 
@@ -343,28 +347,33 @@
 #table [data-review-level="2"] .line-text,
 #table [data-review-level="3"] .line-text {
   color:var(--revLevelMinorTextColor);
-  border-bottom-color:var(--revLevelMinorTextColor);
+  /* border-bottom-color:var(--revLevelMinorTextColor); */
   font-size:22px !important;
 }
 
 #table [data-review-level="1"] .line-text {
-  border-bottom-width:0px;
+  /* border-bottom-width:0px; */
+  text-decoration-thickness: 1px;
 }
 
 #table [data-review-level="100"] .line-text {
-  border-bottom-width:1px;
+  text-decoration-thickness: 1px;
+  /* border-bottom-width:1px; */
 }
 
 #table [data-review-level="2"] .line-text {
-  border-bottom-width:1px;
+  text-decoration-thickness: 2px;
+  /* border-bottom-width:1px; */
 }
 
 #table [data-review-level="200"] .line-text {
-  border-bottom-width:2px;
+  text-decoration-thickness: 2px;
+  /* border-bottom-width:2px; */
 }
 
 #table [data-review-level="3"] .line-text {
-  border-bottom-width:2px;
+  text-decoration-thickness: 3px;
+  /* border-bottom-width:2px; */
 }
 
 #table [data-review-level="300"] .line-text {

@@ -545,11 +545,10 @@ export const TableView = function () {
       }
       return
     }
-    this.data.entries = structuredClone(
-      Application.getCurrentSourceData().currentEntries);
+    this.data.entries = structuredClone(Application.getCurrentSourceData().currentEntries);
 
-    if (this.state.order?.length) {
-      this.data.orderedEntries = this.state.order.map(i => this.data.entries[i]).filter(o => typeof o !== 'undefined');
+    if (this.state.order?.length) { 
+      this.data.orderedEntries = this.state.order.map(i => this.data.entries.find(entry => entry.originalIndex === i)).filter(o => typeof o !== 'undefined');
     }
     this.renderTable();
     this.setRenderedEvents(this.tableEl);

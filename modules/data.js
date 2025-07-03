@@ -9,7 +9,6 @@ export const DataFactory = {
   globalPool : 'global',
 
   vocabFilesIndex: [
-    'test',
     'SR_Kona2',
     'SR_autumn',
     'SR_yuyu',
@@ -28,6 +27,8 @@ export const DataFactory = {
     'SR_Obon_Society',
     'chat',
     'boxes_packs',
+    'chernobyl',
+    'osarai-sex',
     'global',
   ],  
 
