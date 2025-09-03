@@ -12,6 +12,7 @@ export const DataFactory = {
     'SR_Kona2',
     'SR_autumn',
     'SR_yuyu',
+    'SR_withered-tree',
     'goshogun0',
     'shirobanba',
     'kokugo-osarai',
