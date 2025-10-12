@@ -140,10 +140,14 @@ export const DataFactory = {
 
   linesFilter: (l) => {
     return (
+      // !l.startsWith('?')
+      // && !l.startsWith('？')
+      // && !l.startsWith('::')
+      // && l.trim().replaceAll('\n', '').length
       !l.startsWith('?')
       && !l.startsWith('？')
       && !l.startsWith('::')
-      && l.trim().replaceAll('\n', '').length
+      && l.trim().split('\n').join('').length
     )
   },
 
@@ -212,7 +216,8 @@ export const DataFactory = {
         }
         let replaced = entry;
         DataFactory.toReplace.forEach(s => {
-          replaced = replaced.replaceAll(s, '')
+          //replaced = replaced.replaceAll(s, '')
+          replaced = replaced.split(s).join('')
         });
         const originalLines = replaced.split('\n');
         const filteredLines = [];
@@ -248,14 +253,21 @@ export const DataFactory = {
                   resEntry.reviewLevel = asteriskCount;
                 }
                 lineText = DataFactory.reviewLevelMarks.reduce(
-                  (lineText, m) => lineText.replaceAll(m, '').trim(),
+                  (lineText, m) => lineText.split(m).join('').trim(),
                   lineText
                 );
+                // lineText = DataFactory.reviewLevelMarks.reduce(
+                //   (lineText, m) => lineText.replaceAll(m, '').trim(),
+                //   lineText
+                // );
               }
               filteredLines.push(lineText)
-            } else if (lineText.replaceAll('\n', '').trim().length) {
+            } else if (lineText.split('\n').join('').trim().length) {
               excludedLines.push(lineText)
             }
+            /*else if (lineText.replaceAll('\n', '').trim().length) {
+              excludedLines.push(lineText)
+            } */
           }
         })
 

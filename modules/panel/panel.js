@@ -156,8 +156,10 @@ export const PanelView = function () {
       [...items].forEach(el => {
         const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
         if (entry) {
-          entry.source ??= Application.state.currentSource;
-          entry.hash ??= stringToHash(JSON.stringify(entry));
+          // entry.source ??= Application.state.currentSource;
+          // entry.hash ??= stringToHash(JSON.stringify(entry));
+          if (entry.source == null) entry.source = Application.state.currentSource;
+          if (entry.hash == null) entry.hash = stringToHash(JSON.stringify(entry));
           if (globalHashes.includes(entry.hash)) {
             el.dataset.global = true;
           } else {
@@ -661,8 +663,11 @@ export const PanelView = function () {
       })
     }
     //this.state.lineIndexes ??= {};
-    this.state.itemsInBoxes ??= {};
-    this.state.removedItems ??= [];
+    // this.state.itemsInBoxes ??= {};
+    // this.state.removedItems ??= [];
+    if (this.state.itemsInBoxes == null) this.state.itemsInBoxes = {};
+    if (this.state.removedItems == null) this.state.removedItems = [];
+
     this.renderPanel();
     this.setPanelLayout();
 

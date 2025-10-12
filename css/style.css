@@ -169,6 +169,7 @@ body.night {
 
 html {
   /* min-height: 100%; */
+  min-height:100vh;/*DANGER*/
   min-height: 100dvh;
 }
 

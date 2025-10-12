@@ -117,8 +117,11 @@ export const BoardView = function () {
       [...items].forEach(el => {
         const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
         if (entry) {
-          entry.source ??= Application.state.currentSource;
-          entry.hash ??= stringToHash(JSON.stringify(entry));
+          // entry.source ??= Application.state.currentSource;
+          // entry.hash ??= stringToHash(JSON.stringify(entry));
+
+          if (entry.source == null) entry.source = Application.state.currentSource;
+          if (entry.hash == null) entry.hash = stringToHash(JSON.stringify(entry));          
           if (globalHashes.includes(entry.hash)) {
             el.dataset.global = true;
           } else {
@@ -662,10 +665,14 @@ export const BoardView = function () {
         op.selected = op.value == this.state.mode;
       })
     }
-    this.state.lineIndexes ??= {};
-    this.state.itemsInCols ??= {};
-    this.state.removedItems ??= [];
-    this.state.lapses ??= {};
+    // this.state.lineIndexes ??= {};
+    // this.state.itemsInCols ??= {};
+    // this.state.removedItems ??= [];
+    // this.state.lapses ??= {};
+    if (this.state.lineIndexes == null) this.state.lineIndexes = {};
+    if (this.state.itemsInCols == null) this.state.itemsInCols = {};
+    if (this.state.removedItems == null) this.state.removedItems = [];
+    if (this.state.lapses == null) this.state.lapses = {};    
     this.renderBoard();
     this.setBoardLayout();
 

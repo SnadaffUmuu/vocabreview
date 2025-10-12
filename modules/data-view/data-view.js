@@ -84,7 +84,9 @@ export const DataView = function () {
     this.testsSelect.addEventListener('change', (e) => {
       if (e.target.value !== '') {
         const entries = this.getData().map(entry => {
-          entry.source ??= Application.state.currentSource;
+          entry.source = (entry.source !== null && entry.source !== undefined)
+            ? entry.source
+            : Application.state.currentSource;
           entry.breadcrumbs = this.getBreadcrumbs(entry, Application.state.currentSource);
           return entry
         });        
