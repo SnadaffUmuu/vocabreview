@@ -1,4 +1,3 @@
-import { DataFactory } from "../data.js";
 import { Element } from "../element.js";
 
 export const SlideSide = function () {

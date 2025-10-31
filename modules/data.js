@@ -61,6 +61,7 @@ export const DataFactory = {
     alt_reading: 'alt_reading',
     example: 'example',
     example_translation: 'example_translation',
+    info: 'info',
     unknown: 'unknown',
   },
 
@@ -140,10 +141,6 @@ export const DataFactory = {
 
   linesFilter: (l) => {
     return (
-      // !l.startsWith('?')
-      // && !l.startsWith('？')
-      // && !l.startsWith('::')
-      // && l.trim().replaceAll('\n', '').length
       !l.startsWith('?')
       && !l.startsWith('？')
       && !l.startsWith('::')
@@ -216,7 +213,6 @@ export const DataFactory = {
         }
         let replaced = entry;
         DataFactory.toReplace.forEach(s => {
-          //replaced = replaced.replaceAll(s, '')
           replaced = replaced.split(s).join('')
         });
         const originalLines = replaced.split('\n');
@@ -256,35 +252,24 @@ export const DataFactory = {
                   (lineText, m) => lineText.split(m).join('').trim(),
                   lineText
                 );
-                // lineText = DataFactory.reviewLevelMarks.reduce(
-                //   (lineText, m) => lineText.replaceAll(m, '').trim(),
-                //   lineText
-                // );
               }
               filteredLines.push(lineText)
             } else if (lineText.split('\n').join('').trim().length) {
               excludedLines.push(lineText)
             }
-            /*else if (lineText.replaceAll('\n', '').trim().length) {
-              excludedLines.push(lineText)
-            } */
           }
         })
 
         if (filteredLines.length) {
-          //const entryType = DataFactory.guessEntryType(filteredLines, resEntry);
-          //resEntry.entryType = entryType;
           const resLines = filteredLines.map((l, i) => {
             const isCompact = DataFactory.isNotJapaneseOnly(l);
             const isSpeakable = DataFactory.isJapaneseOnly(l) 
               || DataFactory.isJapaneseWithEigaChars(l);
-            //const lineTypes = DataFactory.getLineTypes(l, filteredLines);
             return {
               text: l,
               originalIndex: i,
               speakable: isSpeakable,
               isCompact: isCompact,
-              // linetypes: lineTypes,
             }
           });
           resEntry.lines = resLines;
@@ -353,9 +338,6 @@ export const DataFactory = {
       DataFactory.isNonJapanese(ch)
         && !regex.nonChars.test(ch)
     );
-    //if (jaChars.length && nonJaChars.length && nonJaChars.length <= 5 && nonJaChars.length > 3) debugger;
-    //return jaChars.length > nonJaChars.length
-    //return nonJaChars.length/l.length*100
     return jaChars.length && nonJaChars.length <= 3
   },
 
@@ -407,12 +389,6 @@ export const DataFactory = {
     } else {
       //а так вообще первая строка - это всегда выражение
       lines[0].role = lRoles.expression;
-      /*
-      if (firstNotJpOnly
-        && !inBracketsRegexp.test(firstNotJpOnly.text)) {
-        firstNotJpOnly.role = lRoles.meaning;
-      }
-      */
     }
 
     let lReading = null;
@@ -429,7 +405,6 @@ export const DataFactory = {
         && !lines[0].text.startsWith('〜')
       ) {
         lReading = firstHiraganaOnlyLine;
-        //lReadingTarget = lines.find(l => l.text == shortestString(linesWithKanji));
       } else if (
         //первая начинается с 〜 и она с кандзи, 
         lines[0].text.startsWith('〜')
@@ -437,25 +412,12 @@ export const DataFactory = {
         && firstHiraganaOnlyLine.originalIndex == 1
       ) {
         lReading = firstHiraganaOnlyLine;
-        //lReadingTarget = lines[0];
       }
     };
-    
-    //if (lReading && lReadingTarget) {
     if (lReading) {
       lReading.role = lRoles.reading
-      //lReadingTarget.reading = lReading.text;
     }
 
-    /*
-    if (meanings.length) {
-      const lineStartingWithEquals = lines.find(l => Array.from('=＝').some(ch => l.text.startsWith(ch)));
-      if (lineStartingWithEquals) {
-        lineStartingWithEquals.role = lRoles.meaning;
-        lineStartingWithEquals.theSameAs = true;
-      }
-    }
-    */
     let remainingLines = lines.filter(l => !l.role);
     let infoRoleLine = null;
 
@@ -465,7 +427,6 @@ export const DataFactory = {
         && prevLine.role && prevLine.role !== lRoles.example
         && DataFactory.isNotJapaneseOnly(l.text)) {
         //предыдущая строка имеет роль, а данная - следующая и не японская, т.е. разъяснение
-        // l.role = lRoles.info;
         if (entry.info) {
           entry.info = entry.info + '\n' + l.text;
         } else {
@@ -494,8 +455,6 @@ export const DataFactory = {
         l.role = lRoles.alt_reading
       }
     });
-
-    //if (lines.find(l => !l.role)) debugger;
       
     remainingLines = lines.filter(l => !l.role).forEach(l =>
       l.role = lRoles.unknown);

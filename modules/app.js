@@ -10,9 +10,10 @@ import {TableView} from "./table/table.js"
 import {PreloaderView} from "./preloader/preloader.js"
 import {SlideSide} from "./slide/slide-side.js"
 import {Slide} from "./slide/slide.js"
+import {Dialog} from "./dialog/dialog.js"
 import {BoardView} from "./board/board.js"
 import {PanelView} from "./panel/panel.js"
-import {MatchView} from "./match/match.js"
+//import {MatchView} from "./match/match.js"
 import {setDeep, stringToHash} from "./utils.js"
 
 export const Application = {
@@ -30,17 +31,20 @@ export const Application = {
   },
   initialData: {},
   data: {},
+  saveTimeout: null,
+  saveQueued: {},
 
   initViews: async function () {
     this.views = {
       PreloaderView: await View.create(PreloaderView),
+      Dialog: await View.create(Dialog),
       MenuView: await View.create(MenuView),
       SliderView: await View.create(Slider),
       TableView: await View.create(TableView),
       DataView: await View.create(DataView),
       BoardView: await View.create(BoardView),
       PanelView: await View.create(PanelView),
-      MatchView: await View.create(MatchView),
+//      MatchView: await View.create(MatchView),
     };
   },
 

@@ -328,10 +328,10 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   -webkit-line-clamp: 2;
 }
 
-/* .boardItem.menuExpanded .itemLine {
-  overflow: unset;
-  -webkit-line-clamp: unset;
-} */
+.boardItem.menuExpanded .itemLine {
+  margin-right:0;
+  padding-right:17px;
+}
 
 .boardItem .itemLine[data-current] {
   display: -webkit-box;

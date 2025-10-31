@@ -373,6 +373,11 @@ body:has(.focused) {
   padding:0px 1px;
 }
 
+.panelItem.menuExpanded .itemLine {
+  margin-right:0;
+  padding-right:17px;
+}
+
 .panelItem .itemLine[data-current] {
   display: block;
 }

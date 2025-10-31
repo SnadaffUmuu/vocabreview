@@ -23,7 +23,8 @@
 
 #menu {
   z-index: 300;
-  max-width: 75vw;
+  /* max-width: 75vw; */
+  width: 75vw;
   transition: transform 0.5s;
   position: fixed;
   top:0;
@@ -48,10 +49,6 @@
 }
 
 #dataActions {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-end;
-  gap: 15px 8px;
   margin-bottom:15px;
 }
 
@@ -61,14 +58,36 @@
 
 #dataActions #vocabSources {
   height: 30px;
+  width: 100%;
+  margin-bottom:15px;
 }
 
-#dataActions .switchView {
+#switchViewRow {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+#showCurrentSessions {
+  margin-right: 15px;
+}
+
+#switchViewWrap {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+}
+
+#switchViewWrap .switchView {
   flex:0 1 auto;
   padding:3px 9px;
 }
 
-#dataActions .switchView.active {
+#switchViewWrap .switchView:not(:first-child) {
+  margin-left:5px;
+}
+
+#switchViewWrap .switchView.active {
   background-color: red;
 }
 

@@ -2,6 +2,7 @@ import { View } from "../view.js";
 import { Application } from "../app.js"
 import { DataFactory } from "../data.js"
 import { setSelectOption } from "../utils.js"
+import { SessionsView } from "../sessions/sessions.js"
 
 export const MenuView = function () {
 
@@ -9,12 +10,19 @@ export const MenuView = function () {
     'click #menuTrigger': 'toggleMenu',
     'change #vocabSources': 'changeSource',
     'change #globalActions': 'executeFunction',
-    'click .switchView': 'switchView'
+    'click .switchView': 'switchView',
+    'click #showCurrentSessions' : 'showCurrentSessions'
   }
 
   this.executeFunction = function (e) {
     if (e.target.value == '') return;
     this[e.target.value]();
+  }
+
+  this.showCurrentSessions = async function (e) {
+    Application.views.Dialog.show();
+    Application.views.SessionsView = await View.create(SessionsView)
+    Application.views.SessionsView.show();
   }
 
   this.toggleMenu = function (e) {

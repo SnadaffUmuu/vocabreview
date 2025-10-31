@@ -150,7 +150,7 @@
 
 #table th {
   position: sticky;
-  top:40px;
+  top:0;
   background: var(--bg);
   z-index:500;
 }

@@ -18,6 +18,7 @@ label[for="toggleAll"] {
   padding:0 0 10px 20px;
   list-style-type: none;
   line-height: 180%;
+  box-sizing: border-box;
 }
 
 #structure ul ul {

@@ -25,9 +25,9 @@ export const Router = {
       case 'panel':
         this.currentView = Application.views.PanelView;
         break;
-      case 'match':
-        this.currentView = Application.views.MatchView;
-        break;
+      // case 'match':
+      //   this.currentView = Application.views.MatchView;
+      //   break;
     }
   },
 

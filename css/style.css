@@ -8,7 +8,9 @@
 @import url("../modules/preloader/preloader.css");
 @import url("../modules/board/board.css");
 @import url("../modules/panel/panel.css");
-@import url("../modules/match/match.css");
+@import url("../modules/dialog/dialog.css");
+@import url("../modules/sessions/sessions.css");
+/* @import url("../modules/match/match.css"); */
 /* @import url("./theme.css"); */
 
 :root {
@@ -26,6 +28,8 @@
   --button-secondary: #c4bfca;
 
   --menuOpenedBg: rgba(85, 74, 123, 0.24);
+  --overlay:  rgba(42, 36, 61, 0.24);
+  --dialogShadow: rgba(45, 35, 65, 0.741);
   --menuBg: #8a2134;
   --menuTextColor: white;
 
@@ -105,6 +109,8 @@ body.night {
   --table-text-color-reading: #f7d4ff6e;
   --icon-speakable-bg: #5e1730;
   --appheader-title-text-color: var(--text-color);
+
+  --dialogShadow: rgb(0 0 0 / 69%);
 
   --button-primary:#320008;
   --button-secondary:#7b848e;
@@ -196,6 +202,12 @@ body {
   box-sizing: border-box;
   align-items:stretch;
   position: relative;
+  position: fixed;
+  top:0;
+  right:0;
+  left:0;
+  bottom:0;
+  overflow: auto
 }
 
 select {
