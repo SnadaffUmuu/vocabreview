@@ -164,19 +164,6 @@ export const UserActionHandlers = {
   preventDefault : (e) => {
     e.preventDefault();
   },
-/*
-  handleSingleClick : () => {
-    console.log('Single click or tap');
-  },
-  
-  handleDoubleClick : () => {
-    console.log('Double click');
-  },
-  
-  handleLongTouch : () => {
-    console.log('Long touch');
-  },
-*/
 } 
 
 export function isOverflow(el, maxWidth, maxHeight) {
@@ -200,4 +187,8 @@ export function isOverflow(el, maxWidth, maxHeight) {
 export function countCharOccurrencesInString (str, ch) {
   return [...str].reduce((count, currentChar) =>
     currentChar === ch ? count + 1 : count, 0);
+}
+
+export function objNotEmpty (obj) {
+  return obj && Object.keys(obj).length
 }

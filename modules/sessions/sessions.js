@@ -1,5 +1,6 @@
 import {Application} from "../app.js";
 import {View} from "../view.js";
+import {objNotEmpty} from "../utils.js"
 
 export const SessionsView = function () {
 
@@ -9,16 +10,16 @@ export const SessionsView = function () {
       const views = Application.state.views[k];
       const B = views.BoardView;
       const P = views.PanelView;
-      const S = views.SliderView;
+      const S = views.Slider;
       const T = views.TableView;
       let letters = [];
-      if (B && B.itemsInCols && Object.keys(B.itemsInCols).length) {
+      if (B && (objNotEmpty(B.removedItems) || objNotEmpty(B.lapses) || objNotEmpty(B.itemsInCols))) {
         letters.push('B')
       }
-      if (P && P.itemsInBoxes && Object.keys(P.itemsInBoxes).length) {
+      if (P && (objNotEmpty(P.removedItems) || objNotEmpty(P.itemsInBoxes))) {
         letters.push('P')
       }
-      if (S && S.currentIndex && S.currentIndex) {
+      if (S && S.currentIndex) {
         letters.push('S')
       }
       if (T && T.order && T.order.length) {

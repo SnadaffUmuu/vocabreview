@@ -102,12 +102,12 @@ export const BoardView = function () {
 
     Application.setGlobal(structuredClone(entriesToAdd));
 
-    candidates.forEach(el => {
-      delete this.state.itemsInCols[el.dataset.originalIndex];
-    });
-    Application.views.StructureView.render();
-    this.state.selfUpdate = !this.state.selfUpdate;
-    this.render();
+    // candidates.forEach(el => {
+    //   delete this.state.itemsInCols[el.dataset.originalIndex];
+    // });
+    // Application.views.StructureView.render();
+    // this.state.selfUpdate = !this.state.selfUpdate;
+    // this.render();
   }
 
   this.toggleMarkGlobal = function (e) {

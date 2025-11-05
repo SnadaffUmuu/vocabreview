@@ -1,5 +1,5 @@
 #menuContainer {
-  position: absolute;
+  position: fixed;
   left:0;
   top:0;
   z-index: 1000;
@@ -23,18 +23,18 @@
 
 #menu {
   z-index: 300;
-  /* max-width: 75vw; */
   width: 75vw;
   transition: transform 0.5s;
   position: fixed;
   top:0;
   bottom:0;
-  overflow:auto;
   transform: translateX(-100%);
-  padding:50px 10px 5px;
+  padding:10px 10px 5px;
   background: var(--menuBg);
   font-size:13px;
   color:var(--menuTextColor);
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 #menu.isOpened {
@@ -42,14 +42,13 @@
 }
 
 #globalActions {
-  position: absolute;
-  right: 10px;
-  left:75px;
-  top: 8px;
+  flex: 0 0 auto;
+  margin:0 0 13px 65px;
 }
 
 #dataActions {
   margin-bottom:15px;
+  flex: 0 0 auto;
 }
 
 #dataActions select {
@@ -84,7 +83,7 @@
 }
 
 #switchViewWrap .switchView:not(:first-child) {
-  margin-left:5px;
+  margin-left:7px;
 }
 
 #switchViewWrap .switchView.active {

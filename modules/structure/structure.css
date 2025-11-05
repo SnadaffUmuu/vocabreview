@@ -1,7 +1,25 @@
+#structure {
+  overflow: auto;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+#structureTree {
+  display: flex;
+  flex-flow: column nowrap;
+  overflow: auto;
+}
+
 #structureActions {
   display: flex;
   flex-flow: row nowrap;
   align-items: stretch;
+  flex: 0 0 auto;
+}
+
+#structureOuterList {
+  flex: 1 1 auto;
+  overflow: auto;
 }
 
 #filterCollection {
