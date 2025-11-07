@@ -157,6 +157,7 @@ export const Slider = function () {
   this.handleStateChange = function (newState, prop, value) {
     if (prop == 'mode') {
       this.state.sideIndexes = {};
+      this.updateModeElement(this.cardModeEl)
     } 
   };
 
@@ -173,6 +174,8 @@ export const Slider = function () {
       this.state.order = [];
       this.state.sideIndexes = {};
       this.state.currentIndex = 0;
+      this.state.mode = 'original';
+      this.isRandomEl.checked = false;
     }
     if (this.slider) {
       this.slider.destroy();

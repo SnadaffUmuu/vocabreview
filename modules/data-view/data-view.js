@@ -32,7 +32,8 @@ export const DataView = function () {
   this.doSearch = function (e) {
     if (e.keyCode === 13) {
       this.outputEl.innerHTML = '';
-      if (e.target.value == '') {
+      const value = e.target.value.trim();
+      if (value == '') {
         this.trigerDataTest()
       } else {
         e.preventDefault();
@@ -41,7 +42,7 @@ export const DataView = function () {
           if (source == DataFactory.globalPool) continue;
           
           const matchingEntries = structuredClone(Application.data[source]?.allEntries?.filter(en =>
-            en.lines.some(l => l.text.indexOf(e.target.value) != -1)));
+            en.lines.some(l => l.text.indexOf(value) != -1)));
           matchingEntries.forEach(entry => {
             entry.source = source;
             entry.breadcrumbs = this.getBreadcrumbs(entry, source);
@@ -54,7 +55,7 @@ export const DataView = function () {
         res.forEach(entry => {
           this.outputEl.insertAdjacentHTML(
             'beforeend',
-            DataTests.entryFormatters.getEntryShortInfoString2(entry, e.target.value))
+            DataTests.entryFormatters.getEntryShortInfoString2(entry, value))
         });
         this.resultCounter.innerHTML = res.length
       }

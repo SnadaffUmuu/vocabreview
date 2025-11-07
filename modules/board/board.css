@@ -119,7 +119,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 }
 
 #boardLearnCol {
-  flex: 1 0 50vw;
+  flex: 1 0 40vw;
   justify-content: center;
   border-color: var(--boardLearnColBorder);
 }

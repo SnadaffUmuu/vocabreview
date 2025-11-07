@@ -6,7 +6,7 @@ import {
 
 export const DataFactory = {
 
-  globalPool : 'global',
+  globalPool: 'global',
 
   vocabFilesIndex: [
     'SR_Kona2',
@@ -31,7 +31,7 @@ export const DataFactory = {
     'chernobyl',
     'osarai-sex',
     'global',
-  ],  
+  ],
 
   ENTRY_TAG: {
     grammar: 'grammar',
@@ -66,7 +66,7 @@ export const DataFactory = {
   },
 
   lineOrders: {
-    'expression' : [
+    'expression': [
       'expression',
       'alt_reading',
       'example',
@@ -75,7 +75,7 @@ export const DataFactory = {
       'reading',
       'unknown',
     ],
-    'meaning' : [
+    'meaning': [
       'meaning',
       'expression',
       'alt_reading',
@@ -84,7 +84,7 @@ export const DataFactory = {
       'reading',
       'unknown',
     ],
-    'example' : [
+    'example': [
       'example',
       'expression',
       'alt_reading',
@@ -93,7 +93,7 @@ export const DataFactory = {
       'reading',
       'unknown',
     ],
-    'example_translation' : [
+    'example_translation': [
       'example_translation',
       'meaning',
       'example',
@@ -161,7 +161,7 @@ export const DataFactory = {
     text.split('\n\n').forEach(entryObj => {
       //building structure
       const entry = entryObj.trim();
-      if (entry.indexOf('~~') > -1) {
+      if(entry.indexOf('~~') > -1) {
         const structureEntry = {
           name: entry.match(new RegExp(regex.upperSectionTitle))[1],
           index: structure.length,
@@ -170,12 +170,12 @@ export const DataFactory = {
         structure.push(structureEntry)
         currentUpperSection = structureEntry.id;
       }
-      if (entry.startsWith('[')) {
+      if(entry.startsWith('[')) {
         const nameMatchGroups = entry.match(new RegExp(regex.pageLevelSection));
         const name = nameMatchGroups[1] + (nameMatchGroups.length > 1 && nameMatchGroups[2] != undefined ? nameMatchGroups[2] : '');
         let index = null;
         let parent = null;
-        if (currentUpperSection) {
+        if(currentUpperSection) {
           parent = structure.find(o => o.id == currentUpperSection);
           index = parent.children ? parent.children.length : 0
         } else {
@@ -185,14 +185,14 @@ export const DataFactory = {
           name: name,
           index: index
         }
-        if (parent) {
+        if(parent) {
           structureEntry.parentId = parent.id;
         }
         const hash = stringToHash(JSON.stringify(structureEntry));
         currentSection = hash;
         structureEntry.id = hash;
-        if (parent) {
-          if (parent.children) {
+        if(parent) {
+          if(parent.children) {
             parent.children.push(structureEntry)
           } else {
             parent.children = [structureEntry];
@@ -202,13 +202,13 @@ export const DataFactory = {
         }
       }
       //handling true entries
-      if (DataFactory.entryFilter(entry)) {
+      if(DataFactory.entryFilter(entry)) {
         const resEntry = {
-          originalIndex : entriesCounter++
+          originalIndex: entriesCounter++
         };
-        if (currentSection) {
+        if(currentSection) {
           resEntry.section = currentSection
-        } else if (currentUpperSection) {
+        } else if(currentUpperSection) {
           resEntry.section = currentUpperSection
         }
         let replaced = entry;
@@ -220,31 +220,31 @@ export const DataFactory = {
         //meta lines: tags and review marks
         originalLines.forEach(l => {
           let lineText = l.trim();
-          if (lineText.startsWith('::') && !lineText.startsWith('::diff')) {
+          if(lineText.startsWith('::') && !lineText.startsWith('::diff')) {
             let tag = null;
             const parts = lineText.split('::');
-            if ((parts.length) > 2) {
+            if((parts.length) > 2) {
               tag = parts[1];
               resEntry.info = parts[2];
             } else {
-              if (parts[1].startsWith('onomat')) {
+              if(parts[1].startsWith('onomat')) {
                 tag = 'onomatopoeia';
               } else {
                 tag = parts[1];
               }
             }
-            if (tag) {
+            if(tag) {
               resEntry.tag = tag.trim();
             }
           } else {
-            if (DataFactory.linesFilter(lineText)) {
-              if (DataFactory.reviewLevelMarks.some(m => lineText.endsWith(m))) {
+            if(DataFactory.linesFilter(lineText)) {
+              if(DataFactory.reviewLevelMarks.some(m => lineText.endsWith(m))) {
                 const triangle = DataFactory.reviewLevelMarks[0];
                 const asterisk = DataFactory.reviewLevelMarks[1];
-                if (lineText.endsWith(triangle)) {
+                if(lineText.endsWith(triangle)) {
                   const triangleCount = countCharOccurrencesInString(lineText, triangle);
                   resEntry.reviewLevel = triangleCount + '00';
-                } else if (lineText.endsWith(asterisk)) {
+                } else if(lineText.endsWith(asterisk)) {
                   const asteriskCount = countCharOccurrencesInString(lineText, asterisk);
                   resEntry.reviewLevel = asteriskCount;
                 }
@@ -254,16 +254,16 @@ export const DataFactory = {
                 );
               }
               filteredLines.push(lineText)
-            } else if (lineText.split('\n').join('').trim().length) {
+            } else if(lineText.split('\n').join('').trim().length) {
               excludedLines.push(lineText)
             }
           }
         })
 
-        if (filteredLines.length) {
+        if(filteredLines.length) {
           const resLines = filteredLines.map((l, i) => {
             const isCompact = DataFactory.isNotJapaneseOnly(l);
-            const isSpeakable = DataFactory.isJapaneseOnly(l) 
+            const isSpeakable = DataFactory.isJapaneseOnly(l)
               || DataFactory.isJapaneseWithEigaChars(l);
             return {
               text: l,
@@ -282,10 +282,10 @@ export const DataFactory = {
     })
     collection.allEntries = entries;
     console.log('tags', new Set(entries.filter(en => en.tag).map(en => en.tag)))
-    if (excludedEntries.length) {
+    if(excludedEntries.length) {
       collection.excludedEntries = excludedEntries;
     }
-    if (excludedLines.length) {
+    if(excludedLines.length) {
       collection.excludedLines = excludedLines;
     }
     collection.structure = structure;
@@ -313,10 +313,10 @@ export const DataFactory = {
   },
 
   isWithKanji: (l) => {
-    return (regex.japaneseOnly.test(l) 
-      || regex.mixed.test(l) 
-        && DataFactory.isJapaneseWithEigaChars(l))
-      && Array.from(l).some(ch => 
+    return (regex.japaneseOnly.test(l)
+      || regex.mixed.test(l)
+      && DataFactory.isJapaneseWithEigaChars(l))
+      && Array.from(l).some(ch =>
         regex.hasKanji.test(l));
   },
 
@@ -330,13 +330,13 @@ export const DataFactory = {
   },
 
   isJapaneseWithEigaChars: (l) => {
-    const jaChars = Array.from(l).filter(ch => 
+    const jaChars = Array.from(l).filter(ch =>
       DataFactory.isJapaneseOnly(ch)
-        && !regex.nonChars.test(ch)
+      && !regex.nonChars.test(ch)
     );
-    const nonJaChars = Array.from(l).filter(ch => 
+    const nonJaChars = Array.from(l).filter(ch =>
       DataFactory.isNonJapanese(ch)
-        && !regex.nonChars.test(ch)
+      && !regex.nonChars.test(ch)
     );
     return jaChars.length && nonJaChars.length <= 3
   },
@@ -348,14 +348,14 @@ export const DataFactory = {
 
     const meanings = []
 
-    const firstNotJpOnly = lines.find(l => 
+    const firstNotJpOnly = lines.find(l =>
       DataFactory.isNotJapaneseOnly(l.text));
-    
+
     //строка начинается на "=" это всегда meaning
     const lineThatStartsWithEqual = lines.find(l =>
       Array.from('=＝').some(ch => l.text.startsWith(ch)));
 
-    if (lineThatStartsWithEqual) {
+    if(lineThatStartsWithEqual) {
       lineThatStartsWithEqual.role = lRoles.meaning;
       lineThatStartsWithEqual.theSameAs = true;
       meanings.push(lineThatStartsWithEqual);
@@ -367,21 +367,15 @@ export const DataFactory = {
         l && DataFactory.isNotJapaneseOnly(l.text)
         && !inBracketsRegexp.test(l.text));
 
-      if (altMeaning) {
+      if(altMeaning) {
         altMeaning.role = lRoles.meaning;
         meanings.push(altMeaning);
       }
-    } 
-    //первая неяпонская - это meaning, если не было кейса с началом на =
-    if (!meanings.length && firstNotJpOnly
-      && !inBracketsRegexp.test(firstNotJpOnly.text)) {
-      firstNotJpOnly.role = lRoles.meaning;
-      meanings.push(firstNotJpOnly);
-    } 
+    }
 
     //если первая неяпонская, то это инверсия и это всегда meaning
     //тогда следующая за ней - это всегда выражение
-    if (DataFactory.isNotJapaneseOnly(lines[0].text)) {
+    if(DataFactory.isNotJapaneseOnly(lines[0].text)) {
       lines[0].role = lRoles.meaning;
       lines[1].role = lRoles.expression;
       entry.reversed = true;
@@ -389,23 +383,29 @@ export const DataFactory = {
     } else {
       //а так вообще первая строка - это всегда выражение
       lines[0].role = lRoles.expression;
+      //первая неяпонская - это meaning, если не было кейса с началом на =
+      if(!meanings.length && firstNotJpOnly
+        && !inBracketsRegexp.test(firstNotJpOnly.text)) {
+        firstNotJpOnly.role = lRoles.meaning;
+        meanings.push(firstNotJpOnly);
+      }
     }
 
     let lReading = null;
-    const firstHiraganaOnlyLine = lines.find(l => 
+    const firstHiraganaOnlyLine = lines.find(l =>
       DataFactory.isHiraganaOnly(l.text));
     const linesWithKanji = lines.filter(l => DataFactory.isWithKanji(l.text));
 
-    if (firstHiraganaOnlyLine
+    if(firstHiraganaOnlyLine
       && linesWithKanji.length > 0
     ) {
-      if (
+      if(
         //линия "только хирагана" не первая, а первая не начинается с 〜
         firstHiraganaOnlyLine.originalIndex > 0
         && !lines[0].text.startsWith('〜')
       ) {
         lReading = firstHiraganaOnlyLine;
-      } else if (
+      } else if(
         //первая начинается с 〜 и она с кандзи, 
         lines[0].text.startsWith('〜')
         && DataFactory.isWithKanji(lines[0].text)
@@ -414,7 +414,7 @@ export const DataFactory = {
         lReading = firstHiraganaOnlyLine;
       }
     };
-    if (lReading) {
+    if(lReading) {
       lReading.role = lRoles.reading
     }
 
@@ -423,39 +423,39 @@ export const DataFactory = {
 
     remainingLines.forEach(l => {
       const prevLine = lines[l.originalIndex - 1];
-      if (!entry.reversed && prevLine 
-        && prevLine.role && prevLine.role !== lRoles.example
+      if(prevLine && prevLine.role && prevLine.role !== lRoles.example
         && DataFactory.isNotJapaneseOnly(l.text)) {
+        //TODO: test. Раньше тут также было условие !entry.reversed
         //предыдущая строка имеет роль, а данная - следующая и не японская, т.е. разъяснение
-        if (entry.info) {
+        if(entry.info) {
           entry.info = entry.info + '\n' + l.text;
         } else {
           entry.info = l.text;
           infoRoleLine = l;
         }
-      } else if ((DataFactory.isJapaneseOnly(l.text)
+      } else if((DataFactory.isJapaneseOnly(l.text)
         || DataFactory.isJapaneseWithEigaChars(l.text)
-        ) && !Array.from('(=＝').some(ch => l.text.startsWith(ch))) {
-          l.role = lRoles.example;
-      } else if (prevLine && prevLine.role && prevLine.role == lRoles.example
+      ) && !Array.from('(=＝').some(ch => l.text.startsWith(ch))) {
+        l.role = lRoles.example;
+      } else if(prevLine && prevLine.role && prevLine.role == lRoles.example
         && DataFactory.isNotJapaneseOnly(l.text)) {
-          l.role = lRoles.example_translation;
-          prevLine.translationLineIndex = l.originalIndex;
+        l.role = lRoles.example_translation;
+        prevLine.translationLineIndex = l.originalIndex;
       }
     });
 
-    if (infoRoleLine) {
+    if(infoRoleLine) {
       lines.splice(lines.indexOf(infoRoleLine), 1);
       remainingLines.splice(remainingLines.indexOf(infoRoleLine), 1);
     }
 
     remainingLines = lines.filter(l => !l.role).forEach(l => {
-      if (DataFactory.isJapaneseOnly(l.text) 
+      if(DataFactory.isJapaneseOnly(l.text)
         && inBracketsRegexp.test(l.text)) {
         l.role = lRoles.alt_reading
       }
     });
-      
+
     remainingLines = lines.filter(l => !l.role).forEach(l =>
       l.role = lRoles.unknown);
   },

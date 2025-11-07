@@ -1,5 +1,5 @@
-import { DataFactory } from "../data.js";
-import { View } from "../view.js";
+import {DataFactory} from "../data.js";
+import {View} from "../view.js";
 import {
   speak,
   UserActionHandlers,
@@ -9,7 +9,7 @@ import {
   setSelectOption,
   stringToHash,
 } from "../utils.js";
-import { Application } from "../app.js";
+import {Application} from "../app.js";
 
 export const BoardView = function () {
   this.actionsContainer = null;
@@ -90,7 +90,7 @@ export const BoardView = function () {
   }
 
   this.executeFunction = function (e) {
-    if (e.target.value == '') return;
+    if(e.target.value == '') return;
     this[e.target.value]();
   }
 
@@ -112,17 +112,17 @@ export const BoardView = function () {
 
   this.toggleMarkGlobal = function (e) {
     const items = this.element.querySelectorAll('.boardItem');
-    if (e.target.checked) {
+    if(e.target.checked) {
       const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
       [...items].forEach(el => {
         const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
-        if (entry) {
+        if(entry) {
           // entry.source ??= Application.state.currentSource;
           // entry.hash ??= stringToHash(JSON.stringify(entry));
 
-          if (entry.source == null) entry.source = Application.state.currentSource;
-          if (entry.hash == null) entry.hash = stringToHash(JSON.stringify(entry));          
-          if (globalHashes.includes(entry.hash)) {
+          if(entry.source == null) entry.source = Application.state.currentSource;
+          if(entry.hash == null) entry.hash = stringToHash(JSON.stringify(entry));
+          if(globalHashes.includes(entry.hash)) {
             el.dataset.global = true;
           } else {
             delete el.dataset.global
@@ -137,7 +137,7 @@ export const BoardView = function () {
   }
 
   this.collapseAllItems = function (e) {
-    if (!e.target.classList.contains('itemDroppableContainer')
+    if(!e.target.classList.contains('itemDroppableContainer')
       /*&& (!e.target.id || !e.target.id == 'studyMode')*/) return;
     [...this.element.querySelectorAll('.menuExpanded')].forEach(item => {
       /*
@@ -171,7 +171,7 @@ export const BoardView = function () {
 
   this.removeItem = function (e) {
     const item = this.getDragItem(e.target);
-    if (Application.state.currentSource == DataFactory.globalPool) {
+    if(Application.state.currentSource == DataFactory.globalPool) {
       Application.getCurrentSourceData().allEntries = Application.getCurrentSourceData().allEntries.filter(entry =>
         entry.hash !== parseInt(item.dataset.hash));
     } else {
@@ -189,8 +189,8 @@ export const BoardView = function () {
     //if (!this.isStudyMode()) return;
     const item = this.getDragItem(e.target);
     const container = item.closest('.itemDroppableContainer');
-    if (!item || !container) return;
-    if (!item.classList.contains('menuExpanded')) {
+    if(!item || !container) return;
+    if(!item.classList.contains('menuExpanded')) {
       const top = item.getBoundingClientRect().top;
       const width = item.offsetWidth;
       const height = item.offsetHeight;
@@ -216,9 +216,9 @@ export const BoardView = function () {
   this.speakLine = function (e) {
     e.stopPropagation();
     const expandedItem = e.target.closest('.boardItem');
-    if (!expandedItem) return;
+    if(!expandedItem) return;
     const line = expandedItem.querySelector('[data-current]');
-    if (!line || !line.dataset?.reading) return;
+    if(!line || !line.dataset?.reading) return;
     console.log('speaking');
     speak(line.dataset.reading);
   }
@@ -241,17 +241,17 @@ export const BoardView = function () {
     e.stopPropagation();
     e.preventDefault();
     const item = this.getDragItem(e.target);
-    if (!item) return;
+    if(!item) return;
     const allLines = item.querySelectorAll('.itemLine');
-    if (allLines.length == 1) {
+    if(allLines.length == 1) {
       console.log('non-rotatiable, only 1 line');
       return;
     }
     let current = null;
     let next = null;
     let c = 0;
-    for (let l of allLines) {
-      if (l.dataset.current) {
+    for(let l of allLines) {
+      if(l.dataset.current) {
         current = l;
         next = allLines[c + 1] ? allLines[c + 1] : allLines[0];
         break;
@@ -259,17 +259,17 @@ export const BoardView = function () {
       c++;
     }
     next.dataset.current = true;
-    if (current && current.dataset) {
+    if(current && current.dataset) {
       delete current.dataset.current;
     }
     this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
   };
 
   this.setCurrentLineIndex = function (itemIndex, lineIndex) {
-    if (this.state.lineIndexes[itemIndex] !== undefined) {
+    if(this.state.lineIndexes[itemIndex] !== undefined) {
       this.state.lineIndexes[itemIndex] = lineIndex;
     } else {
-      this.state.lineIndexes = Object.assign({ [itemIndex]: lineIndex }, this.state.lineIndexes)
+      this.state.lineIndexes = Object.assign({[itemIndex]: lineIndex}, this.state.lineIndexes)
     }
     this.state.selfUpdate = !this.state.selfUpdate;
   };
@@ -287,14 +287,14 @@ export const BoardView = function () {
   };
 
   this.setItemInCol = function (e, elementFromPoint) {
-    if (elementFromPoint) {
-      if (Application.views.MenuView.element.contains(elementFromPoint)) {
+    if(elementFromPoint) {
+      if(Application.views.MenuView.element.contains(elementFromPoint)) {
         this.removeItem(e);
       } else {
         const item = this.getDragItem(e.target);
-        if (!item) return;
+        if(!item) return;
         const container = item.closest('.itemDroppableContainer');
-        if (container?.dataset?.result) {
+        if(container?.dataset?.result) {
           this.state.itemsInCols[item.dataset.originalIndex] = container.dataset.result;
         } else {
           delete this.state.itemsInCols[item.dataset.originalIndex];
@@ -314,9 +314,9 @@ export const BoardView = function () {
     badItems.forEach(item => {
       const index = parseInt(item.dataset.originalIndex);
       const lapsedSideOfItem = parseInt(item.querySelector('[data-current]').dataset.originalIndex);
-      if (index in this.state.lapses) {
+      if(index in this.state.lapses) {
         const lapsedSidesInState = this.state.lapses[index];
-        if (!lapsedSidesInState.includes(lapsedSideOfItem)) {
+        if(!lapsedSidesInState.includes(lapsedSideOfItem)) {
           lapsedSidesInState.push(lapsedSideOfItem);
         }
       } else {
@@ -335,15 +335,15 @@ export const BoardView = function () {
       delete this.state.itemsInCols[item.dataset.originalIndex];
     });
     const lapsedItems = this.goodCol.querySelectorAll('.boardItem:has([lapsed])');
-    if (!lapsedItems.length) return;
+    if(!lapsedItems.length) return;
     [...lapsedItems].forEach(item => {
       const itemIndex = item.dataset.originalIndex;
       const lapsedSideOfItem = parseInt(item.querySelector('[data-current]').dataset.originalIndex);
-      if (itemIndex in this.state.lapses) {
+      if(itemIndex in this.state.lapses) {
         let lapsedSidesInState = this.state.lapses[itemIndex];
-        if (lapsedSidesInState.includes(lapsedSideOfItem)) {
+        if(lapsedSidesInState.includes(lapsedSideOfItem)) {
           lapsedSidesInState = lapsedSidesInState.filter(o => o != lapsedSideOfItem);
-          if (!lapsedSidesInState.length) {
+          if(!lapsedSidesInState.length) {
             delete this.state.lapses[itemIndex];
             this.state.removedItems.push(parseInt(item.dataset.originalIndex));
           } else {
@@ -361,7 +361,7 @@ export const BoardView = function () {
   this.setTouchStart = function (e) {
     //if (this.isStudyMode()) return;
     const item = this.getDragItem(e.target);
-    if (!item) return;
+    if(!item) return;
     this.touchTimeout = setTimeout(() => {
       this.draggable = true;
       item.classList.add("dragging");
@@ -370,14 +370,14 @@ export const BoardView = function () {
 
   this.setTouchMove = function (e) {
     //if (this.isStudyMode()) return;
-    if (this.draggable !== true) {
+    if(this.draggable !== true) {
       e.stopPropagation();
       clearTimeout(this.touchTimeout)
     } else {
       const draggedItem = this.getDragItem(e.target);
-      if (!draggedItem) return;
+      if(!draggedItem) return;
       this.draggedItem = draggedItem;
-      if (!this.placeholder) {
+      if(!this.placeholder) {
         this.placeholder = createPlaceholder(this.draggedItem.querySelector('[data-current]'));
       }
       const touch = e.touches[0];
@@ -387,7 +387,7 @@ export const BoardView = function () {
       this.draggedItem.style.top = `${touch.clientY}px`;
       const elFromPoint = document.elementFromPoint(touch.clientX, touch.clientY);
       this.potentialContainer = elFromPoint.closest('.itemDroppableContainer');
-      if (this.potentialContainer && this.placeholder) {
+      if(this.potentialContainer && this.placeholder) {
         /*
         const outer = this.potentialContainer.closest('#boardColsContainerOuter');
         if (outer) {
@@ -410,7 +410,7 @@ export const BoardView = function () {
           touch.clientY,
           touch.clientX
         );
-        if (afterElement) {
+        if(afterElement) {
           this.potentialContainer.insertBefore(this.placeholder, afterElement);
         } else {
           this.potentialContainer.appendChild(this.placeholder);
@@ -426,7 +426,7 @@ export const BoardView = function () {
     this.scrollInterval && clearInterval(this.scrollInterval);
     this.draggable = false;
     this.draggedItem && this.draggedItem.classList.remove("dragging");
-    if (this.draggedItem && this.placeholder && this.placeholder.parentNode) {
+    if(this.draggedItem && this.placeholder && this.placeholder.parentNode) {
       this.placeholder.parentNode.insertBefore(this.draggedItem, this.placeholder);
       this.setItemInCol(e, document.elementFromPoint(this.lastMove.clientX, this.lastMove.clientY));
 
@@ -459,7 +459,7 @@ export const BoardView = function () {
     e.preventDefault();
     const afterElement = getDragAfterElement(this.sourceCardsContainer, e.clientX, e.clientY);
     const draggable = document.querySelector('.dragging');
-    if (afterElement == null) {
+    if(afterElement == null) {
       e.currentTarget.appendChild(draggable);
     } else {
       this.sourceCardsContainer.insertBefore(draggable, afterElement);
@@ -470,38 +470,38 @@ export const BoardView = function () {
     const dataset = {
       'original-index': l.originalIndex
     };
-    if (currentLineIndex != null && l.originalIndex == currentLineIndex) {
+    if(currentLineIndex != null && l.originalIndex == currentLineIndex) {
       dataset.current = true;
     }
-    if (l.speakable) {
+    if(l.speakable) {
       dataset.reading = l.text;
     }
-    if (entry.reviewLevel && l.originalIndex == 0) {
+    if(entry.reviewLevel && l.originalIndex == 0) {
       dataset['review-level'] = entry.reviewLevel
     }
 
     const attrs = {};
 
-    if (l.speakable) {
+    if(l.speakable) {
       attrs.speakable = 'true';
     }
-    if (l.role) {
+    if(l.role) {
       attrs.role = l.role;
     }
-    if (l.isCompact) {
+    if(l.isCompact) {
       attrs.compact = true;
     }
-    if (lapsedLines.includes(l.originalIndex)) {
+    if(lapsedLines.includes(l.originalIndex)) {
       attrs.lapsed = true;
     }
 
     let attrsParsed = '';
-    for (let attr in attrs) {
+    for(let attr in attrs) {
       attrsParsed += ` ${attr}="${attrs[attr]}"`;
     }
 
     let datasetParsed = '';
-    for (let dataAttr in dataset) {
+    for(let dataAttr in dataset) {
       datasetParsed += ` data-${dataAttr}="${dataset[dataAttr]}"`;
     }
 
@@ -516,23 +516,23 @@ export const BoardView = function () {
     let lines = entry.lines;
     const lRoles = DataFactory.LINE_ROLE;
     const reading = lines.find(line => line.role == lRoles.reading);
-    if (reading) {
+    if(reading) {
       lines = entry.lines.filter(l => l.role != DataFactory.LINE_ROLE.reading);
     }
     let currentIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
     let reorderedLines = null;
-    if (currentIndex == null) {
+    if(currentIndex == null) {
       let theOrder = null;
       const transArr = [];
-      switch (mode) {
+      switch(mode) {
         case 'expression':
         case 'example':
           theOrder = DataFactory.lineOrders[mode];
           reorderedLines = theOrder.flatMap(role => {
             const subArr = lines.filter(line => line.role == role);
-            if (!subArr.length) return [null];
+            if(!subArr.length) return [null];
 
-            if (['example', 'example_translation'].includes(role)) {
+            if(['example', 'example_translation'].includes(role)) {
               return shuffleArray(subArr)
             } else {
               return subArr
@@ -544,19 +544,19 @@ export const BoardView = function () {
           theOrder = DataFactory.lineOrders[mode];
           reorderedLines = theOrder.flatMap(role => {
             const subArr = lines.filter(line => line.role == role);
-            if (!subArr.length) return [null];
+            if(!subArr.length) return [null];
 
-            if ('example_translation' == role) {
+            if('example_translation' == role) {
               shuffleArray(subArr).forEach(line => {
                 transArr.push(line);
                 const orig = lines.find(ll => ll.translationLineIndex
                   == line.originalIndex);
-                if (orig) {
+                if(orig) {
                   transArr.push(orig);
                 }
               });
               return transArr;
-            } else if ('example' == role) {
+            } else if('example' == role) {
               const untranslatedExamples = subArr.filter(line => !transArr.includes(line));
               return shuffleArray(untranslatedExamples);
             } else {
@@ -571,7 +571,7 @@ export const BoardView = function () {
           reorderedLines = lines;
       }
     }
-    if (currentIndex == null) {
+    if(currentIndex == null) {
       currentIndex = reorderedLines[0].originalIndex;
     }
     const finalLines = reorderedLines || lines;
@@ -585,7 +585,7 @@ export const BoardView = function () {
     </div>
   `;
     let lapsedLines = [];
-    if (stateLapses && (entry.originalIndex in stateLapses)) {
+    if(stateLapses && (entry.originalIndex in stateLapses)) {
       lapsedLines = stateLapses[entry.originalIndex];
     }
     return `
@@ -620,10 +620,23 @@ export const BoardView = function () {
   };
 
   this.handleStateChange = function (newState, prop, value) {
-    if (prop == 'mode') {
+    if(prop == 'mode') {
       this.state.lineIndexes = [];
+      this.updateModeElement(this.cardModeEl)
     }
   };
+
+  // this.updateModeElement = function () {
+  //   if(this.state.mode) {
+  //     Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
+  //       op.selected = op.value == this.state.mode;
+  //     })
+  //   } else {
+  //     Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
+  //       op.removeAttribute('selected')
+  //     })
+  //   }
+  // }
 
   this.reset = function (resetAll) {
     this.sourceCardsContainer.innerHTML = '';
@@ -634,11 +647,12 @@ export const BoardView = function () {
     this.element.querySelector('#markGlobal').removeAttribute('checked');
     setSelectOption(this.boardActions, '');
 
-    if (resetAll) {
+    if(resetAll) {
       this.state.removedItems = this.state.removedItems.filter(index =>
         !this.data.entries.find(entry => entry.originalIndex == index)
       );
-
+      
+      this.state.mode = 'original';
       this.state.itemsInCols = this.filterStateObjByCurrentEntries(this.state.itemsInCols);
       this.state.lapses = this.filterStateObjByCurrentEntries(this.state.lapses);
       this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
@@ -650,8 +664,8 @@ export const BoardView = function () {
   this.render = function (resetAll) {
     this.reset(resetAll);
     this.initState();
-    if (!Application.getCurrentSourceData()?.currentEntries.length) {
-      if (Application.views.PreloaderView.isShown()) {
+    if(!Application.getCurrentSourceData()?.currentEntries.length) {
+      if(Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();
       }
       return
@@ -659,24 +673,17 @@ export const BoardView = function () {
     this.data.entries = structuredClone(
       Application.getCurrentSourceData().currentEntries
     );
+    
+    this.updateModeElement(this.cardModeEl)
 
-    if (this.state.mode) {
-      Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
-        op.selected = op.value == this.state.mode;
-      })
-    }
-    // this.state.lineIndexes ??= {};
-    // this.state.itemsInCols ??= {};
-    // this.state.removedItems ??= [];
-    // this.state.lapses ??= {};
-    if (this.state.lineIndexes == null) this.state.lineIndexes = {};
-    if (this.state.itemsInCols == null) this.state.itemsInCols = {};
-    if (this.state.removedItems == null) this.state.removedItems = [];
-    if (this.state.lapses == null) this.state.lapses = {};    
+    if(this.state.lineIndexes == null) this.state.lineIndexes = {};
+    if(this.state.itemsInCols == null) this.state.itemsInCols = {};
+    if(this.state.removedItems == null) this.state.removedItems = [];
+    if(this.state.lapses == null) this.state.lapses = {};
     this.renderBoard();
     this.setBoardLayout();
 
-    if (!this.renderedEventSet) {
+    if(!this.renderedEventSet) {
       this.setRenderedEvents([
         this.sourceCardsContainer,
         this.goodCol,

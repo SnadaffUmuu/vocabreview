@@ -1,5 +1,5 @@
-import { DataFactory } from "../data.js";
-import { View } from "../view.js";
+import {DataFactory} from "../data.js";
+import {View} from "../view.js";
 import {
   speak,
   UserActionHandlers,
@@ -7,7 +7,7 @@ import {
   setSelectOption,
   stringToHash,
 } from "../utils.js";
-import { Application } from "../app.js";
+import {Application} from "../app.js";
 
 export const PanelView = function () {
 
@@ -19,10 +19,10 @@ export const PanelView = function () {
     'change #cardMode': 'setMode',
     'click .itemDroppableContainer': 'collapseAllItems toggleViewMenu',
     //'click .itemDroppableContainer': 'toggleViewMenu',
-    'click #toggleViewMenu' : 'toggleViewMenu',
+    'click #toggleViewMenu': 'toggleViewMenu',
     'click .viewMenu li': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
-    'click #render' : 'render',
+    'click #render': 'render',
   }
 
   this.renderedEvents = {
@@ -34,8 +34,8 @@ export const PanelView = function () {
       '.expandLine': 'toggleExpandLine',
       '.removeItem': 'removeItem',
       '.toggleInfo': 'toggleInfo',
-      '.clear' : 'clearBox',
-      '.focus' : 'toggleFocusBox',
+      '.clear': 'clearBox',
+      '.focus': 'toggleFocusBox',
     },
     contextmenu: {
       '#panelSources': 'UserActionHandlers.preventDefault',
@@ -68,7 +68,7 @@ export const PanelView = function () {
     const el = this.element.querySelector('#boxesContainerOuter');
     const top = el.getBoundingClientRect().top;
     el.style.minHeight = 'calc(100dvh - ' + top + 'px)';
-  }  
+  }
 
   this.filterStateObjByCurrentEntries = function (stateObj) {
     return Object.fromEntries(
@@ -79,7 +79,7 @@ export const PanelView = function () {
 
   this.executeFunction = function (e) {
     this[e.target.id]();
-    this.panelActions.classList.remove("active"); 
+    this.panelActions.classList.remove("active");
   }
 
   this.updateSourceItemsCount = function () {
@@ -100,7 +100,7 @@ export const PanelView = function () {
     const theBox = e.target.closest('.itemDroppableContainer');
     const placeholder = this.element.querySelector('.boxPlaceholder');
     const parent = theBox.parentElement;
-    if (placeholder) {
+    if(placeholder) {
       placeholder.remove();
       theBox.classList.remove('focused');
       theBox.removeAttribute('style');
@@ -112,7 +112,7 @@ export const PanelView = function () {
       parent.insertBefore(boxPlaceholder, theBox);
       theBox.classList.add('focused');
       theBox.style.height = (rect.height * 2) + 'px';
-      switch (theBox.id.slice(-1)) {
+      switch(theBox.id.slice(-1)) {
         case '1':
         case '2':
           theBox.style.top = (rect.top - 5) + 'px';
@@ -126,9 +126,9 @@ export const PanelView = function () {
   }
 
   this.toggleViewMenu = function (e) {
-    if (e.target.id && e.target.id == 'toggleViewMenu') {
+    if(e.target.id && e.target.id == 'toggleViewMenu') {
       e.target.closest('.viewMenu').classList.toggle("active");
-    } else if (this.panelActions.classList.contains('active')) {
+    } else if(this.panelActions.classList.contains('active')) {
       this.panelActions.classList.remove('active')
     }
   }
@@ -151,16 +151,16 @@ export const PanelView = function () {
 
   this.toggleMarkGlobal = function (e) {
     const items = this.element.querySelectorAll('.panelItem');
-    if (e.target.checked) {
+    if(e.target.checked) {
       const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
       [...items].forEach(el => {
         const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
-        if (entry) {
+        if(entry) {
           // entry.source ??= Application.state.currentSource;
           // entry.hash ??= stringToHash(JSON.stringify(entry));
-          if (entry.source == null) entry.source = Application.state.currentSource;
-          if (entry.hash == null) entry.hash = stringToHash(JSON.stringify(entry));
-          if (globalHashes.includes(entry.hash)) {
+          if(entry.source == null) entry.source = Application.state.currentSource;
+          if(entry.hash == null) entry.hash = stringToHash(JSON.stringify(entry));
+          if(globalHashes.includes(entry.hash)) {
             el.dataset.global = true;
           } else {
             delete el.dataset.global
@@ -175,15 +175,15 @@ export const PanelView = function () {
   }
 
   this.collapseAllItems = function (e) {
-    if (!e.target.classList.contains('itemDroppableContainer')) return;
+    if(!e.target.classList.contains('itemDroppableContainer')) return;
     [...this.element.querySelectorAll('.menuExpanded')].forEach(item => {
       item.querySelectorAll('.itemLine').forEach(line => {
-        if (!line.dataset.current 
+        if(!line.dataset.current
           && line.dataset.originalIndex == item.dataset.upperLineIndex) {
-            line.dataset.current = true;
-        } else if (line.dataset.current
+          line.dataset.current = true;
+        } else if(line.dataset.current
           && line.dataset.originalIndex != item.dataset.upperLineIndex) {
-            delete line.dataset.current
+          delete line.dataset.current
         }
       })
       item.classList.remove('lineExpanded');
@@ -208,8 +208,8 @@ export const PanelView = function () {
   this.toggleItemMenu = function (e) {
     const item = this.getDragItem(e.target);
     const container = item.closest('.itemDroppableContainer');
-    if (!item || !container) return;
-    if (!item.classList.contains('menuExpanded')) {
+    if(!item || !container) return;
+    if(!item.classList.contains('menuExpanded')) {
       item.dataset.prevTop = item.style.top;
       const top = item.getBoundingClientRect().top;
       // const width = item.offsetWidth;
@@ -229,9 +229,9 @@ export const PanelView = function () {
   this.speakLine = function (e) {
     e.stopPropagation();
     const expandedItem = e.target.closest('.panelItem');
-    if (!expandedItem) return;
+    if(!expandedItem) return;
     const line = expandedItem.querySelector('[data-current]');
-    if (!line || !line.dataset?.reading) return;
+    if(!line || !line.dataset?.reading) return;
     console.log('speaking');
     speak(line.dataset.reading);
   }
@@ -249,17 +249,17 @@ export const PanelView = function () {
     e.stopPropagation();
     e.preventDefault();
     const item = this.getDragItem(e.target);
-    if (!item) return;
+    if(!item) return;
     const allLines = item.querySelectorAll('.itemLine');
-    if (allLines.length == 1) {
+    if(allLines.length == 1) {
       console.log('non-rotatiable, only 1 line');
       return;
     }
     let current = null;
     let next = null;
     let c = 0;
-    for (let l of allLines) {
-      if (l.dataset.current) {
+    for(let l of allLines) {
+      if(l.dataset.current) {
         current = l;
         next = allLines[c + 1] ? allLines[c + 1] : allLines[0];
         break;
@@ -267,7 +267,7 @@ export const PanelView = function () {
       c++;
     }
     next.dataset.current = true;
-    if (current && current.dataset) {
+    if(current && current.dataset) {
       delete current.dataset.current;
     }
     //this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
@@ -298,7 +298,7 @@ export const PanelView = function () {
 
   this.removeItem = function (e) {
     const item = this.getDragItem(e.target);
-    if (Application.state.currentSource == DataFactory.globalPool) {
+    if(Application.state.currentSource == DataFactory.globalPool) {
       Application.getCurrentSourceData().allEntries = Application.getCurrentSourceData().allEntries.filter(entry =>
         entry.hash !== parseInt(item.dataset.hash));
     } else {
@@ -313,14 +313,14 @@ export const PanelView = function () {
   }
 
   this.setItemInBox = function (e, elementFromPoint) {
-    if (elementFromPoint) {
-      if (Application.views.MenuView.element.contains(elementFromPoint)) {
+    if(elementFromPoint) {
+      if(Application.views.MenuView.element.contains(elementFromPoint)) {
         this.removeItem(e);
       } else {
         const item = this.getDragItem(e.target);
-        if (!item) return;
+        if(!item) return;
         const container = item.closest('.itemDroppableContainer');
-        if (container?.dataset?.box) {
+        if(container?.dataset?.box) {
           this.state.itemsInBoxes[item.dataset.originalIndex] = container.dataset.box;
         } else {
           delete this.state.itemsInBoxes[item.dataset.originalIndex];
@@ -335,7 +335,7 @@ export const PanelView = function () {
 
   this.setTouchStart = function (e) {
     const item = this.getDragItem(e.target);
-    if (!item || item.classList.contains('menuExpanded')) return;
+    if(!item || item.classList.contains('menuExpanded')) return;
     this.touchTimeout = setTimeout(() => {
       this.draggable = true;
       item.classList.add("dragging");
@@ -348,12 +348,12 @@ export const PanelView = function () {
   }
 
   this.setTouchMove = function (e) {
-    if (this.draggable !== true) {
+    if(this.draggable !== true) {
       e.stopPropagation();
       clearTimeout(this.touchTimeout)
     } else {
       const draggedItem = this.getDragItem(e.target);
-      if (!draggedItem || draggedItem.classList.contains('menuExpanded')) return;
+      if(!draggedItem || draggedItem.classList.contains('menuExpanded')) return;
       this.draggedItem = draggedItem;
       const touch = e.touches[0];
       this.lastMove = touch;
@@ -368,10 +368,10 @@ export const PanelView = function () {
     this.touchTimeout && clearTimeout(this.touchTimeout);
     this.scrollInterval && clearInterval(this.scrollInterval);
     this.draggable = false;
-    if (this.draggedItem) {
+    if(this.draggedItem) {
       this.draggedItem.classList.remove("dragging");
       let targetContainer = document.elementFromPoint(this.lastMove.clientX, this.lastMove.clientY);
-      if (!targetContainer.classList.contains('itemDroppableContainer')) {
+      if(!targetContainer.classList.contains('itemDroppableContainer')) {
         targetContainer = targetContainer.closest('.itemDroppableContainer');
       }
       targetContainer.appendChild(this.draggedItem);
@@ -402,13 +402,13 @@ export const PanelView = function () {
 
   this.itemDragEnd = function (e) {
     let targetContainer = document.elementFromPoint(e.clientX, e.clientY);
-    if (!targetContainer.classList.contains('itemDroppableContainer')) {
+    if(!targetContainer.classList.contains('itemDroppableContainer')) {
       targetContainer = targetContainer.closest('.itemDroppableContainer');
     }
     targetContainer.appendChild(e.target);
     e.target.style.left = (e.clientX - parseInt(targetContainer.dataset.left) - parseInt(e.target.dataset.offsetX)) + 'px';
     e.target.style.top = (e.clientY - parseInt(targetContainer.dataset.top) - parseInt(e.target.dataset.offsetY)) + 'px';
-    
+
     e.target.classList.remove('dragging');
     this.setItemInBox(e, targetContainer);
     this.updateSourceItemsCount();
@@ -420,35 +420,35 @@ export const PanelView = function () {
     const dataset = {
       'original-index': l.originalIndex
     };
-    if (currentLineIndex != null && l.originalIndex == currentLineIndex) {
+    if(currentLineIndex != null && l.originalIndex == currentLineIndex) {
       dataset.current = true;
     }
-    if (l.speakable) {
+    if(l.speakable) {
       dataset.reading = l.text;
     }
-    if (entry.reviewLevel && l.originalIndex == 0) {
+    if(entry.reviewLevel && l.originalIndex == 0) {
       dataset['review-level'] = entry.reviewLevel
     }
 
     const attrs = {};
 
-    if (l.speakable) {
+    if(l.speakable) {
       attrs.speakable = 'true';
     }
-    if (l.role) {
+    if(l.role) {
       attrs.role = l.role;
     }
-    if (l.isCompact) {
+    if(l.isCompact) {
       attrs.compact = true;
     }
 
     let attrsParsed = '';
-    for (let attr in attrs) {
+    for(let attr in attrs) {
       attrsParsed += ` ${attr}="${attrs[attr]}"`;
     }
 
     let datasetParsed = '';
-    for (let dataAttr in dataset) {
+    for(let dataAttr in dataset) {
       datasetParsed += ` data-${dataAttr}="${dataset[dataAttr]}"`;
     }
 
@@ -463,24 +463,24 @@ export const PanelView = function () {
     let lines = entry.lines;
     const lRoles = DataFactory.LINE_ROLE;
     const reading = lines.find(line => line.role == lRoles.reading);
-    if (reading) {
+    if(reading) {
       lines = entry.lines.filter(l => l.role != DataFactory.LINE_ROLE.reading);
     }
     //let currentIndex = this.state.lineIndexes[entry.originalIndex] ?? null;
     let currentIndex = null;
     let reorderedLines = null;
-    if (currentIndex == null) {
+    if(currentIndex == null) {
       let theOrder = null;
       const transArr = [];
-      switch (mode) {
+      switch(mode) {
         case 'expression':
         case 'example':
           theOrder = DataFactory.lineOrders[mode];
           reorderedLines = theOrder.flatMap(role => {
             const subArr = lines.filter(line => line.role == role);
-            if (!subArr.length) return [null];
+            if(!subArr.length) return [null];
 
-            if (['example', 'example_translation'].includes(role)) {
+            if(['example', 'example_translation'].includes(role)) {
               return shuffleArray(subArr)
             } else {
               return subArr
@@ -492,19 +492,19 @@ export const PanelView = function () {
           theOrder = DataFactory.lineOrders[mode];
           reorderedLines = theOrder.flatMap(role => {
             const subArr = lines.filter(line => line.role == role);
-            if (!subArr.length) return [null];
+            if(!subArr.length) return [null];
 
-            if ('example_translation' == role) {
+            if('example_translation' == role) {
               shuffleArray(subArr).forEach(line => {
                 transArr.push(line);
                 const orig = lines.find(ll => ll.translationLineIndex
                   == line.originalIndex);
-                if (orig) {
+                if(orig) {
                   transArr.push(orig);
                 }
               });
               return transArr;
-            } else if ('example' == role) {
+            } else if('example' == role) {
               const untranslatedExamples = subArr.filter(line => !transArr.includes(line));
               return shuffleArray(untranslatedExamples);
             } else {
@@ -519,7 +519,7 @@ export const PanelView = function () {
           reorderedLines = lines;
       }
     }
-    if (currentIndex == null) {
+    if(currentIndex == null) {
       currentIndex = reorderedLines[0].originalIndex;
     }
     const finalLines = reorderedLines || lines;
@@ -575,7 +575,7 @@ export const PanelView = function () {
 
   this.unFastenItems = function () {
     [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
-      if (box.id == 'panelSources') {
+      if(box.id == 'panelSources') {
         box.style.width = box.offsetWidth + 'px';
         box.style.height = box.offsetHeight + 'px';
       }
@@ -615,13 +615,14 @@ export const PanelView = function () {
       item.style.zIndex = item == theItem ? '100' : '0';
     })
   };
-/*
+
   this.handleStateChange = function (newState, prop, value) {
-    if (prop == 'mode') {
+    if(prop == 'mode') {
       this.state.lineIndexes = [];
+      this.updateModeElement(this.cardModeEl)
     }
   };
-*/
+
   this.reset = function (resetAll) {
     this.panelSources.innerHTML = '';
     this.box1.innerHTML = '';
@@ -633,12 +634,14 @@ export const PanelView = function () {
     this.resetItems();
     this.element.querySelector('#markGlobal').removeAttribute('checked');
     setSelectOption(this.panelActions, '');
-    if (resetAll == true) {
+
+    if(resetAll == true) {
       this.state.removedItems = this.state.removedItems.filter(index =>
         !this.data.entries.find(entry => entry.originalIndex == index)
       );
       this.state.itemsInBoxes = this.filterStateObjByCurrentEntries(this.state.itemsInBoxes);
       //this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
+      this.state.mode = 'original';
       Application.views.StructureView.render();
     }
     this.data = {};
@@ -647,8 +650,8 @@ export const PanelView = function () {
   this.render = function (resetAll) {
     this.reset(resetAll);
     this.initState();
-    if (!Application.getCurrentSourceData()?.currentEntries.length) {
-      if (Application.views.PreloaderView.isShown()) {
+    if(!Application.getCurrentSourceData()?.currentEntries.length) {
+      if(Application.views.PreloaderView.isShown()) {
         Application.views.PreloaderView.hide();
       }
       return
@@ -657,21 +660,15 @@ export const PanelView = function () {
       Application.getCurrentSourceData().currentEntries
     );
 
-    if (this.state.mode) {
-      Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
-        op.selected = op.value == this.state.mode;
-      })
-    }
-    //this.state.lineIndexes ??= {};
-    // this.state.itemsInBoxes ??= {};
-    // this.state.removedItems ??= [];
-    if (this.state.itemsInBoxes == null) this.state.itemsInBoxes = {};
-    if (this.state.removedItems == null) this.state.removedItems = [];
+    this.updateModeElement(this.cardModeEl)
+
+    if(this.state.itemsInBoxes == null) this.state.itemsInBoxes = {};
+    if(this.state.removedItems == null) this.state.removedItems = [];
 
     this.renderPanel();
     this.setPanelLayout();
 
-    if (!this.renderedEventSet) {
+    if(!this.renderedEventSet) {
       this.setRenderedEvents([
         this.sourceContainer,
         this.box1,

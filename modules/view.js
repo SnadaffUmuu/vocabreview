@@ -108,6 +108,18 @@ View.prototype = {
     }
   },
 
+  updateModeElement (cardModeEl) {
+    if(this.state.mode) {
+      Array.from(cardModeEl.querySelectorAll('option')).forEach(op => {
+        op.selected = op.value == this.state.mode;
+      })
+    } else {
+      Array.from(cardModeEl.querySelectorAll('option')).forEach(op => {
+        op.removeAttribute('selected')
+      })
+    }
+  },
+
   initState() {
     const initialState = Application.getViewState(this) || {
       selfUpdate : false,
