@@ -192,3 +192,31 @@ export function countCharOccurrencesInString (str, ch) {
 export function objNotEmpty (obj) {
   return obj && Object.keys(obj).length
 }
+
+export function positionDropdown(el, sourceElement) {
+  const sourceRect = sourceElement.getBoundingClientRect();
+  el.classList.remove('hidden')
+  const menuWidth = el.offsetWidth;
+  el.classList.add('hidden')
+  const viewportWidth = window.innerWidth;
+
+  // Центр кнопки
+  const sourceCenter = sourceRect.left + sourceRect.width / 2;
+
+  // Позиция меню, если оно по центру кнопки
+  let left = sourceCenter - menuWidth / 2;
+
+  // Проверяем выход за левый край
+  if (left < 0) {
+    left = 0;
+  }
+
+  // Проверяем выход за правый край
+  if (left + menuWidth > viewportWidth) {
+    left = Math.max(0, viewportWidth - menuWidth);
+  }
+
+  // Устанавливаем позицию (в px)
+  el.style.left = left + 'px';
+  el.style.top = sourceRect.top + sourceRect.height + 'px'
+}

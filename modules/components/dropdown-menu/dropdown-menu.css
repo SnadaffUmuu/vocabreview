@@ -1,0 +1,24 @@
+.dropdown-menu {
+  position: absolute;
+  top: 0;
+  background: var(--bg);
+  border: 1px solid var(--paleBorder);
+  border-radius: 6px;
+  box-shadow: 2px 4px 6px var(--dialogShadow);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.dropdown-menu.hidden {
+  display: none;
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.dropdown-list {
+  list-style:none;
+}

@@ -8,6 +8,8 @@ import {
   stringToHash,
 } from "../utils.js";
 import {Application} from "../app.js";
+import {BurgerButton} from "../components/burger-button/burger-button.js"
+import {DropdownMenu} from "../components/dropdown-menu/dropdown-menu.js";
 
 export const PanelView = function () {
 
@@ -80,6 +82,10 @@ export const PanelView = function () {
   this.executeFunction = function (e) {
     this[e.target.id]();
     this.panelActions.classList.remove("active");
+  }
+
+  this.executeFunction2 = (funcName) => {
+    this[funcName]();
   }
 
   this.updateSourceItemsCount = function () {
@@ -678,6 +684,7 @@ export const PanelView = function () {
       ]);
       this.renderedEventSet = true;
     }
+
     Application.views.PreloaderView.hidePreloader();
   }
 
@@ -697,10 +704,36 @@ export const PanelView = function () {
       '4': this.box4,
     }
     this.cardModeEl = this.element.querySelector('#cardMode');
+    this.viewActionsContainer = this.element.querySelector("#panelActionsBlock");
     this.panelActions = this.element.querySelector(".viewMenu");
     this.tagsLegend = this.element.querySelector('#panelLegend');
 
     this.renderedEventSet = null;
+
+    this.getViewActionsTriggerElement = () => {
+      return this.viewActionsTrigger.el
+    }
+
+    this.viewActions = new DropdownMenu({
+      items: {
+        resetPanel: 'Reset'
+      },
+      onSelect: this.executeFunction2,
+      clickOutsideTarget: this.element.querySelectorAll('.itemDroppableContainer'),
+      getSourceElement : this.getViewActionsTriggerElement
+    });
+
+    this.viewActionsTrigger = new BurgerButton({
+      onClick: burger => {
+        burger.toggle();
+        this.viewActions.toggle()
+      },
+    })
+
+    this.viewActionsTrigger.appendTo(this.viewActionsContainer);
+    this.viewActions.appendTo(this.viewActionsContainer)
+
+
     this.render();
   }
 }

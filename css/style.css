@@ -10,6 +10,8 @@
 @import url("../modules/panel/panel.css");
 @import url("../modules/dialog/dialog.css");
 @import url("../modules/sessions/sessions.css");
+@import url("../modules/components/burger-button/burger-button.css");
+@import url("../modules/components/dropdown-menu/dropdown-menu.css");
 /* @import url("../modules/match/match.css"); */
 /* @import url("./theme.css"); */
 
@@ -336,4 +338,12 @@ button {
   background: var(--bg);
   border: 1px dashed var(--paleBorder);
   margin-top:-1px;
+}
+
+.burgerMenu {
+  position: relative
+}
+
+.burgerMenu__trigger {
+  
 }

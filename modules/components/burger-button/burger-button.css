@@ -1,0 +1,27 @@
+.burger-button {
+  width: 32px;
+  display: inline-flex;
+  flex-flow:column  nowrap;
+  justify-content: space-between;
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+}
+
+.burger-button span {
+  width: 100%;
+  height: 2px;
+  background: var(--text-color);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.burger-button.is-active {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.burger-button.is-active span {
+  width: 2px;
+  height: 100%;
+}
