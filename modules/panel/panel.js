@@ -9,7 +9,7 @@ import {
 } from "../utils.js";
 import {Application} from "../app.js";
 import {BurgerButton} from "../components/burger-button/burger-button.js"
-import {DropdownMenu} from "../components/dropdown-menu/dropdown-menu.js";
+import {DropdownAction} from "../components/dropdown-action.js"
 
 export const PanelView = function () {
 
@@ -19,9 +19,9 @@ export const PanelView = function () {
 
   this.events = {
     'change #cardMode': 'setMode',
-    'click .itemDroppableContainer': 'collapseAllItems toggleViewMenu',
+    'click .itemDroppableContainer': 'collapseAllItems',
     //'click .itemDroppableContainer': 'toggleViewMenu',
-    'click #toggleViewMenu': 'toggleViewMenu',
+    // 'click #toggleViewMenu': 'toggleViewMenu',
     'click .viewMenu li': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
     'click #render': 'render',
@@ -81,7 +81,6 @@ export const PanelView = function () {
 
   this.executeFunction = function (e) {
     this[e.target.id]();
-    this.panelActions.classList.remove("active");
   }
 
   this.executeFunction2 = (funcName) => {
@@ -131,13 +130,13 @@ export const PanelView = function () {
     }
   }
 
-  this.toggleViewMenu = function (e) {
-    if(e.target.id && e.target.id == 'toggleViewMenu') {
-      e.target.closest('.viewMenu').classList.toggle("active");
-    } else if(this.panelActions.classList.contains('active')) {
-      this.panelActions.classList.remove('active')
-    }
-  }
+  // this.toggleViewMenu = function (e) {
+  //   if(e.target.id && e.target.id == 'toggleViewMenu') {
+  //     e.target.closest('.viewMenu').classList.toggle("active");
+  //   } else if(this.panelActions.classList.contains('active')) {
+  //     this.panelActions.classList.remove('active')
+  //   }
+  // }
 
   this.setGlobal = function () {
     const candidates = [...this.box4.querySelectorAll('.panelItem')];
@@ -639,7 +638,6 @@ export const PanelView = function () {
     this.resetBoxesDimensions();
     this.resetItems();
     this.element.querySelector('#markGlobal').removeAttribute('checked');
-    setSelectOption(this.panelActions, '');
 
     if(resetAll == true) {
       this.state.removedItems = this.state.removedItems.filter(index =>
@@ -705,33 +703,21 @@ export const PanelView = function () {
     }
     this.cardModeEl = this.element.querySelector('#cardMode');
     this.viewActionsContainer = this.element.querySelector("#panelActionsBlock");
-    this.panelActions = this.element.querySelector(".viewMenu");
+    // this.panelActions = this.element.querySelector(".viewMenu");
     this.tagsLegend = this.element.querySelector('#panelLegend');
 
     this.renderedEventSet = null;
 
-    this.getViewActionsTriggerElement = () => {
-      return this.viewActionsTrigger.el
-    }
-
-    this.viewActions = new DropdownMenu({
-      items: {
-        resetPanel: 'Reset'
+    this.viewActions = new DropdownAction({
+      trigger: new BurgerButton(),
+      items: { 
+        resetPanel: 'Reset',
+        setGlobal: 'Set as global'
       },
-      onSelect: this.executeFunction2,
+      onSelect: (val) => this.executeFunction2(val),
       clickOutsideTarget: this.element.querySelectorAll('.itemDroppableContainer'),
-      getSourceElement : this.getViewActionsTriggerElement
+      appendTo: this.viewActionsContainer
     });
-
-    this.viewActionsTrigger = new BurgerButton({
-      onClick: burger => {
-        burger.toggle();
-        this.viewActions.toggle()
-      },
-    })
-
-    this.viewActionsTrigger.appendTo(this.viewActionsContainer);
-    this.viewActions.appendTo(this.viewActionsContainer)
 
 
     this.render();

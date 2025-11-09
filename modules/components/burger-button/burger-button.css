@@ -19,6 +19,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  border-radius: 5px 5px 0 0;
 }
 
 .burger-button.is-active span {

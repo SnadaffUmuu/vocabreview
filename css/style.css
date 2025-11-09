@@ -102,6 +102,8 @@
   --panelBox3Bg: #fff;
   --panelBox4Bg: #fff5fe;
   --panelFocusedBoxShadow: #c5b8d0;
+
+  --viewActionsDropdownShadow: #55495f54
 }
 
 body.night {
@@ -241,8 +243,7 @@ input[type="search"] {
   border: 1px solid #767676;
 }
 
-button,
-.viewMenu {
+button {
   height:25px;
   border:0;
   border-radius: 5px;
@@ -306,7 +307,7 @@ button {
   display: inline-block;
 }
 
-.viewMenu {
+/* .viewMenu {
   width:100px;
   position: relative;
 }
@@ -338,12 +339,4 @@ button {
   background: var(--bg);
   border: 1px dashed var(--paleBorder);
   margin-top:-1px;
-}
-
-.burgerMenu {
-  position: relative
-}
-
-.burgerMenu__trigger {
-  
-}
+} */

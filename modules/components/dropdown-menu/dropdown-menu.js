@@ -1,8 +1,7 @@
-import { positionDropdown } from "../../utils.js";
+import {positionDropdown} from "../../utils.js";
 
 export class DropdownMenu {
-  constructor({items = {}, onSelect, clickOutsideTarget = document, getSourceElement = null} = {}) {
-    this.getSourceElement = getSourceElement
+  constructor({items = {}, clickOutsideTarget = document} = {}) {
     const html = `
     <div class="dropdown-menu hidden">
       <ul class="dropdown-list">
@@ -19,35 +18,45 @@ export class DropdownMenu {
     tpl.innerHTML = html.trim();
     this.el = tpl.content.firstChild;
 
-    const clickHandler = (e) => {
+    const outsideClickHandler = (e) => {
       if(!this.el.contains(e.target)) {
-        this.close()
+        this.close();
       };
     }
     // закрытие при клике вне меню
-    if (clickOutsideTarget instanceof NodeList) {
-      clickOutsideTarget.forEach(el => el.addEventListener('click', clickHandler))
-    } else {
-      clickOutsideTarget.addEventListener('click', clickHandler);
-    }
+    (clickOutsideTarget instanceof NodeList ? [...clickOutsideTarget] : [clickOutsideTarget])
+      .forEach(el => el.addEventListener('click', outsideClickHandler));
 
     this.el.querySelectorAll('.dropdown-item').forEach(li => {
       li.addEventListener('click', () => {
-        if(onSelect) onSelect(li.dataset.value);
+        this.el.dispatchEvent(new CustomEvent('dropdown:select', {
+          bubbles: true,
+          detail: {value: li.dataset.value}
+        }));
         this.close();
       });
     });
 
   }
 
-  open() {this.el.classList.remove('hidden')}
-  close() {this.el.classList.add('hidden')}
-  toggle() {
-    this.el.classList.toggle('hidden')
+  open() {
+    this.el.classList.remove('hidden');
+    this.el.dispatchEvent(new CustomEvent('dropdown:open', { bubbles: true }));
   }
+
+  close() {
+    this.el.classList.add('hidden');
+    this.el.dispatchEvent(new CustomEvent('dropdown:close', { bubbles: true }));
+  }
+
+  toggle() {
+    if (this.el.classList.contains('hidden')) this.open();
+    else this.close();
+  }
+
   appendTo(parent) {
     parent.append(this.el);
-    if (this.getSourceElement) {
+    if(this.getSourceElement) {
       positionDropdown(this.el, this.getSourceElement())
     }
     return this

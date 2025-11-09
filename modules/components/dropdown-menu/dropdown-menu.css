@@ -2,9 +2,9 @@
   position: absolute;
   top: 0;
   background: var(--bg);
-  border: 1px solid var(--paleBorder);
-  border-radius: 6px;
-  box-shadow: 2px 4px 6px var(--dialogShadow);
+  border-radius: 0 5px 5px 5px;
+  border: 1px solid var(--button-secondary);
+  box-shadow: 4px 4px 0 var(--viewActionsDropdownShadow);
   max-height: 300px;
   overflow-y: auto;
   z-index: 1000;
@@ -15,10 +15,12 @@
 }
 
 .dropdown-item {
-  padding: 8px 12px;
+  padding: 6px 13px;
   cursor: pointer;
 }
 
 .dropdown-list {
   list-style:none;
+  padding:5px 0 7px;
+  margin:0;
 }

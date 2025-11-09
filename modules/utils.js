@@ -195,28 +195,41 @@ export function objNotEmpty (obj) {
 
 export function positionDropdown(el, sourceElement) {
   const sourceRect = sourceElement.getBoundingClientRect();
-  el.classList.remove('hidden')
-  const menuWidth = el.offsetWidth;
-  el.classList.add('hidden')
   const viewportWidth = window.innerWidth;
 
-  // Центр кнопки
-  const sourceCenter = sourceRect.left + sourceRect.width / 2;
+  // Временно показать элемент, чтобы измерить ширину
+  el.classList.remove('hidden');
+  const menuWidth = el.offsetWidth;
+  el.classList.add('hidden');
 
-  // Позиция меню, если оно по центру кнопки
-  let left = sourceCenter - menuWidth / 2;
+  // Расстояния до краёв
+  const distanceRight = viewportWidth - sourceRect.left;   // A
+  const distanceLeft = sourceRect.right;                   // Б
 
-  // Проверяем выход за левый край
-  if (left < 0) {
-    left = 0;
+  let left;
+
+  // Если меню помещается справа от кнопки (по левому краю)
+  if (menuWidth <= distanceRight) {
+    left = sourceRect.left;
+  } else {
+    // Меню не помещается справа, пробуем выровнять по правому краю
+    if (distanceLeft > distanceRight) {
+      left = Math.max(0, sourceRect.right - menuWidth);
+      // если даже при этом шире, чем доступно слева — ужимаем
+      if (menuWidth > distanceLeft) {
+        el.style.width = `${distanceLeft}px`;
+      }
+    } else {
+      // Всё-таки оставляем по левому краю, но урезаем ширину
+      left = sourceRect.left;
+      el.style.width = `${distanceRight}px`;
+    }
   }
 
-  // Проверяем выход за правый край
-  if (left + menuWidth > viewportWidth) {
-    left = Math.max(0, viewportWidth - menuWidth);
-  }
+  // Вертикальное позиционирование под кнопкой
+  const top = sourceRect.top + sourceRect.height;
 
-  // Устанавливаем позицию (в px)
-  el.style.left = left + 'px';
-  el.style.top = sourceRect.top + sourceRect.height + 'px'
+  // Применяем финальные координаты
+  el.style.left = `${left}px`;
+  el.style.top = `${top}px`;
 }
