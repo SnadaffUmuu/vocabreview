@@ -33,7 +33,7 @@ export const SessionsView = function () {
     this.element.insertAdjacentHTML('beforeend', `<table class="sessions__data"><tr>${res.join('</tr><tr>')}</tr></table>`)
   }
 
-  this.show = function (content) {
+  this.show = function () {
     View.prototype.show.call(this);
     this.render();
   }

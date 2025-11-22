@@ -715,7 +715,7 @@ export const PanelView = function () {
         setGlobal: 'Set as global'
       },
       onSelect: (val) => this.executeFunction2(val),
-      clickOutsideTarget: this.element.querySelectorAll('.itemDroppableContainer'),
+      //clickOutsideTarget: this.element.querySelectorAll('.itemDroppableContainer'),
       appendTo: this.viewActionsContainer
     });
 

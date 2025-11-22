@@ -55,10 +55,20 @@
   flex:1 1 100%;
 }
 
+#sourcesRow {
+  margin:0 0 13px 65px;
+  display:flex;
+}
+
+#reloadCurrentSource {
+  height:30px
+}
+
 #dataActions #vocabSources {
   height: 30px;
   width: 100%;
   margin-bottom:15px;
+  margin-right:10px;
 }
 
 #switchViewRow {

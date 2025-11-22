@@ -1,0 +1,35 @@
+.prompt {
+  background: var(--bg);
+  padding:15px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 8px var(--dialogShadow), -5px -5px 8px var(--dialogShadow);
+  padding:30px 15px;
+  font-size: 15px;
+  min-width:30vw;
+  margin-top:10vh;
+}
+
+.prompt-overlay {
+  z-index:6000;
+  position:fixed;
+  right:0;
+  bottom:0;
+  top:0;
+  left:0;
+  background: var(--overlay);
+  display:flex;
+  flex-flow:row nowrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.prompt-text {
+  text-align: center
+}
+
+.prompt-buttons {
+  margin-top:20px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+}

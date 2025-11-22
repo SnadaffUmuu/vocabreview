@@ -26,3 +26,9 @@
   width: 2px;
   height: 100%;
 }
+
+.burger-button.v2 {
+  height: 30px;
+  width:40px;
+  margin-left:10px;
+}

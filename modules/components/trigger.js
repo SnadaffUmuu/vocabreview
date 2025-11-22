@@ -20,6 +20,11 @@ export class Trigger {
     });
   }
 
+  prependTo(parent) {
+    parent.prepend(this.el);
+    return this;
+  }
+
   appendTo(parent) {
     parent.append(this.el);
     return this;

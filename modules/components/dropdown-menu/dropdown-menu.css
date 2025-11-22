@@ -17,6 +17,7 @@
 .dropdown-item {
   padding: 6px 13px;
   cursor: pointer;
+  width:max-content;
 }
 
 .dropdown-list {

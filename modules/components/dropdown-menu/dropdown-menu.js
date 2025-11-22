@@ -1,7 +1,7 @@
 import {positionDropdown} from "../../utils.js";
 
 export class DropdownMenu {
-  constructor({items = {}, clickOutsideTarget = document} = {}) {
+  constructor({items = {}} = {}) {
     const html = `
     <div class="dropdown-menu hidden">
       <ul class="dropdown-list">
@@ -18,15 +18,6 @@ export class DropdownMenu {
     tpl.innerHTML = html.trim();
     this.el = tpl.content.firstChild;
 
-    const outsideClickHandler = (e) => {
-      if(!this.el.contains(e.target)) {
-        this.close();
-      };
-    }
-    // закрытие при клике вне меню
-    (clickOutsideTarget instanceof NodeList ? [...clickOutsideTarget] : [clickOutsideTarget])
-      .forEach(el => el.addEventListener('click', outsideClickHandler));
-
     this.el.querySelectorAll('.dropdown-item').forEach(li => {
       li.addEventListener('click', () => {
         this.el.dispatchEvent(new CustomEvent('dropdown:select', {
@@ -35,8 +26,7 @@ export class DropdownMenu {
         }));
         this.close();
       });
-    });
-
+    });    
   }
 
   open() {
@@ -56,6 +46,14 @@ export class DropdownMenu {
 
   appendTo(parent) {
     parent.append(this.el);
+    if(this.getSourceElement) {
+      positionDropdown(this.el, this.getSourceElement())
+    }
+    return this
+  }
+
+  prependTo(parent) {
+    parent.prepend(this.el);
     if(this.getSourceElement) {
       positionDropdown(this.el, this.getSourceElement())
     }
