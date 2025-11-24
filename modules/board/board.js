@@ -6,10 +6,12 @@ import {
   getDragAfterElement,
   createPlaceholder,
   shuffleArray,
-  setSelectOption,
   stringToHash,
 } from "../utils.js";
 import {Application} from "../app.js";
+import {Prompt} from "../components/prompt/prompt.js"
+import {BurgerButton} from "../components/burger-button/burger-button.js"
+import {DropdownAction} from "../components/dropdown-action.js"
 
 export const BoardView = function () {
   this.actionsContainer = null;
@@ -23,10 +25,11 @@ export const BoardView = function () {
     'change #cardMode': 'setMode',
     'change #studyMode': 'toggleStudyMode',
     'click .itemDroppableContainer': 'collapseAllItems',
-    'click #setLapses': 'setLapses',
-    'click #fixLapses': 'fixLapses',
-    'change #boardActions': 'executeFunction',
-    'change #markGlobal': 'toggleMarkGlobal'
+    // 'click #setLapses': 'setLapses',
+    // 'click #fixLapses': 'fixLapses',
+    // 'change #boardActions': 'executeFunction',
+    'change #markGlobal': 'toggleMarkGlobal',
+    'change #markReversed': 'toggleMarkReversed'
   }
 
   this.renderedEvents = {
@@ -89,10 +92,10 @@ export const BoardView = function () {
     this.collapseAllItems(e);
   }
 
-  this.executeFunction = function (e) {
-    if(e.target.value == '') return;
-    this[e.target.value]();
-  }
+  // this.executeFunction = function (e) {
+  //   if(e.target.value == '') return;
+  //   this[e.target.value]();
+  // }
 
   this.setGlobal = function () {
     const candidates = [...this.learnCol.querySelectorAll('.boardItem')];
@@ -113,7 +116,7 @@ export const BoardView = function () {
   this.toggleMarkGlobal = function (e) {
     const items = this.element.querySelectorAll('.boardItem');
     if(e.target.checked) {
-      const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
+      const globalHashes = Application.data[DataFactory.globalPool]?.allEntries?.map(en => en.hash) ?? [];
       [...items].forEach(el => {
         const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
         if(entry) {
@@ -134,6 +137,13 @@ export const BoardView = function () {
         delete el.dataset.global
       })
     }
+  }
+
+  this.toggleMarkReversed = function(e) {
+    const items = this.element.querySelectorAll('.boardItem[data-reversed]');
+    [...items].forEach(el => {
+      el.classList.toggle('reversedShown', e.target.checked)
+    })
   }
 
   this.collapseAllItems = function (e) {
@@ -233,7 +243,12 @@ export const BoardView = function () {
   };
 
   this.resetBoard = function (e) {
-    this.render(true);
+    new Prompt({
+      text: 'Reset board?',
+      onConfirm: () => {
+        this.render(true);
+      }
+    })
   };
 
   this.rotateCard = function (e) {
@@ -440,6 +455,7 @@ export const BoardView = function () {
     this.scrollInterval = null;
     this.lastMove = null;
     this.updateSourceItemsCount();
+    this.setBoardLayout();
   }
 
   this.itemDragStart = function (e) {
@@ -593,6 +609,7 @@ export const BoardView = function () {
         draggable="true"
         ${entry.tag ? ' data-tag="' + entry.tag + '"' : ''} 
         ${entry.hash ? ' data-hash="' + entry.hash + '"' : ''} 
+        ${entry.reversed ? 'data-reversed' : ''}
         data-upper-line-index="${currentIndex}" 
         data-original-index="${entry.originalIndex}">
         ${entry.info ? ' <div class="itemInfo">ⓘ&nbsp;' + entry.info + '</div><div class="infoMark">i</div>' : ''}
@@ -645,7 +662,7 @@ export const BoardView = function () {
     this.failedCol.innerHTML = '';
     this.learnCol.innerHTML = '';
     this.element.querySelector('#markGlobal').removeAttribute('checked');
-    setSelectOption(this.boardActions, '');
+    //setSelectOption(this.boardActions, '');
 
     if(resetAll) {
       this.state.removedItems = this.state.removedItems.filter(index =>
@@ -709,9 +726,20 @@ export const BoardView = function () {
     this.studyModeEl = this.element.querySelector('#studyMode');
     this.cardModeEl = this.element.querySelector('#cardMode');
     this.sourceItemCounter = this.element.querySelector('#sourceItemsCounter');
-    this.boardActions = this.element.querySelector('#boardActions');
+    this.viewActionsContainer = this.element.querySelector('#boardActionsBlock');
     this.tagsLegend = this.element.querySelector('#boardLegend');
     this.renderedEventSet = null;
+    this.viewActions = new DropdownAction({
+      trigger: new BurgerButton(),
+      items: { 
+        resetBoard: 'Reset',
+        setLapses: 'Set',
+        fixLapses: 'Fix',
+        setGlobal: 'Set as global',
+      },
+      onSelect: (methodName) => this[methodName](),
+      appendTo: this.viewActionsContainer
+    });    
     this.render();
   }
 }

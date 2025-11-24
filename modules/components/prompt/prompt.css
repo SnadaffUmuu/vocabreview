@@ -1,12 +1,14 @@
 .prompt {
-  background: var(--bg);
+  background: var(--button-secondary);
   padding:15px;
-  border-radius: 10px;
-  box-shadow: 5px 5px 8px var(--dialogShadow), -5px -5px 8px var(--dialogShadow);
+  border-radius: 5px;
+  box-shadow: 8px 8px 0 var(--promptShadow);
   padding:30px 15px;
   font-size: 15px;
   min-width:30vw;
   margin-top:10vh;
+  color: var(--promptText);
+  font-weight: bold;
 }
 
 .prompt-overlay {
@@ -16,7 +18,7 @@
   bottom:0;
   top:0;
   left:0;
-  background: var(--overlay);
+  background: var(--promptOverlay);
   display:flex;
   flex-flow:row nowrap;
   justify-content: center;
@@ -32,4 +34,14 @@
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
+}
+
+.prompt-buttons button {
+  margin:0 10px;
+  font-size:15px;
+  padding: 10px 15px;
+  height: auto;
+  background: var(--button-primary);
+  color: var(--text-color);
+  font-weight:bold;
 }

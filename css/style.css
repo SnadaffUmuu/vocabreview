@@ -47,7 +47,7 @@
   --boardRemoveItemTextColor:#e6004d;
   --boardItemMenuExpandedBorder: #a6cecf;
   --boardInfoShadow:#a6cecf; 
-  --boardGlobalItemShadow: #0034ff;
+  --boardGlobalItemShadow: #1e20c07d;
 
   --slideInfoBg: #c4bfca;
   --slideInfoColor: var(--text-color);
@@ -104,7 +104,15 @@
   --panelBox4Bg: #fff5fe;
   --panelFocusedBoxShadow: #c5b8d0;
 
-  --viewActionsDropdownShadow: #55495f54
+  --viewActionsDropdownShadow: #4546838f;
+  --viewActionDropdownText:var(--text-color);
+  --reversedItemBoxShadow:#cb00ff5e;
+
+  --burgerButtonLine:var(--text-color);
+
+  --promptOverlay:#f1e6e8a3;
+  --promptShadow:#2d234169;
+  --promptText:var(--text-color);
 }
 
 body.night {
@@ -115,7 +123,7 @@ body.night {
   --icon-speakable-bg: #5e1730;
   --appheader-title-text-color: var(--text-color);
 
-  --dialogShadow: rgb(0 0 0 / 69%);
+  --dialogShadow: #1e0000b0;
 
   --button-primary:#320008;
   --button-secondary:#7b848e;
@@ -129,7 +137,7 @@ body.night {
   --boardItemLapsedLineTextColor:rgba(255, 255, 255, 0.798);
   --boardItemMenuExpandedBorder: #6b526d;
   --boardInfoShadow:rgb(22 0 36); 
-  --boardGlobalItemShadow: white;
+  --boardGlobalItemShadow: #ffffff45;
 
   --currentSlideIndexTextColor: var(--text-color);
 
@@ -176,6 +184,17 @@ body.night {
   --panelBox3Bg: #3d4551;
   --panelBox4Bg: #553f4c;
   --panelFocusedBoxShadow: #300000;
+
+  --viewActionsDropdownShadow: #250106; 
+  --viewActionDropdownText:var(--boardItem);
+  --reversedItemBoxShadow:#0003ff8f;
+
+  --dropdownText:#250006;
+
+  --burgerButtonLine:var(--boardItem);
+  --promptOverlay:#4d000e94;
+  --promptShadow:#1e0000b0;
+  --promptText:var(--boardItem);
 }
 
 html {

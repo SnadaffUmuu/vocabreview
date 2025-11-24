@@ -4,12 +4,12 @@ import {
   speak,
   UserActionHandlers,
   shuffleArray,
-  setSelectOption,
   stringToHash,
 } from "../utils.js";
 import {Application} from "../app.js";
 import {BurgerButton} from "../components/burger-button/burger-button.js"
 import {DropdownAction} from "../components/dropdown-action.js"
+import {Prompt} from "../components/prompt/prompt.js"
 
 export const PanelView = function () {
 
@@ -22,7 +22,7 @@ export const PanelView = function () {
     'click .itemDroppableContainer': 'collapseAllItems',
     //'click .itemDroppableContainer': 'toggleViewMenu',
     // 'click #toggleViewMenu': 'toggleViewMenu',
-    'click .viewMenu li': 'executeFunction',
+    //'click .viewMenu li': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
     'click #render': 'render',
   }
@@ -79,13 +79,13 @@ export const PanelView = function () {
     );
   }
 
-  this.executeFunction = function (e) {
-    this[e.target.id]();
-  }
+  // this.executeFunction = function (e) {
+  //   this[e.target.id]();
+  // }
 
-  this.executeFunction2 = (funcName) => {
-    this[funcName]();
-  }
+  // this.executeFunction2 = (funcName) => {
+  //   this[funcName]();
+  // }
 
   this.updateSourceItemsCount = function () {
     this.sourceItemCounter.innerHTML = this.sourceContainer.querySelectorAll('.panelItem').length;
@@ -157,7 +157,7 @@ export const PanelView = function () {
   this.toggleMarkGlobal = function (e) {
     const items = this.element.querySelectorAll('.panelItem');
     if(e.target.checked) {
-      const globalHashes = Application.data[DataFactory.globalPool]?.allEntries.map(en => en.hash) ?? [];
+      const globalHashes = Application.data[DataFactory.globalPool]?.allEntries?.map(en => en.hash) ?? [];
       [...items].forEach(el => {
         const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
         if(entry) {
@@ -247,7 +247,12 @@ export const PanelView = function () {
   }
 
   this.resetPanel = function (e) {
-    this.render(true);
+    new Prompt({
+      text: 'Reset panel?',
+      onConfirm: () => {
+        this.render(true);
+      }
+    })
   };
 
   this.rotateCard = function (e) {
@@ -714,8 +719,7 @@ export const PanelView = function () {
         resetPanel: 'Reset',
         setGlobal: 'Set as global'
       },
-      onSelect: (val) => this.executeFunction2(val),
-      //clickOutsideTarget: this.element.querySelectorAll('.itemDroppableContainer'),
+      onSelect: (methodName) => this[methodName](),
       appendTo: this.viewActionsContainer
     });
 

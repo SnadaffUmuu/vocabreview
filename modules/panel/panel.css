@@ -1,10 +1,12 @@
 #panelView {
   display: flex;
   flex-flow: column nowrap;
+  flex: 1 1 auto;
+  overflow: auto;
 }
 
 #panelActionsBlock {
-  padding: 10px 5px 5px;
+  padding: 10px 0 5px 5px;
   flex: 0 1 auto;
   font-size: 13px;
   display: flex;
@@ -22,13 +24,18 @@
   padding-right:15px;
 }
 
+#panelActionsBlock > * {
+  margin-right:7px;
+}
+
 body:has(#menu option[value="global"]:checked) #panelActions option[value="setGlobal"],
 body:has(#menu option[value="global"]:checked) #markGlobal {
   display:none;
 }
 
 #panelContainer {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
+  overflow:auto;
   display: flex;
   flex-flow: column nowrap;
   font-size: 15px;

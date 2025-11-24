@@ -13,6 +13,7 @@ export const DataFactory = {
     'SR-subway-attack',
     'SR_secret',
     'SR_yuyu',
+    'SR_Akiko',
     'SR_Nutshell',
     'goshogun0',
     'shirobanba',

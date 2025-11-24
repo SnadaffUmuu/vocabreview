@@ -112,7 +112,9 @@ export const StructureView = function () {
   this.render = function () {
 
     this.reset();
-    if (!Application.getCurrentSourceData()?.currentEntries?.length) {
+    const currentSouceData = Application.getCurrentSourceData();
+    if (!currentSouceData?.currentEntries?.length
+      || currentSouceData.global == true) {
       return;
     }
     this.data.filteredEntries = structuredClone(Application.getCurrentSourceData().currentEntries);

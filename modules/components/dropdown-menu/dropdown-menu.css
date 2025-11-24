@@ -1,13 +1,14 @@
 .dropdown-menu {
   position: absolute;
   top: 0;
-  background: var(--bg);
-  border-radius: 0 5px 5px 5px;
-  border: 1px solid var(--button-secondary);
+  background: var(--button-secondary);
+  /* border: 1px solid var(--viewActionsDropdownShadow); */
   box-shadow: 4px 4px 0 var(--viewActionsDropdownShadow);
   max-height: 300px;
   overflow-y: auto;
   z-index: 1000;
+  font-size:16px;
+  color:var(--viewActionDropdownText)
 }
 
 .dropdown-menu.hidden {
@@ -15,13 +16,13 @@
 }
 
 .dropdown-item {
-  padding: 6px 13px;
+  padding: 10px 13px;
   cursor: pointer;
   width:max-content;
 }
 
 .dropdown-list {
   list-style:none;
-  padding:5px 0 7px;
+  padding:5px 10px 7px;
   margin:0;
 }

@@ -1,14 +1,16 @@
 <div id="panelView"  class="appView">
   <div id="panelActionsBlock">
     <!-- <button id="resetPanel">Reset</button> -->
-    <select id="cardMode">
-      <option value="original">original</option>
-      <option value="expression">expression</option>
-      <option value="meaning">meaning</option>
-      <option value="example">examples</option>
-      <option value="example_translation">examples' translation</option>
-      <option value="random">random</option>
-    </select>
+    <label for="cardMode">M: 
+      <select id="cardMode">
+        <option value="original">original</option>
+        <option value="expression">expression</option>
+        <option value="meaning">meaning</option>
+        <option value="example">examples</option>
+        <option value="example_translation">examples' translation</option>
+        <option value="random">random</option>
+      </select>
+    </label>
     <!-- <div class="viewMenu">
       <div id="toggleViewMenu" class="viewMenu__trigger">Actions</div>
       <ul class="actions">
@@ -16,7 +18,7 @@
         <li id="resetPanel">Reset</li>
       </ul>
     </div> -->
-    <label for="markGlobal">
+    <label for="markGlobal" style="flex:1 0 auto;">G: 
       <input type="checkbox" id="markGlobal">
     </label>
     <button id="render">⟳</button>

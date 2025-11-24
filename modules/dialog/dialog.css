@@ -1,14 +1,22 @@
 .dialog {
+  background: var(--bg);
+  padding:15px;
+  border-radius: 5px;
+  box-shadow: 8px 8px 0 var(--dialogShadow);
+  box-sizing: border-box;
+  width:100%;
+  position: relative;
+}
+
+.dialog__wrap {
   z-index:7000;
   position: fixed;
   top:30px;
-  bottom:30px;
   right: 30px;
   left:30px;
-  background: var(--bg);
-  padding:15px;
-  border-radius: 10px;
-  box-shadow: 5px 5px 8px var(--dialogShadow), -5px -5px 8px var(--dialogShadow);
+  bottom:30px;
+  overflow:auto;
+  padding: 10px;
 }
 
 .dialog__overlay {
@@ -32,8 +40,8 @@
 .dialog__closeButton {
   position: absolute;
   right:10px;
-  bottom:10px;
-  border-radius: 10px;
+  top:10px;
+  border-radius: 5px;
   width:30px;
   height:30px;
 }
