@@ -1,6 +1,7 @@
 import { View } from "../view.js";
 import { speak, shuffleArraySaveOrder } from "../utils.js";
 import { Application } from "../app.js";
+import {Prompt} from "../components/prompt/prompt.js"
 
 export const Slider = function () {
   this.slider = null;
@@ -11,6 +12,7 @@ export const Slider = function () {
     'change #cardMode' : 'setCardMode',
     'change #randomSlidesOrder' : 'setSlidesOrder',
     'click #resetSlider' : 'resetSlider',
+    'click #batsu' : 'toggleLapse',
   },
   
   this.renderedEvents = {
@@ -22,7 +24,12 @@ export const Slider = function () {
   };
 
   this.resetSlider = function () {
-    this.render(true);
+    new Prompt({
+      text: 'Really reset the App?',
+      onConfirm: () => {
+        this.render(true);
+      }
+    });
   }
 
   this.speakLine = function (e) {
@@ -70,7 +77,28 @@ export const Slider = function () {
       }
       currentSideIndexDisplayEl.innerHTML = newCurrent.dataset.index;
       this.setCurrentSideIndex(slideOuter.dataset.originalIndex, newCurrent.dataset.index);
+      this.updateBatsu()
     }    
+  }
+
+  this.toggleLapse = function(e) {
+    const turnOn = !e.target.classList.contains('active');
+    const slide = this.slider.slides[this.slider.track.details.rel];
+    const index = parseInt(slide.dataset.originalIndex);
+    const lapsedSide = parseInt(slide.querySelector('.current').dataset.index);
+    if (turnOn) {
+      if(this.state.lapses[index]) {
+        if(!this.state.lapses[index].includes(lapsedSide)) {
+          this.state.lapses[index].push(lapsedSide);
+        }
+      } else {
+        this.state.lapses[index] = [lapsedSide];
+      }
+    } else {
+      this.state.lapses[index] = this.state.lapses[index].filter(it => it != lapsedSide)
+    }
+    this.state.selfUpdate = !this.state.selfUpdate;
+    e.target.classList.toggle('active');
   }
 
   this.setCurrentSideIndex = function (slideIndex, sideIndex) {
@@ -144,14 +172,16 @@ export const Slider = function () {
         slideChanged: (slider) => {
           showIndex(slider.track.details.rel);
           instance.state.currentIndex = slider.track.details.rel;
+          this.updateBatsu()
         }
       },
     );
     this.slider = slider;
     if (this.state.currentIndex) {
       this.showCurrentIndex(this.state.currentIndex);
-      this.slider.moveToIdx(this.state.currentIndex, false)
+      this.slider.moveToIdx(this.state.currentIndex, false);
     }
+    this.updateBatsu()
   };
 
   this.handleStateChange = function (newState, prop, value) {
@@ -160,6 +190,20 @@ export const Slider = function () {
       this.updateModeElement(this.cardModeEl)
     } 
   };
+
+  this.updateBatsu = function() {
+    const slide = this.slider.slides[this.slider.track.details.rel];
+    const index = parseInt(slide.dataset.originalIndex);
+    const currentSideIndex = parseInt(slide.querySelector('.current').dataset.index);
+    const lapsedSidesInState = this.state.lapses[index];
+    if (!lapsedSidesInState) {
+      this.batsu.classList.remove('active');
+      return;
+    }
+    if (lapsedSidesInState.includes(currentSideIndex)) {
+      this.batsu.classList.add('active')
+    }
+  }
 
   this.handleFilter = function() {
     this.state.order && delete this.state.order;
@@ -174,13 +218,23 @@ export const Slider = function () {
       this.state.order = [];
       this.state.sideIndexes = {};
       this.state.currentIndex = 0;
+      this.state.lapses = {};
+      this.state.removed = [];
       this.state.mode = 'original';
       this.isRandomEl.checked = false;
     }
     if (this.slider) {
       this.slider.destroy();
     }
-    this.sliderOuter.innerHTML = this.keensliderContainerTemplate.outerHTML;
+    //this.sliderOuter.innerHTML = this.keensliderContainerTemplate;
+    //this.sliderOuter.innerHTML = this.keensliderContainerTemplate.outerHTML;
+    document.getElementById('my-keen-slider')?.remove();
+    this.sliderOuter.insertAdjacentElement('beforeend', this.keensliderContainerTemplate)
+    // this.sliderOuter.innerHTML = `
+    //   <div class="batsu"></div>
+    //   <div id="my-keen-slider" class="keen-slider js-slider"></div>
+    // `
+    this.batsu.classList.remove('active');
   };  
 
   this.render = async function (resetAll) {
@@ -202,9 +256,11 @@ export const Slider = function () {
         op.selected = op.value == this.state.mode;
       })
     }
-    if (!this.state.sideIndexes) {
-      this.state.sideIndexes = [];
-    }
+    if (this.state.sideIndexes == null) this.state.sideIndexes = [];
+    if (this.state.lapses == null) this.state.lapses = {};
+    if (this.state.sideIndexes == null) this.state.sideIndexes = {};
+    if (this.state.removed == null) this.state.removed = [];
+
     this.renderSlider();
     this.initSlider();
     this.setRenderedEvents(this.sliderOuter.querySelector('.js-slider'));
@@ -216,6 +272,11 @@ export const Slider = function () {
     this.currentSlideIndexEl = this.element.querySelector('#currentSlideIndex');
     this.sliderOuter = this.element.querySelector('#js-slider-outer');
     this.keensliderContainerTemplate = this.sliderOuter.removeChild(this.element.querySelector('#my-keen-slider'));
+    this.batsu = this.element.querySelector("#batsu")
+    // this.keensliderContainerTemplate = `
+    // <div id="js-slider-outer">
+    //   <div class="batsu"></div>
+    // </div>`;
     this.speakEl = this.element.querySelector('#speak');
     this.isRandomEl = this.element.querySelector('#randomSlidesOrder');
     this.cardModeEl = this.element.querySelector('#cardMode');

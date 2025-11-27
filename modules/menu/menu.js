@@ -1,7 +1,6 @@
 import {View} from "../view.js";
 import {Application} from "../app.js"
 import {DataFactory} from "../data.js"
-import {setSelectOption} from "../utils.js"
 import {SessionsView} from "../sessions/sessions.js"
 import {Prompt} from "../components/prompt/prompt.js"
 import {BurgerButton} from "../components/burger-button/burger-button.js"
@@ -73,7 +72,6 @@ export const MenuView = function () {
         this.toggleMenu();
       }
     });
-
   }
 
   this.reloadCurrentSource = function () {

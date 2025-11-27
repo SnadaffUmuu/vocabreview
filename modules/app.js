@@ -186,7 +186,6 @@ export const Application = {
             Router.resetViews();
           }
           if(self.state.currentSource) {
-            debugger;
             self.initialData[self.state.currentSource] = target;
           }
         }

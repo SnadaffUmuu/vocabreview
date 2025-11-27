@@ -29,8 +29,7 @@
 
 .burger-button.v2 {
   height: 30px;
-  width:40px;
-  margin-left:10px;
+  margin-left:5px;
   padding: 7px 10px;
   box-sizing: border-box;
 }

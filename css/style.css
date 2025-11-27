@@ -116,6 +116,8 @@
   --promptOverlay:#f1e6e8a3;
   --promptShadow:#2d234169;
   --promptText:var(--text-color);
+
+  --batsuActiveText: #bb0c0c
 }
 
 body.night {
