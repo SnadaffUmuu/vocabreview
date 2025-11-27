@@ -3,6 +3,13 @@ import {View} from "../view.js";
 export const Dialog = function () {
   this.events = {
     'click .dialog__closeButton': 'close',
+    'click .dialog__overlay' : 'closeByClickOuside'
+  }
+
+  this.closeByClickOuside = function (e) {
+    if (!e.target.closest('.dialog')) {
+      this.close();
+    }
   }
 
   this.close = function (e) {

@@ -57,10 +57,11 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 }
 
 #sourceItemsCounter {
-  position: fixed;
+  /* position: fixed;
   top:85px; 
-  right:12px;
+  right:12px; 
   z-index:100;
+  */
   width:23px;
   text-align: center;
   box-sizing: border-box;
@@ -68,7 +69,8 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 
 #boardSourceCards {
   flex: 1 0 calc(100vw - 40px);
-  padding: 7px 42px 10px 10px;
+  /* padding: 7px 42px 10px 10px; */
+  padding: 7px 15px 10px 10px;
   box-sizing: border-box;
   display: flex;
   flex-flow: row wrap;
@@ -404,9 +406,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 
 .boardItem .itemActions {
   flex-flow: row nowrap;
-  /* gap: 10px 20px; */
   display: none;
-  /* padding: 10px 1px 8px; */
   padding: 10px 1px 0;
   align-items: center;
   backdrop-filter: blur(3px);
@@ -423,7 +423,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 }
 
 .boardItem .itemAction {
-  width: 35px;
+  width: 30px;
   height:40px;
   margin-right:10px;
   display: flex;
@@ -476,6 +476,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   margin-right:0;
   flex: 1 1 auto;
   justify-content: flex-end;
+  font-size:13px;
 }
 
 .boardItem:not(:has([data-current="true"][data-reading])) .reading {

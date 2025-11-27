@@ -4,8 +4,8 @@
   border-radius: 5px;
   box-shadow: 8px 8px 0 var(--dialogShadow);
   box-sizing: border-box;
-  width:100%;
   position: relative;
+  /* width: calc(100% - 20px); */
 }
 
 .dialog__wrap {
@@ -16,7 +16,7 @@
   left:30px;
   bottom:30px;
   overflow:auto;
-  padding: 10px;
+  padding: 16px;
 }
 
 .dialog__overlay {

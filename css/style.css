@@ -106,6 +106,9 @@
 
   --viewActionsDropdownShadow: #4546838f;
   --viewActionDropdownText:var(--text-color);
+  --veiwActionDropdownItemBorder:#3e36558f;
+  --viewActionDropdownItemSelected:#f1e6e896;
+
   --reversedItemBoxShadow:#cb00ff5e;
 
   --burgerButtonLine:var(--text-color);
@@ -187,6 +190,8 @@ body.night {
 
   --viewActionsDropdownShadow: #250106; 
   --viewActionDropdownText:var(--boardItem);
+  --viewActionDropdownItemSelected:#aca9b780;
+
   --reversedItemBoxShadow:#0003ff8f;
 
   --dropdownText:#250006;
@@ -326,37 +331,3 @@ button {
 .tagsLegend [data-tag] > span {
   display: inline-block;
 }
-
-/* .viewMenu {
-  width:100px;
-  position: relative;
-}
-
-.viewMenu__trigger {
-  padding: 3px 10px;
-  line-height: 19px;
-}
-
-.viewMenu > ul {
-  padding:0;
-  margin:0;
-  list-style: none;
-  display: none;
-  position: absolute;
-  left:0;
-  top:100%;
-  z-index: 1000;
-  min-width: 100%;
-}
-
-.viewMenu.active ul {
-  display:block;
-}
-
-.viewMenu li {
-  padding:5px;
-  cursor:pointer;
-  background: var(--bg);
-  border: 1px dashed var(--paleBorder);
-  margin-top:-1px;
-} */

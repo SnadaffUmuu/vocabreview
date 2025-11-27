@@ -20,9 +20,6 @@ export const PanelView = function () {
   this.events = {
     'change #cardMode': 'setMode',
     'click .itemDroppableContainer': 'collapseAllItems',
-    //'click .itemDroppableContainer': 'toggleViewMenu',
-    // 'click #toggleViewMenu': 'toggleViewMenu',
-    //'click .viewMenu li': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
     'click #render': 'render',
   }
@@ -38,6 +35,7 @@ export const PanelView = function () {
       '.toggleInfo': 'toggleInfo',
       '.clear': 'clearBox',
       '.focus': 'toggleFocusBox',
+      '.rotateBack': 'rotateBack',
     },
     contextmenu: {
       '#panelSources': 'UserActionHandlers.preventDefault',
@@ -79,26 +77,23 @@ export const PanelView = function () {
     );
   }
 
-  // this.executeFunction = function (e) {
-  //   this[e.target.id]();
-  // }
-
-  // this.executeFunction2 = (funcName) => {
-  //   this[funcName]();
-  // }
-
   this.updateSourceItemsCount = function () {
     this.sourceItemCounter.innerHTML = this.sourceContainer.querySelectorAll('.panelItem').length;
   }
 
   this.clearBox = function (e) {
-    const theBox = e.target.closest('.itemDroppableContainer');
-    [...theBox.querySelectorAll('.panelItem')].forEach(item => {
-      delete this.state.itemsInBoxes[parseInt(item.dataset.originalIndex)];
+    new Prompt({
+      text: 'Clear the box?',
+      onConfirm: () => {
+        const theBox = e.target.closest('.itemDroppableContainer');
+        [...theBox.querySelectorAll('.panelItem')].forEach(item => {
+          delete this.state.itemsInBoxes[parseInt(item.dataset.originalIndex)];
+        });
+        Application.views.StructureView.render();
+        this.state.selfUpdate = !this.state.selfUpdate;
+        this.render();
+      }
     });
-    Application.views.StructureView.render();
-    this.state.selfUpdate = !this.state.selfUpdate;
-    this.render();
   }
 
   this.toggleFocusBox = function (e) {
@@ -130,14 +125,6 @@ export const PanelView = function () {
     }
   }
 
-  // this.toggleViewMenu = function (e) {
-  //   if(e.target.id && e.target.id == 'toggleViewMenu') {
-  //     e.target.closest('.viewMenu').classList.toggle("active");
-  //   } else if(this.panelActions.classList.contains('active')) {
-  //     this.panelActions.classList.remove('active')
-  //   }
-  // }
-
   this.setGlobal = function () {
     const candidates = [...this.box4.querySelectorAll('.panelItem')];
     const entriesToAdd = candidates.map(el =>
@@ -145,13 +132,6 @@ export const PanelView = function () {
         entry.originalIndex == el.dataset.originalIndex))
 
     Application.setGlobal(structuredClone(entriesToAdd));
-
-    // candidates.forEach(el => {
-    //   delete this.state.itemsInBoxes[el.dataset.originalIndex];
-    // });
-    // Application.views.StructureView.render();
-    // this.state.selfUpdate = !this.state.selfUpdate;
-    // this.render();
   }
 
   this.toggleMarkGlobal = function (e) {
@@ -161,8 +141,6 @@ export const PanelView = function () {
       [...items].forEach(el => {
         const entry = this.data.entries.find(en => en.originalIndex == parseInt(el.dataset.originalIndex));
         if(entry) {
-          // entry.source ??= Application.state.currentSource;
-          // entry.hash ??= stringToHash(JSON.stringify(entry));
           if(entry.source == null) entry.source = Application.state.currentSource;
           if(entry.hash == null) entry.hash = stringToHash(JSON.stringify(entry));
           if(globalHashes.includes(entry.hash)) {
@@ -255,7 +233,7 @@ export const PanelView = function () {
     })
   };
 
-  this.rotateCard = function (e) {
+  this.rotateCard = function (e, toBack) {
     e.stopPropagation();
     e.preventDefault();
     const item = this.getDragItem(e.target);
@@ -271,7 +249,11 @@ export const PanelView = function () {
     for(let l of allLines) {
       if(l.dataset.current) {
         current = l;
-        next = allLines[c + 1] ? allLines[c + 1] : allLines[0];
+        if (toBack) {
+          next = allLines[c - 1] ? allLines[c - 1] : allLines[allLines.length - 1];
+        } else {
+          next = allLines[c + 1] ? allLines[c + 1] : allLines[0];
+        }
         break;
       }
       c++;
@@ -282,6 +264,10 @@ export const PanelView = function () {
     }
     //this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
   };
+
+  this.rotateBack = function (e) {
+    this.rotateCard(e, true)
+  }  
 
   /*
   this.setCurrentLineIndex = function (itemIndex, lineIndex) {
@@ -537,6 +523,7 @@ export const PanelView = function () {
     <div class="itemActions">
       <div class="itemAction removeItem">✖</div>
       <div class="itemAction expandLine">⇕</div>
+      <div class="itemAction rotateBack">←</div>
       <div class="itemAction speakLine">▶</div>
       ${entry.info ? '<div class="itemAction toggleInfo">ⓘ</div>' : ''}
       <div class="itemAction reading">${reading ? reading.text : ''}</div>
@@ -577,7 +564,7 @@ export const PanelView = function () {
   this.renderPanelBoxControls = function () {
     [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
       box.insertAdjacentHTML('afterbegin', `
-        <div class="clear"></div>
+        <div class="clear">x</div>
         <div class="focus"></div>
       `)
     })
@@ -708,7 +695,6 @@ export const PanelView = function () {
     }
     this.cardModeEl = this.element.querySelector('#cardMode');
     this.viewActionsContainer = this.element.querySelector("#panelActionsBlock");
-    // this.panelActions = this.element.querySelector(".viewMenu");
     this.tagsLegend = this.element.querySelector('#panelLegend');
 
     this.renderedEventSet = null;

@@ -1,9 +1,13 @@
 import {positionDropdown} from "../../utils.js";
 
 export class DropdownMenu {
-  constructor({items = {}} = {}) {
+  constructor({
+    items = {},
+    dropdownCssClasses = []
+  } = {}) {
+    this.items = items;
     const html = `
-    <div class="dropdown-menu hidden">
+    <div class="dropdown-menu hidden ${dropdownCssClasses.join(' ')}">
       <ul class="dropdown-list">
       ${Object.entries(items).map(([value, label]) => `
         <li class="dropdown-item" data-value="${value}">
@@ -31,6 +35,7 @@ export class DropdownMenu {
 
   open() {
     this.el.classList.remove('hidden');
+    this.scrollToSelected()
     this.el.dispatchEvent(new CustomEvent('dropdown:open', { bubbles: true }));
   }
 
@@ -58,6 +63,19 @@ export class DropdownMenu {
       positionDropdown(this.el, this.getSourceElement())
     }
     return this
+  }
+
+  highlight(value) {
+    const items = this.el.querySelectorAll('li')
+    for (const li of items) {
+      li.classList.toggle('selected', li.dataset.value === value);
+    }
+    this.scrollToSelected()
+  }
+
+  scrollToSelected() {
+    const selected = this.el.querySelector('li.selected')
+    selected?.scrollIntoView(true)
   }
 
 }

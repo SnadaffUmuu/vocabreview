@@ -15,14 +15,44 @@
   display: none;
 }
 
+.dropdown-list {
+  list-style:none;
+  padding:5px 10px 7px;
+  margin:0;
+}
+
 .dropdown-item {
   padding: 10px 13px;
   cursor: pointer;
   width:max-content;
 }
 
-.dropdown-list {
-  list-style:none;
-  padding:5px 10px 7px;
-  margin:0;
+.dropdown-menu.sourcesList {
+  position:fixed;
+  max-height: none;
+  bottom:20px;
+  right:20px !important;
+  left:20px !important;
+  max-height:none;
+  margin-top: 7px;
+}
+
+.dropdown-menu.sourcesList .dropdown-list {
+  padding-left:0;
+  padding-right:0;
+}
+
+.dropdown-menu.sourcesList .dropdown-item {
+  padding: 12px 13px;
+  cursor: pointer;
+  display:block;
+  width:auto;
+}
+
+.dropdown-menu.sourcesList .dropdown-item:not(:first-child) {
+  border-top:1px solid var(--veiwActionDropdownItemBorder)
+}
+
+.dropdown-menu.sourcesList .dropdown-item.selected {
+  background: var(--viewActionDropdownItemSelected)
 }

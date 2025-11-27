@@ -52,7 +52,8 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
 
 #panelSources {
   flex: 1 0 calc(100vw - 40px);
-  padding: 7px 40px 10px 10px;
+  /* padding: 7px 40px 10px 10px; */
+  padding: 7px 15px 10px 10px;
   box-sizing: border-box;
   display: flex;
   flex-flow: row wrap;
@@ -99,6 +100,7 @@ body:has(#menu option[value="global"]:checked) #markGlobal {
   width:20px;
   height:20px;
   background: var(--button-primary);
+  text-align:center;
 }
 
 #boxesContainer #box1 .clear,
@@ -454,7 +456,7 @@ body:has(.focused) {
 }
 
 .panelItem .itemAction {
-  width: 35px;
+  width: 30px;
   height:40px;
   margin-right:10px;
   display: flex;
@@ -507,6 +509,7 @@ body:has(.focused) {
   margin-right:0;
   flex: 1 1 auto;
   justify-content: flex-end;
+  font-size:13px;
 }
 
 .panelItem:not(:has([data-current="true"][data-reading])) .reading {

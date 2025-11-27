@@ -22,6 +22,11 @@ export class Prompt {
     document.body.append(this.el)
 
     this.el.addEventListener('click', (e) => {
+      if (e.target === this.el) {
+        onCancel();
+        this.close();
+        return;
+      }
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
 

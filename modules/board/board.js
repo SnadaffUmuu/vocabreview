@@ -25,9 +25,6 @@ export const BoardView = function () {
     'change #cardMode': 'setMode',
     'change #studyMode': 'toggleStudyMode',
     'click .itemDroppableContainer': 'collapseAllItems',
-    // 'click #setLapses': 'setLapses',
-    // 'click #fixLapses': 'fixLapses',
-    // 'change #boardActions': 'executeFunction',
     'change #markGlobal': 'toggleMarkGlobal',
     'change #markReversed': 'toggleMarkReversed'
   }
@@ -41,6 +38,7 @@ export const BoardView = function () {
       '.expandLine': 'toggleExpandLine',
       '.removeItem': 'removeItem',
       '.toggleInfo': 'toggleInfo',
+      '.rotateBack': 'rotateBack'
     },
     contextmenu: {
       '#boardSourceCards': 'UserActionHandlers.preventDefault',
@@ -147,8 +145,7 @@ export const BoardView = function () {
   }
 
   this.collapseAllItems = function (e) {
-    if(!e.target.classList.contains('itemDroppableContainer')
-      /*&& (!e.target.id || !e.target.id == 'studyMode')*/) return;
+    if(!e.target.classList.contains('itemDroppableContainer')) return;
     [...this.element.querySelectorAll('.menuExpanded')].forEach(item => {
       /*
       item.querySelectorAll('.itemLine').forEach(line => {
@@ -251,8 +248,7 @@ export const BoardView = function () {
     })
   };
 
-  this.rotateCard = function (e) {
-    //if (!this.isStudyMode()) return;
+  this.rotateCard = function (e, toBack) {
     e.stopPropagation();
     e.preventDefault();
     const item = this.getDragItem(e.target);
@@ -268,7 +264,11 @@ export const BoardView = function () {
     for(let l of allLines) {
       if(l.dataset.current) {
         current = l;
-        next = allLines[c + 1] ? allLines[c + 1] : allLines[0];
+        if (toBack) {
+          next = allLines[c - 1] ? allLines[c - 1] : allLines[allLines.length - 1];
+        } else {
+          next = allLines[c + 1] ? allLines[c + 1] : allLines[0];
+        }
         break;
       }
       c++;
@@ -279,6 +279,10 @@ export const BoardView = function () {
     }
     this.setCurrentLineIndex(parseInt(item.dataset.originalIndex), parseInt(next.dataset.originalIndex));
   };
+
+  this.rotateBack = function (e) {
+    this.rotateCard(e, true)
+  }
 
   this.setCurrentLineIndex = function (itemIndex, lineIndex) {
     if(this.state.lineIndexes[itemIndex] !== undefined) {
@@ -595,6 +599,7 @@ export const BoardView = function () {
     <div class="itemActions">
       <div class="itemAction removeItem">✖</div>
       <div class="itemAction expandLine">⇕</div>
+      <div class="itemAction rotateBack">←</div>
       <div class="itemAction speakLine">▶</div>
       ${entry.info ? '<div class="itemAction toggleInfo">ⓘ</div>' : ''}
       <div class="itemAction reading">${reading ? reading.text : ''}</div>
@@ -662,7 +667,6 @@ export const BoardView = function () {
     this.failedCol.innerHTML = '';
     this.learnCol.innerHTML = '';
     this.element.querySelector('#markGlobal').removeAttribute('checked');
-    //setSelectOption(this.boardActions, '');
 
     if(resetAll) {
       this.state.removedItems = this.state.removedItems.filter(index =>

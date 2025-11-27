@@ -29,7 +29,7 @@
   top:0;
   bottom:0;
   transform: translateX(-100%);
-  padding:10px 10px 5px;
+  padding:8px 10px 5px;
   background: var(--menuBg);
   font-size:13px;
   color:var(--menuTextColor);
@@ -69,6 +69,23 @@
   width: 100%;
   margin-bottom:15px;
   margin-right:10px;
+}
+
+#dataActions .selectSourcesButton {
+  flex:1 1 auto;
+  display: flex;
+  text-align:center;
+  /* justify-content: center; */
+  align-items: center;
+  overflow: hidden;
+  display:-webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  font-size:16px;
+  margin-right:5px;
+  height:30px;
+  line-height:30px;
+  white-space:nowrap;
 }
 
 #switchViewRow {

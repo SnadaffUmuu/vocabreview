@@ -5,7 +5,9 @@ import {setSelectOption} from "../utils.js"
 import {SessionsView} from "../sessions/sessions.js"
 import {Prompt} from "../components/prompt/prompt.js"
 import {BurgerButton} from "../components/burger-button/burger-button.js"
+import {SelectTrigger} from "../components/select-trigger/select-trigger.js"
 import {DropdownAction} from "../components/dropdown-action.js"
+import {SelectAction} from "../components/select-action.js"
 
 export const MenuView = function () {
 
@@ -39,6 +41,7 @@ export const MenuView = function () {
     if(this.menu.classList.contains("isOpened")) {
       this.menu.classList.remove("isOpened")
       this.menuTrigger.innerText = ">>"
+      this.sourcesList.close()
     } else {
       this.menu.classList.add("isOpened")
       this.menuTrigger.innerText = "<<"
@@ -101,6 +104,14 @@ export const MenuView = function () {
     this.sourcesSelect.insertAdjacentHTML('beforeend', options);
   }
 
+  this.buildSourcesList = function () {
+    let result = {};
+    DataFactory.vocabFilesIndex.forEach(s => {
+      result[s] = s
+    })
+    return result
+  }
+
   this.toggleViewHighlight = function (el, turnOn) {
     this.viewEls.forEach(button => {
       if(button.dataset.appType == el.dataset.appType && turnOn == true) {
@@ -111,24 +122,28 @@ export const MenuView = function () {
     })
   }
 
-  this.changeSource = function (e) {
+  //this.changeSource = function (e) {
+  this.changeSource = function (value) {
     if(!Application.views.PreloaderView.isShown()) {
       Application.views.PreloaderView.show();
     }
     setTimeout(() => {
-      Application.changeSource(e.target.value);
+      //Application.changeSource(e.target.value);
+      Application.changeSource(value);
     }, 0)
   }
 
   this.reset = function () {
-    setSelectOption(this.sourcesSelect, '');
+    this.sourcesList.reset()
+    //setSelectOption(this.sourcesSelect, '');
     this.viewEls.forEach(el => this.toggleViewHighlight(el, false));
   }
 
   this.render = function () {
     this.reset();
     if(Application.state.currentSource) {
-      setSelectOption(this.sourcesSelect, Application.state.currentSource);
+      //setSelectOption(this.sourcesSelect, Application.state.currentSource);
+      this.sourcesList.setValue(Application.state.currentSource)
     }
     if(Application.state.appType) {
       const current = this.viewEls.find(el => el.dataset.appType == Application.state.appType);
@@ -148,7 +163,7 @@ export const MenuView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
-    this.sourcesSelect = this.element.querySelector('#vocabSources');
+    //this.sourcesSelect = this.element.querySelector('#vocabSources');
     this.menuTrigger = this.element.querySelector('#menuTrigger');
     // this.viewSelect = this.element.querySelector('#viewSelect');
     this.viewEls = [...this.element.querySelectorAll('.switchView')];
@@ -168,7 +183,16 @@ export const MenuView = function () {
       appendTo: this.actionsRow
     });
 
-    this.renderSelectOptions();
+    this.sourcesList = new SelectAction({
+      trigger: new SelectTrigger({cssClasses : ['js-selectSources selectSourcesButton']}),
+      items : this.buildSourcesList(),
+      value : Application.state.currentSource,
+      dropdownCssClasses : ['sourcesList'],
+      onChange : (value) => this.changeSource(value),
+      prependTo: this.actionsRow
+    })
+
+    //this.renderSelectOptions();
 
     this.render();
   }
