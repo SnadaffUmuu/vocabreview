@@ -44,22 +44,20 @@
   position: fixed;
   width:50vw;
   display:flex;
-  justify-content: center;
   align-items: center;
-  bottom: 60px;
+  top: 130px;
   z-index:1;
 }
 
 #js-slider-outer #batsu {
   right: 0;
-}
-
-#js-slider-outer #maru {
-  left: 0;
+  justify-content: flex-end;
+  padding-right: 16px;
+  font-size: 40px;
 }
 
 #js-slider-outer #batsu::after {
-  content: 'ばつ';
+  content: '✗';
   display:block;
   height:100%;
   width:60px;
@@ -67,12 +65,18 @@
   line-height:100px;
   box-sizing: border-box;
   opacity:0.2;
-  margin-left: 15vw;
 }
 
 #js-slider-outer #batsu.active::after {
   opacity: 1;
   color: var(--batsuActiveText)
+}
+
+#js-slider-outer #maru {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: 16px;
+  font-weight: bold;
 }
 
 #js-slider-outer #maru::after {
@@ -84,14 +88,12 @@
   line-height:100px;
   box-sizing: border-box;
   opacity:0.2;
-  margin-right: 15vw;
 }
 
 #js-slider-outer #maru.active::after {
   opacity: 1;
   color: var(--maruActiveText)
 }
-
 
 #js-slider-outer #removeSlide {
   position: absolute;
