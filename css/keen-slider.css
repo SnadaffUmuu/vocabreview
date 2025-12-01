@@ -37,13 +37,13 @@
   max-height: 100vh;
 }
 
-.slide-inner {
+/* .slide-inner {
   flex: 1 1 auto;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: stretch;
-}
+} */
 
 .slide-side:not(.current) {
   display: none;

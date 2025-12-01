@@ -38,28 +38,79 @@
   position:relative;
 }
 
-#js-slider-outer #batsu {
+#js-slider-outer .slideActions {
   font-size:30px;
   position: fixed;
-  width:100px;
+  width:50vw;
   height:100px;
   display:flex;
   justify-content: center;
   align-items: center;
   bottom: 60px;
-  right: 0;
   z-index:1;
+}
+
+#js-slider-outer #batsu {
+  right: 0;
+}
+
+#js-slider-outer #maru {
+  left: 0;
 }
 
 #js-slider-outer #batsu::after {
   content: 'ばつ';
   display:block;
-  opacity:0.2
+  height:100%;
+  width:60px;
+  text-align: center;
+  line-height:100px;
+  box-sizing: border-box;
+  opacity:0.2;
+  margin-left: 15vw;
 }
 
 #js-slider-outer #batsu.active::after {
   opacity: 1;
   color: var(--batsuActiveText)
+}
+
+#js-slider-outer #maru::after {
+  content: '〇';
+  display:block;
+  height:100%;
+  width:60px;
+  text-align: center;
+  line-height:100px;
+  box-sizing: border-box;
+  opacity:0.2;
+  margin-right: 15vw;
+}
+
+#js-slider-outer #maru.active::after {
+  opacity: 1;
+  color: var(--maruActiveText)
+}
+
+
+#js-slider-outer #removeSlide {
+  position: fixed;
+  width:60px;
+  height:60px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  left: 0;
+  z-index:1;
+  background:var(--slideSpeakableLineBg);
+}
+
+#js-slider-outer #removeSlide::after {
+  font-size:30px;
+  content: '消';
+  display:block;
+  color:var(--bg);
 }
 
 .keen-slider:not([data-keen-slider-disabled]) {

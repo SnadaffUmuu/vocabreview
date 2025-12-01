@@ -101,22 +101,39 @@ export function shuffleArray(array) {
   return array;
 }
 
-export function shuffleArraySaveOrder (array) {
-  let indexedArray = array.map((o, i) => {
-    return {
-      i : i,
-      o : o
-    }
-  });
-  for (let i = indexedArray.length - 1; i > 0; i--) {
+// export function shuffleArraySaveOrder (array) {
+//   let indexedArray = array.map((o, i) => {
+//     return {
+//       i : i,
+//       o : o
+//     }
+//   });
+//   for (let i = indexedArray.length - 1; i > 0; i--) {
+//     const j = Math.floor(Math.random() * (i + 1));
+//     const temp = indexedArray[i];
+//     indexedArray[i] = indexedArray[j];
+//     indexedArray[j] = temp;
+//   }
+//   return {
+//     order : indexedArray.map(o => o.i),
+//     array : indexedArray.map(o => o.o),
+//   };
+// }
+
+export function shuffleArraySaveOrder(array) {
+  // создаём копию массива, чтобы не мутировать исходный
+  const copied = array.slice();
+
+  // перемешиваем Fisher–Yates
+  for (let i = copied.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    const temp = indexedArray[i];
-    indexedArray[i] = indexedArray[j];
-    indexedArray[j] = temp;
+    [copied[i], copied[j]] = [copied[j], copied[i]];
   }
+
+  // в order кладём originalIndex каждого элемента
   return {
-    order : indexedArray.map(o => o.i),
-    array : indexedArray.map(o => o.o),
+    order: copied.map(o => o.originalIndex),
+    array: copied
   };
 }
 

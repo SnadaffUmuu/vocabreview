@@ -666,7 +666,8 @@ export const BoardView = function () {
     this.goodCol.innerHTML = '';
     this.failedCol.innerHTML = '';
     this.learnCol.innerHTML = '';
-    this.element.querySelector('#markGlobal').removeAttribute('checked');
+    this.markGlobal.removeAttribute('checked');
+    this.markReversed.removeAttribute('checked');
 
     if(resetAll) {
       this.state.removedItems = this.state.removedItems.filter(index =>
@@ -677,6 +678,7 @@ export const BoardView = function () {
       this.state.itemsInCols = this.filterStateObjByCurrentEntries(this.state.itemsInCols);
       this.state.lapses = this.filterStateObjByCurrentEntries(this.state.lapses);
       this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
+      this.
       Application.views.StructureView.render();
     }
     this.data = {};
@@ -732,6 +734,8 @@ export const BoardView = function () {
     this.sourceItemCounter = this.element.querySelector('#sourceItemsCounter');
     this.viewActionsContainer = this.element.querySelector('#boardActionsBlock');
     this.tagsLegend = this.element.querySelector('#boardLegend');
+    this.markGlobal = this.element.querySelector('#markGlobal');
+    this.markReversed = this.element.querySelector('#markReversed');
     this.renderedEventSet = null;
     this.viewActions = new DropdownAction({
       trigger: new BurgerButton(),

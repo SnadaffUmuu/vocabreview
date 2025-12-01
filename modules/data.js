@@ -49,6 +49,7 @@ export const DataFactory = {
     counter: 'counter',
     suffix: 'suffix',
     dialect: 'dialect',
+    katakana: 'katakana',
   },
 
   buildLegendHtml() {
