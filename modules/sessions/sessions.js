@@ -59,7 +59,7 @@ export const SessionsView = function (dialog) {
         letters.push('table')
       }
       if (letters.length) {
-        res.push(`<td data-change-source="${k}">${k}</td><td>${letters.map(l => `<span class="tag" data-app-type="${l}">${l}</span>`).join('')}</td>`)
+        res.push(`<td data-change-source="${k}">${k}</td><td>${letters.map(l => `<div class="tag" data-app-type="${l}">${l}</div>`).join('')}</td>`)
       }
     })
 

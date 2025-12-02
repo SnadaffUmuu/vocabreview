@@ -220,8 +220,9 @@ export const Slider = function () {
           showIndex(slider.track.details ? slider.track.details.rel : 0);
         },
         slideChanged: (slider) => {
-          showIndex(slider.track.details.rel);
-          instance.state.currentIndex = slider.track.details.rel;
+          const rel = slider.track.details ? slider.track.details.rel : 0;
+          showIndex(rel);
+          instance.state.currentIndex = rel;
           this.updateSideLearnMarks()
           console.log('slide changed')
         }

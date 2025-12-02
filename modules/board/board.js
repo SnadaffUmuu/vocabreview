@@ -90,11 +90,6 @@ export const BoardView = function () {
     this.collapseAllItems(e);
   }
 
-  // this.executeFunction = function (e) {
-  //   if(e.target.value == '') return;
-  //   this[e.target.value]();
-  // }
-
   this.setGlobal = function () {
     const candidates = [...this.learnCol.querySelectorAll('.boardItem')];
     const entriesToAdd = candidates.map(el =>
@@ -678,7 +673,6 @@ export const BoardView = function () {
       this.state.itemsInCols = this.filterStateObjByCurrentEntries(this.state.itemsInCols);
       this.state.lapses = this.filterStateObjByCurrentEntries(this.state.lapses);
       this.state.lineIndexes = this.filterStateObjByCurrentEntries(this.state.lineIndexes);
-      this.
       Application.views.StructureView.render();
     }
     this.data = {};

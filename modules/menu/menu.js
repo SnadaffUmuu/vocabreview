@@ -12,21 +12,10 @@ export const MenuView = function () {
 
   this.events = {
     'click #menuTrigger': 'toggleMenu',
-    //'change #globalActions': 'executeFunction',
     'click .switchView': 'switchView',
     'click #showCurrentSessions': 'showCurrentSessions',
     'click #reloadCurrentSource': 'reloadCurrentSource'
   }
-
-  // this.executeFunction = function (e) {
-  //   if(e.target.value == '') return;
-  //   this[e.target.value]();
-  // }
-
-  // this.executeFunction2 = function (e) {
-  //   if(e.target.id == '') return;
-  //   this[e.target.id]();
-  // }
 
   this.showCurrentSessions = async function (e) {
     Application.views.Dialog.show();
