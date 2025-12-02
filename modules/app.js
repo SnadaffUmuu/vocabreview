@@ -271,7 +271,7 @@ export const Application = {
     }
   },
 
-  loadAndSetCurrentSource: function (name) {
+  loadAndSetCurrentSource: async function (name) {
     if(name == DataFactory.globalPool) return;
     if('' == name) {
       this.reset();

@@ -2,3 +2,8 @@
   padding:5px 10px;
   border:1px solid var(--paleBorder)
 }
+
+.sessions__data td .tag {
+  padding: 3px 10px;
+  margin-right:5px;
+}

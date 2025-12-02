@@ -27,7 +27,6 @@ export const Dialog = function () {
 
   this.show = function (content) {
     View.prototype.show.call(this);
-    //this.render(content);
   }  
 }
 Dialog.prototype = Object.assign(Object.create(View.prototype), {

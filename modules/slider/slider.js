@@ -17,13 +17,13 @@ export const Slider = function () {
     'click #removeSlide': 'removeSlide',
   },
 
-    this.renderedEvents = {
-      click: {
-        '.slide-inner': 'rotateSlide',
-        '.slideReading': 'read',
-        '.js-slide-side': 'speakLine',
-      },
-    };
+  this.renderedEvents = {
+    click: {
+      '.slide-inner': 'rotateSlide',
+      '.slideReading': 'read',
+      '.js-slide-side': 'speakLine',
+    },
+  };
 
   this.resetSlider = function () {
     new Prompt({
@@ -110,7 +110,6 @@ export const Slider = function () {
       }
       currentSideIndexDisplayEl.innerHTML = newCurrent.dataset.index;
       this.setCurrentSideIndex(slideOuter.dataset.originalIndex, newCurrent.dataset.index);
-      //this.updateBatsu()
       this.updateSideLearnMarks()
     }
   }
@@ -144,26 +143,6 @@ export const Slider = function () {
     if (skipToggleOther !== true && turnOn && this.maru.classList.contains('active')) {
       this.toggleHit(null, true)
     }
-    // const turnOn = !e.target.classList.contains('active');
-    // const slide = this.slider.slides[this.slider.track.details.rel];
-    // const index = parseInt(slide.dataset.originalIndex);
-    // const lapsedSide = parseInt(slide.querySelector('.current').dataset.index);
-    // if(turnOn) {
-    //   if(this.state.lapses[index]) {
-    //     if(!this.state.lapses[index].includes(lapsedSide)) {
-    //       this.state.lapses[index].push(lapsedSide);
-    //     }
-    //   } else {
-    //     this.state.lapses[index] = [lapsedSide];
-    //   }
-    // } else {
-    //   this.state.lapses[index] = this.state.lapses[index].filter(it => it != lapsedSide)
-    //   if(!this.state.lapses[index].length) {
-    //     delete this.state.lapses[index]
-    //   }
-    // }
-    // this.state.selfUpdate = !this.state.selfUpdate;
-    // e.target.classList.toggle('active');
   }
 
   this.toggleHit = function (e, skipToggleOther) {
@@ -238,13 +217,13 @@ export const Slider = function () {
       {
         loop: true,
         created: (slider) => {
-          showIndex(slider.track.details.rel);
+          showIndex(slider.track.details ? slider.track.details.rel : 0);
         },
         slideChanged: (slider) => {
           showIndex(slider.track.details.rel);
           instance.state.currentIndex = slider.track.details.rel;
-          //this.updateBatsu()
           this.updateSideLearnMarks()
+          console.log('slide changed')
         }
       },
     );
@@ -253,7 +232,6 @@ export const Slider = function () {
       this.showCurrentIndex(this.state.currentIndex);
       this.slider.moveToIdx(this.state.currentIndex, false);
     }
-    //this.updateBatsu()
     this.updateSideLearnMarks()
   };
 

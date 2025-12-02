@@ -12,22 +12,21 @@ export const MenuView = function () {
 
   this.events = {
     'click #menuTrigger': 'toggleMenu',
-    'change #vocabSources': 'changeSource',
-    'change #globalActions': 'executeFunction',
+    //'change #globalActions': 'executeFunction',
     'click .switchView': 'switchView',
     'click #showCurrentSessions': 'showCurrentSessions',
     'click #reloadCurrentSource': 'reloadCurrentSource'
   }
 
-  this.executeFunction = function (e) {
-    if(e.target.value == '') return;
-    this[e.target.value]();
-  }
+  // this.executeFunction = function (e) {
+  //   if(e.target.value == '') return;
+  //   this[e.target.value]();
+  // }
 
-  this.executeFunction2 = function (e) {
-    if(e.target.id == '') return;
-    this[e.target.id]();
-  }
+  // this.executeFunction2 = function (e) {
+  //   if(e.target.id == '') return;
+  //   this[e.target.id]();
+  // }
 
   this.showCurrentSessions = async function (e) {
     Application.views.Dialog.show();
@@ -48,9 +47,10 @@ export const MenuView = function () {
   }
 
   this.switchView = function (e) {
+    const el = e instanceof Element ? e : e.target;
     Application.views.PreloaderView.showPreloaderAndRun(() => {
-      Application.switchView(e.target.dataset.appType);
-      this.toggleViewHighlight(e.target, true);
+      Application.switchView(el.dataset.appType);
+      this.toggleViewHighlight(el, true);
       this.toggleMenu();
     });
   }
@@ -120,27 +120,23 @@ export const MenuView = function () {
     })
   }
 
-  //this.changeSource = function (e) {
-  this.changeSource = function (value) {
+  this.changeSource = async function (value) {
     if(!Application.views.PreloaderView.isShown()) {
       Application.views.PreloaderView.show();
     }
     setTimeout(() => {
-      //Application.changeSource(e.target.value);
       Application.changeSource(value);
     }, 0)
   }
 
   this.reset = function () {
     this.sourcesList.reset()
-    //setSelectOption(this.sourcesSelect, '');
     this.viewEls.forEach(el => this.toggleViewHighlight(el, false));
   }
 
   this.render = function () {
     this.reset();
     if(Application.state.currentSource) {
-      //setSelectOption(this.sourcesSelect, Application.state.currentSource);
       this.sourcesList.setValue(Application.state.currentSource)
     }
     if(Application.state.appType) {
@@ -161,9 +157,7 @@ export const MenuView = function () {
 
   this.show = function () {
     View.prototype.show.call(this);
-    //this.sourcesSelect = this.element.querySelector('#vocabSources');
     this.menuTrigger = this.element.querySelector('#menuTrigger');
-    // this.viewSelect = this.element.querySelector('#viewSelect');
     this.viewEls = [...this.element.querySelectorAll('.switchView')];
     this.menu = this.element.querySelector('#menu');
     this.actionsRow = this.element.querySelector("#sourcesRow");
@@ -189,8 +183,6 @@ export const MenuView = function () {
       onChange : (value) => this.changeSource(value),
       prependTo: this.actionsRow
     })
-
-    //this.renderSelectOptions();
 
     this.render();
   }

@@ -63,13 +63,13 @@
 #reloadCurrentSource {
   height:30px
 }
-
+/* 
 #dataActions #vocabSources {
   height: 30px;
   width: 100%;
   margin-bottom:15px;
   margin-right:10px;
-}
+} */
 
 #dataActions .selectSourcesButton {
   flex:1 1 auto;
