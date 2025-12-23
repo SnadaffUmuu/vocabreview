@@ -31,9 +31,9 @@ export const Router = {
     }
   },
 
-  start: function () {
+  start: async function () {
     this.defineCurrentView(Application.state.appType ? Application.state.appType : '');
-    this.showMenuView();
+    await this.showMenuView();
     this.showCurrentView();
   },
 

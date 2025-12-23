@@ -2,6 +2,7 @@ import {View} from "../view.js";
 import {speak, shuffleArraySaveOrder} from "../utils.js";
 import {Application} from "../app.js";
 import {Prompt} from "../components/prompt/prompt.js"
+import {DataFactory} from "../data.js"
 
 export const Slider = function () {
   this.slider = null;
@@ -15,7 +16,14 @@ export const Slider = function () {
     'click #batsu': 'toggleLapse',
     'click #maru': 'toggleHit',
     'click #removeSlide': 'removeSlide',
+    'change #onlyMatchingMode' : 'toggleFilterByMode',
   },
+
+  this.modeMatchingFilteringCompatiableModes = [
+    DataFactory.LINE_ROLE.meaning, 
+    DataFactory.LINE_ROLE.example, 
+    DataFactory.LINE_ROLE.example_translation
+  ]
 
   this.renderedEvents = {
     click: {
@@ -42,7 +50,7 @@ export const Slider = function () {
           console.log('Cannot remove the only slide!');
           return;
         }
-        const slide = this.slider.slides[this.slider.track.details.rel];
+        const slide = this.slider.track.details ? this.slider.slides[this.slider.track.details.rel] : this.slider.slides[0];
         const index = parseInt(slide.dataset.originalIndex);
         this.state.removed.push(index);
         this.state.removed = this.state.removed;
@@ -63,6 +71,20 @@ export const Slider = function () {
         this.render()
       }
     });
+  }
+
+  this.toggleFilterByMode = function () {
+    this.state.isOnlyMatchingMode = this.isOnlyMatchingModeEl.checked;
+    if (this.modeMatchingFilteringCompatiableModes.includes(this.state.mode)) {
+      this.render()
+    }
+  }
+
+  this.filterByMode = function(entries) {
+    if (!this.state.mode
+      || !this.modeMatchingFilteringCompatiableModes.includes(this.state.mode)
+    ) return entries;
+    return entries.filter(en => en.lines.some(l => l.role == DataFactory.LINE_ROLE[this.state.mode]))
   }
 
   this.speakLine = function (e) {
@@ -116,7 +138,7 @@ export const Slider = function () {
 
   this.toggleSideLearnMark = function(el, stateObj) {
     const turnOn = !el.classList.contains('active');
-    const slide = this.slider.slides[this.slider.track.details.rel];
+    const slide = this.slider.track.details ? this.slider.slides[this.slider.track.details.rel] : this.slider.slides[0];
     const index = parseInt(slide.dataset.originalIndex);
     const currentSide = parseInt(slide.querySelector('.current').dataset.index);
     if(turnOn) {
@@ -165,6 +187,10 @@ export const Slider = function () {
     this.currentSlideIndexEl.innerHTML = index;
   }
 
+  this.setCurrentDataCount = function () {
+    this.currentDataCountEl.innerHTML = this.slider.slides.length
+  }
+
   this.setCardMode = function (e) {
     Application.views.PreloaderView.showPreloaderAndRun(() => {
       this.state.mode = e.target.value;
@@ -211,29 +237,47 @@ export const Slider = function () {
     const showIndex = (index) => {
       this.showCurrentIndex(index)
     }
+    const updateLearnMarks = () => {
+      this.updateSideLearnMarks()
+    }
+    const setSlider = (slider) => {
+      this.slider = slider
+    }
+    const moveToIdx = (slider) => {
+      if(this.state.currentIndex !== null && this.state.currentIndex !== undefined) {
+        this.showCurrentIndex(this.state.currentIndex);
+        slider.moveToIdx(this.state.currentIndex, false);
+      }
+    }
+    const setCurrentTotal = () => {
+      this.setCurrentDataCount()
+    }
     const instance = this;
     const slider = new KeenSlider(
       "#my-keen-slider",
       {
         loop: true,
         created: (slider) => {
+          setSlider(slider)
+          setCurrentTotal()
           showIndex(slider.track.details ? slider.track.details.rel : 0);
+          updateLearnMarks()
+          moveToIdx(slider)
         },
         slideChanged: (slider) => {
           const rel = slider.track.details ? slider.track.details.rel : 0;
           showIndex(rel);
           instance.state.currentIndex = rel;
-          this.updateSideLearnMarks()
+          updateLearnMarks()
           console.log('slide changed')
         }
       },
     );
-    this.slider = slider;
-    if(this.state.currentIndex !== null && this.state.currentIndex !== undefined) {
-      this.showCurrentIndex(this.state.currentIndex);
-      this.slider.moveToIdx(this.state.currentIndex, false);
-    }
-    this.updateSideLearnMarks()
+    //this.slider = slider;
+    // if(this.state.currentIndex !== null && this.state.currentIndex !== undefined) {
+    //   this.showCurrentIndex(this.state.currentIndex);
+    //   this.slider.moveToIdx(this.state.currentIndex, false);
+    // }
   };
 
   this.handleStateChange = function (newState, prop, value) {
@@ -249,7 +293,7 @@ export const Slider = function () {
   }
 
   this.updateSideLearnMark = function (stateObj, el) {
-    const slide = this.slider.slides[this.slider.track.details.rel];
+    const slide = this.slider.track.details ? this.slider.slides[this.slider.track.details.rel] : this.slider.slides[0];
     const index = parseInt(slide.dataset.originalIndex);
     const currentSideIndex = parseInt(slide.querySelector('.current').dataset.index);
     const sidesInState = stateObj[index];
@@ -277,7 +321,9 @@ export const Slider = function () {
       this.state.hits = {};
       this.state.removed = [];
       this.state.mode = 'original';
+      this.isOnlyMatchingMode = false;
       this.isRandomEl.checked = false;
+      this.isOnlyMatchingModeEl.checked = false;
     }
     if(this.slider) {
       this.slider.destroy();
@@ -285,6 +331,7 @@ export const Slider = function () {
     document.getElementById('my-keen-slider')?.remove();
     this.sliderOuter.insertAdjacentHTML('beforeend', this.keensliderContainerTemplate)
     this.batsu.classList.remove('active');
+    Application.views.StructureView.render();
   };
 
   this.render = async function (resetAll) {
@@ -296,12 +343,12 @@ export const Slider = function () {
       }
       return
     }
-    this.data.entries = structuredClone(Application.getCurrentSourceData().currentEntries).filter(en => this.state.removed && !this.state.removed.includes(en.originalIndex));
+    this.data.entries = structuredClone(Application.getCurrentSourceData().currentEntries).filter(en => this.state.removed ?
+      !this.state.removed.includes(en.originalIndex) : true);
     if(this.state.order?.length) {
       const map = Object.fromEntries(
         this.data.entries.map(e => [e.originalIndex, e])
       );
-      //this.data.shuffledEntries = this.state.order.map(i => this.data.entries[i]);
       this.data.shuffledEntries = this.state.order.map(id => map[id]);
       this.isRandomEl.checked = true;
     }
@@ -309,12 +356,23 @@ export const Slider = function () {
       Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
         op.selected = op.value == this.state.mode;
       })
+      if (this.state.isOnlyMatchingMode) {
+        this.isOnlyMatchingModeEl.checked = true;
+        const data = this.data.shuffledEntries || this.data.entries;
+        const filteredData = this.filterByMode(data)
+        if (this.data.shuffledEntries) {
+          this.data.shuffledEntries = filteredData
+        } else {
+          this.data.entries = filteredData
+        }
+      }
     }
     if(this.state.sideIndexes == null) this.state.sideIndexes = [];
     if(this.state.lapses == null) this.state.lapses = {};
     if(this.state.hits == null) this.state.hits = {};
     if(this.state.sideIndexes == null) this.state.sideIndexes = {};
     if(this.state.removed == null) this.state.removed = [];
+    if(this.state.isOnlyMatchingMode == null) this.state.isOnlyMatchingMode = false;
 
     this.renderSlider();
     this.initSlider();
@@ -325,12 +383,14 @@ export const Slider = function () {
   this.show = async function () {
     View.prototype.show.call(this);
     this.currentSlideIndexEl = this.element.querySelector('#currentSlideIndex');
+    this.currentDataCountEl = this.element.querySelector('#currentDataCount');
     this.sliderOuter = this.element.querySelector('#js-slider-outer');
     this.batsu = this.element.querySelector("#batsu");
     this.maru = this.element.querySelector("#maru");
     this.keensliderContainerTemplate = `<div id="my-keen-slider" class="keen-slider js-slider"></div>`;
     this.speakEl = this.element.querySelector('#speak');
     this.isRandomEl = this.element.querySelector('#randomSlidesOrder');
+    this.isOnlyMatchingModeEl = this.element.querySelector("#onlyMatchingMode");
     this.cardModeEl = this.element.querySelector('#cardMode');
     this.render();
   }

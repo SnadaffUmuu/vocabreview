@@ -356,6 +356,8 @@ export const Application = {
 
   flushGlobal: function () {
     this.data[DataFactory.globalPool].allEntries = [];
+    this.state.views.global = {}
+    this.state.views = this.state.views
   }
 
 };

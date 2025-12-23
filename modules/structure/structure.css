@@ -104,10 +104,10 @@ label[for="toggleAll"] {
   display:none;
 }
 
-#menu:has(option[value="global"]:checked) #globalPoolActions {
+#menu:has([data-value="global"].selected) #globalPoolActions {
   display:block;
 }
 
-#menu:has(option[value="global"]:checked) #structureActions {
+#menu:has([data-value="global"].selected) #structureActions {
   display:none;
 }

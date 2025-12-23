@@ -35,6 +35,7 @@
   overflow: auto;
   padding:15px;
   font-size: 15px;
+  box-sizing: border-box;
 }
 
 .dialog__closeButton {

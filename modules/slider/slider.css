@@ -25,9 +25,27 @@
   width:100px
 }
 
+#sliderCountersWrap {
+  display:flex;
+  flex-flow:row nowrap;
+  align-items: center;
+}
+
 #currentSlideIndex {
   color: var(--currentSlideIndexTextColor);
   font-size:20px;
+}
+
+#currentDataCount {
+  color: var(--currentSlideIndexTextColor);
+  font-size:16px;
+  opacity:0.5
+}
+
+#sliderCountersDivider {
+  padding:0 3px;
+  font-size:20px;
+  opacity:0.5
 }
 
 #js-slider-outer {

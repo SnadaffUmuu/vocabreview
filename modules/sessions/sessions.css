@@ -1,3 +1,7 @@
+.sessions__data {
+  width:100%;
+}
+
 .sessions__data td {
   padding:5px 10px;
   border:1px solid var(--paleBorder)
@@ -6,4 +10,5 @@
 .sessions__data td .tag {
   padding: 5px 10px;
   margin-right:5px;
+  display:inline-block;
 }

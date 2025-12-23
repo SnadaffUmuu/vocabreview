@@ -562,7 +562,8 @@ export const PanelView = function () {
   };
 
   this.renderPanelBoxControls = function () {
-    [...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
+    //[...this.element.querySelectorAll('.itemDroppableContainer')].forEach(box => {
+    Object.values(this.boxes).forEach(box => {
       box.insertAdjacentHTML('afterbegin', `
         <div class="clear">x</div>
         <div class="focus"></div>

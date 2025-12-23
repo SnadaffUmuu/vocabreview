@@ -11,12 +11,18 @@
         <option value="example_translation">examples' translations</option>
       </select>
     </label>
+    <label for="onlyMatchingMode">
+      Omm
+      <input type="checkbox" id="onlyMatchingMode">
+    </label>
     <label for="randomSlidesOrder">
       Rand.
       <input type="checkbox" id="randomSlidesOrder">
     </label>
     <button id="resetSlider">Reset</button>
-    <div id="currentSlideIndex"></div>
+    <div id="sliderCountersWrap">
+      <div id="currentSlideIndex"></div><div id="sliderCountersDivider">/</div><div id="currentDataCount"></div>
+    </div>
   </div>
   <div id="js-slider-outer">
     <div id="batsu" class="slideActions"></div>

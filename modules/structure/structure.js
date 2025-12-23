@@ -1,6 +1,6 @@
-
 import { View } from "../view.js";
 import { Application } from "../app.js"
+import {Prompt} from "../components/prompt/prompt.js"
 
 export const StructureView = function () {
   this.toggleEl = null;
@@ -13,7 +13,12 @@ export const StructureView = function () {
   };
 
   this.flushGlobal = function() {
-    Application.flushGlobal();
+    new Prompt({
+      text: 'Really flush global?',
+      onConfirm: () => {
+        Application.flushGlobal();
+      }
+    })
   };
 
   this.trueCheckboxesSelector = '.treeCheckbox';
@@ -113,8 +118,8 @@ export const StructureView = function () {
 
     this.reset();
     const currentSouceData = Application.getCurrentSourceData();
-    if (!currentSouceData?.currentEntries?.length
-      || currentSouceData.global == true) {
+    if (/*!currentSouceData?.currentEntries?.length
+      || */currentSouceData.global == true) {
       return;
     }
     this.data.filteredEntries = structuredClone(Application.getCurrentSourceData().currentEntries);

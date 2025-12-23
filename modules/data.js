@@ -14,6 +14,7 @@ export const DataFactory = {
     'SR_secret',
     'SR_yuyu',
     'SR_Akiko',
+    'SR-kawaranaimono',
     'SR_Nutshell',
     'goshogun0',
     'shirobanba',
@@ -465,4 +466,5 @@ export const DataFactory = {
     remainingLines = lines.filter(l => !l.role).forEach(l =>
       l.role = lRoles.unknown);
   },
+
 }
