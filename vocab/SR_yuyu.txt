@@ -2,6 +2,34 @@
 ::source::SR_yuyu
 ====
 
+[09] Embarrassing Story 3
+
+рост
+身長
+身長が165センチぐらい
+рост примерно 165 см
+
+◯と言って、〜
+это называется Х, и... (раскрываем понятие)
+これはジャカルタコーヒーと言って、とても独特な風味を楽しめるコーヒー
+This is called Jakarta Coffee, and it is a coffee in which one can enjoy a very distinctive flavor
+彼女は、「東京エキストラ」と言って、とても人気のあるブランドのセーターを着ていた
+She was wearing a sweater that is from a very popular brand and which is called "Tokyo Extra."
+::pattern
+
+最寄りの
+もより
+ближайший
+最寄り駅
+ближайшая станция
+最寄りの交番
+ближайшая полицейская будка
+
+池袋
+いけぶくろ
+Район в Токио, Икебукуро
+::geo
+
 [08] Embarrassing Story 2
 
 ねん

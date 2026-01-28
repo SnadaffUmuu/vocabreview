@@ -60,15 +60,18 @@ export const Slider = function () {
         }
         if(this.state.lapses && this.state.lapses[index]) {
           delete this.state.lapses[index]
+          this.state.lapses = this.state.lapses
         }
         if(this.state.hits && this.state.hits[index]) {
           delete this.state.hits[index]
+          this.state.hits = this.state.hits
         }
         if(this.state.currentIndex >= this.slider.slides.length - 1) {
           this.state.currentIndex = 0
         }
         this.data.shuffledEntries = null;
         this.render()
+        Application.views.StructureView.render();
       }
     });
   }
@@ -162,6 +165,7 @@ export const Slider = function () {
 
   this.toggleLapse = function (e, skipToggleOther) {
     const turnOn = this.toggleSideLearnMark(this.batsu, this.state.lapses)
+    Application.views.StructureView.render();
     if (skipToggleOther !== true && turnOn && this.maru.classList.contains('active')) {
       this.toggleHit(null, true)
     }
@@ -169,6 +173,7 @@ export const Slider = function () {
 
   this.toggleHit = function (e, skipToggleOther) {
     const turnOn = this.toggleSideLearnMark(this.maru, this.state.hits)
+    Application.views.StructureView.render();
     if (skipToggleOther !== true && turnOn && this.batsu.classList.contains('active')) {
       this.toggleLapse(e, true)
     }

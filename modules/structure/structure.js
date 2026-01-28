@@ -84,7 +84,8 @@ export const StructureView = function () {
       const viewParams = stateViews[stateViewName];
       for (let viewParam in viewParams) {
         if('removedItems' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
-          || ['itemsInBoxes','itemsInCols','lapses'].includes(viewParam)
+          || 'removed' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
+          || ['itemsInBoxes','itemsInCols','lapses', 'hits'].includes(viewParam)
             && Object.keys(viewParams[viewParam]).some(k => ids.includes(parseInt(k)))) {
           
           letters.add(stateViewName.slice(0,1));

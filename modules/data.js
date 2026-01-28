@@ -12,6 +12,7 @@ export const DataFactory = {
     'SR_withered-tree',
     'SR-subway-attack',
     'SR_secret',
+    'SR_winter',
     'SR_yuyu',
     'SR_Akiko',
     'SR-kawaranaimono',
@@ -227,11 +228,14 @@ export const DataFactory = {
         //meta lines: tags and review marks
         originalLines.forEach(l => {
           let lineText = l.trim();
-          if(lineText.startsWith('::') && !lineText.startsWith('::diff')) {
+          if(lineText.startsWith('::')) {
+          //if(lineText.startsWith('::') && !lineText.startsWith('::diff')) {
             let tag = null;
             const parts = lineText.split('::');
             if((parts.length) > 2) {
-              tag = parts[1];
+              if (!lineText.startsWith('::diff')) {
+                tag = parts[1];
+              }
               resEntry.info = parts[2];
             } else {
               if(parts[1].startsWith('onomat')) {
@@ -399,7 +403,7 @@ export const DataFactory = {
     }
 
     let lReading = null;
-    const firstHiraganaOnlyLine = lines.find(l =>
+    const firstHiraganaOnlyLine = lines.filter(l => !l.role).find(l =>
       DataFactory.isHiraganaOnly(l.text));
     const linesWithKanji = lines.filter(l => DataFactory.isWithKanji(l.text));
 
@@ -425,10 +429,9 @@ export const DataFactory = {
       lReading.role = lRoles.reading
     }
 
-    let remainingLines = lines.filter(l => !l.role);
     let infoRoleLine = null;
 
-    remainingLines.forEach(l => {
+    lines.filter(l => !l.role).forEach(l => {
       const prevLine = lines[l.originalIndex - 1];
       if(prevLine && prevLine.role && prevLine.role !== lRoles.example
         && DataFactory.isNotJapaneseOnly(l.text)) {
@@ -453,17 +456,17 @@ export const DataFactory = {
 
     if(infoRoleLine) {
       lines.splice(lines.indexOf(infoRoleLine), 1);
-      remainingLines.splice(remainingLines.indexOf(infoRoleLine), 1);
+      //remainingLines.splice(remainingLines.indexOf(infoRoleLine), 1);
     }
 
-    remainingLines = lines.filter(l => !l.role).forEach(l => {
+    lines.filter(l => !l.role).forEach(l => {
       if(DataFactory.isJapaneseOnly(l.text)
         && inBracketsRegexp.test(l.text)) {
         l.role = lRoles.alt_reading
       }
     });
 
-    remainingLines = lines.filter(l => !l.role).forEach(l =>
+    lines.filter(l => !l.role).forEach(l =>
       l.role = lRoles.unknown);
   },
 

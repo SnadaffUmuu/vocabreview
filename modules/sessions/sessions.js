@@ -52,7 +52,7 @@ export const SessionsView = function (dialog) {
       if (P && (objNotEmpty(P.removedItems) || objNotEmpty(P.itemsInBoxes))) {
         letters.push('panel')
       }
-      if (S && S.currentIndex) {
+      if (S && (S.removed.length > 0 || objNotEmpty(S.hits) || objNotEmpty(S.lapses))) {
         letters.push('slider')
       }
       if (T && T.order && T.order.length) {
