@@ -39,29 +39,47 @@ export const SessionsView = function (dialog) {
 
   this.render = function() {
     let res = []
-    Object.keys(Application.state.views).forEach(k => {
-      const views = Application.state.views[k];
-      const B = views.BoardView;
-      const P = views.PanelView;
-      const S = views.Slider;
-      const T = views.TableView;
-      let letters = [];
-      if (B && (objNotEmpty(B.removedItems) || objNotEmpty(B.lapses) || objNotEmpty(B.itemsInCols))) {
-        letters.push(['board'])
-      }
-      if (P && (objNotEmpty(P.removedItems) || objNotEmpty(P.itemsInBoxes))) {
-        letters.push('panel')
-      }
-      if (S && (S.removed.length > 0 || objNotEmpty(S.hits) || objNotEmpty(S.lapses))) {
-        letters.push('slider')
-      }
-      if (T && T.order && T.order.length) {
-        letters.push('table')
-      }
+
+    for (let sourceName in Application.state.views) {
+      let letters = []
+      const stateViews = Application.state.views[sourceName]
+      Object.keys(stateViews).forEach(viewName => {
+        const view = Application.views[viewName]
+        const stateView = stateViews[viewName]
+        if (view && view.isInProgress && view.isInProgress(stateView)) {
+          letters.push(view.shortName)
+        }
+      })
       if (letters.length) {
-        res.push(`<td data-change-source="${k}">${k}</td><td>${letters.map(l => `<div class="tag" data-app-type="${l}">${l}</div>`).join('')}</td>`)
+        res.push(`<td data-change-source="${sourceName}">${sourceName}</td><td>${letters.map(l => `<div class="tag" data-app-type="${l}">${l}</div>`).join('')}</td>`)
       }
-    })
+    }
+    // Object.keys(Application.state.views).forEach(viewName => {
+    //   const stateVeiw = Application.state.views[viewName];
+    //   for (let viewName : views) {
+    //     const view = Applicationl.views[viewName]
+    //   }
+    //   const B = views.BoardView;
+    //   const P = views.PanelView;
+    //   const S = views.Slider;
+    //   const T = views.TableView;
+      
+    //   if (B && B.isInProgress()) {
+    //     letters.push(['board'])
+    //   }
+    //   if (P && P.isInProgress()) {
+    //     letters.push('panel')
+    //   }
+    //   if (S && S.isInProgress()) {
+    //     letters.push('slider')
+    //   }
+    //   if (T && T.isInProgress()) {
+    //     letters.push('table')
+    //   }
+    //   if (letters.length) {
+    //     res.push(`<td data-change-source="${k}">${k}</td><td>${letters.map(l => `<div class="tag" data-app-type="${l}">${l}</div>`).join('')}</td>`)
+    //   }
+    // })
 
     this.element.insertAdjacentHTML('beforeend', `<table id="sessions-list" class="sessions__data"><tr>${res.join('</tr><tr>')}</tr></table>`)
     this.setRenderedEvents(this.element.querySelector('#sessions-list'));

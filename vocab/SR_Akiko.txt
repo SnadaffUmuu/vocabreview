@@ -2,6 +2,36 @@
 ::source::SR_Akiko
 ====
 
+[005]
+
+爪の垢を煎じて飲む
+せんじて
+стараться следовать чему-то примеру хоть немного
+::info::煎じる вываривать (лекарственные травы). The idea is that someone who is attempting to imitate a true master would be happy to take in any essence from that person--even the gunk from under their nails--in an attempt to capture their qualities
+
+〜にもかかわらず
+(кн.) союз несмотря на [это] независимо от [этого] [и] всё же
+::info::от かかわる - иметь отношение. 遅くまで仕事をするにもかかわらず
+несмотря на то, что работаю допоздна... にかかわらず безотносительно; にもかかわらず несмотря на. Разница: 英語力にかかわらず、アメリカで仕事を探すことができる。“Regardless of one’s English skills, one can find a job in America.” 英語力にもかかわらず、彼はアメリカで仕事を探すことができた。“Despite his English skills, he was able to find a job in America.” 
+
+брать с кого-то пример
+見習う
+
+тот (из двух), у кого есть время, убирается
+時間がある方が掃除をする
+
+揃う
+そろう
+собраться полностью (о намеченном числе лиц)
+みんなが揃って、一緒に夕食を食べる
+все собираются вместе и ужинают
+
+正社員
+せいしゃいん
+штатный сотрудник, постоянный персонал
+正社員で働いている
+работает на постоянной основе
+
 [004]
 
 プータロー

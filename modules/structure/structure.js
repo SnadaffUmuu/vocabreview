@@ -80,18 +80,25 @@ export const StructureView = function () {
     let ids = sectionEntries.map(entry => entry.originalIndex)
     let letters = new Set();
     const stateViews = Application.state.views[Application.state.currentSource];
-    for (let stateViewName in stateViews) {
-      const viewParams = stateViews[stateViewName];
-      for (let viewParam in viewParams) {
-        if('removedItems' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
-          || 'removed' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
-          || ['itemsInBoxes','itemsInCols','lapses', 'hits'].includes(viewParam)
-            && Object.keys(viewParams[viewParam]).some(k => ids.includes(parseInt(k)))) {
-          
-          letters.add(stateViewName.slice(0,1));
-        }
+    for (let viewName in stateViews) {
+      const view = Application.views[viewName];
+      const stateView = stateViews[viewName]
+      if (view && view.isInProgress && view.isInProgress(stateView) && view.hasEntriesInProgress(ids)) {
+        letters.add(viewName.slice(0,1));
       }
-    }
+    }    
+    // for (let stateViewName in stateViews) {
+    //   const viewParams = stateViews[stateViewName];
+    //   for (let viewParam in viewParams) {
+    //     if('removedItems' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
+    //       || 'removed' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
+    //       || ['itemsInBoxes','itemsInCols','lapses', 'hits'].includes(viewParam)
+    //         && Object.keys(viewParams[viewParam]).some(k => ids.includes(parseInt(k)))) {
+          
+    //       letters.add(stateViewName.slice(0,1));
+    //     }        
+    //   }
+    // }
     return letters.size ? `<span class="inProgress">${Array.from(letters).join('&nbsp;')}</span>` : '';
   }
 

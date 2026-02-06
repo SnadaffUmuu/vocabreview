@@ -643,6 +643,25 @@ export const BoardView = function () {
     }
   };
 
+  this.isInProgress = function (state) {
+    const theState = state !== undefined ? state : this.state;
+    if(theState.itemsInCols && Object.keys(theState.itemsInCols).length > 0
+      || Array.isArray(theState.removedItems) && theState.removedItems.length > 0) {
+      return true;
+    }
+
+    return false;
+  };  
+
+  this.hasEntriesInProgress = function (indexes) {
+    if (this.state.itemsInCols && Object.keys(this.state.itemsInCols).some(k => indexes.includes(parseInt(k)))
+      || Array.isArray(this.state.removedItems) && this.state.removedItems.some(idx => indexes.includes(parseInt(idx)))) {
+      return true
+    }
+
+    return false
+  };  
+
   // this.updateModeElement = function () {
   //   if(this.state.mode) {
   //     Array.from(this.cardModeEl.querySelectorAll('option')).forEach(op => {
@@ -747,6 +766,7 @@ export const BoardView = function () {
 }
 
 BoardView.prototype = Object.assign(Object.create(View.prototype), {
+  shortName : 'board',
   containerSelector: '#appBody',
   templatePath: 'modules/board/board.html',
   templateSelector: '#boardView',

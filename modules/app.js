@@ -39,7 +39,7 @@ export const Application = {
       PreloaderView: await View.create(PreloaderView),
       Dialog: await View.create(Dialog),
       MenuView: await View.create(MenuView),
-      SliderView: await View.create(Slider),
+      Slider: await View.create(Slider),
       TableView: await View.create(TableView),
       DataView: await View.create(DataView),
       BoardView: await View.create(BoardView),

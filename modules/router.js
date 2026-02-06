@@ -11,7 +11,7 @@ export const Router = {
     switch (type) {
       case '':
       case 'slider':
-        this.currentView = Application.views.SliderView;
+        this.currentView = Application.views.Slider;
         break;
       case 'table':
         this.currentView = Application.views.TableView;

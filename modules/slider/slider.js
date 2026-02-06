@@ -316,6 +316,27 @@ export const Slider = function () {
     this.state.sideIndexes && delete this.state.sideIndexes;
   };
 
+  this.isInProgress = function (state) {
+    const theState = state !== undefined ? state : this.state;
+    if(theState.hits && Object.keys(theState.hits).length > 0
+      || theState.lapses && Object.keys(theState.lapses).length > 0
+      || Array.isArray(theState.removed) && theState.removed.length > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
+  this.hasEntriesInProgress = function (indexes) {
+    if (this.state.hits && Object.keys(this.state.hits).some(k => indexes.includes(parseInt(k)))
+      || this.state.lapses && Object.keys(this.state.lapses).some(k => indexes.includes(parseInt(k)))
+      || Array.isArray(this.state.removed) && this.state.removed.some(idx => indexes.includes(parseInt(idx)))) {
+      return true
+    }
+
+    return false
+  };   
+
   this.reset = function (resetAll) {
     this.data = {};
     if(resetAll) {
@@ -402,6 +423,7 @@ export const Slider = function () {
 };
 
 Slider.prototype = Object.assign(Object.create(View.prototype), {
+  shortName : 'slider',
   containerSelector: '#appBody',
   templateSelector: '#sliderView',
   templatePath: 'modules/slider/slider.html',

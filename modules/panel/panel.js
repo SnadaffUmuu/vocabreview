@@ -621,6 +621,25 @@ export const PanelView = function () {
     }
   };
 
+  this.isInProgress = function (state) {
+    const theState = state !== undefined ? state : this.state;
+    if(theState.itemsInBoxes && Object.keys(theState.itemsInBoxes).length > 0
+      || Array.isArray(theState.removedItems) && theState.removedItems.length > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
+  this.hasEntriesInProgress = function (indexes) {
+    if (this.state.itemsInBoxes && Object.keys(this.state.itemsInBoxes).some(k => indexes.includes(parseInt(k)))
+      || Array.isArray(this.state.removedItems) && this.state.removedItems.some(idx => indexes.includes(parseInt(idx)))) {
+      return true
+    }
+
+    return false
+  };
+
   this.reset = function (resetAll) {
     this.panelSources.innerHTML = '';
     this.box1.innerHTML = '';
@@ -716,6 +735,7 @@ export const PanelView = function () {
 }
 
 PanelView.prototype = Object.assign(Object.create(View.prototype), {
+  shortName : 'panel',
   containerSelector: '#appBody',
   templatePath: 'modules/panel/panel.html',
   templateSelector: '#panelView',
