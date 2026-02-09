@@ -7,6 +7,7 @@ import {
 } from "../utils.js";
 import {Application} from "../app.js";
 import {DataFactory} from "../data.js";
+import {Prompt} from "../components/prompt/prompt.js"
 
 export const TableView = function () {
   this.tableContainer = null;
@@ -18,7 +19,9 @@ export const TableView = function () {
 
   this.events = {
     //'click #addColumn': 'addColumn',
-    'click #reset': 'resetOrder',
+    'click #reset': 'resetTable',
+    'click #zoomin': 'zoomTable',
+    'click #zoomout': 'zoomTable',
   };
 
   this.namespaces = {
@@ -43,7 +46,7 @@ export const TableView = function () {
       },
       dragstart: {
         'th:not([draggable="false"])': 'setColumnHeaderDragStart',
-        '.cellContentDraggable': 'setItemDragStart',
+        //'.cellContentDraggable': 'setItemDragStart',
         '.rowDrag': 'setRowDragStart',
       },
       dragenter: {
@@ -71,20 +74,20 @@ export const TableView = function () {
         'th:not([draggable="false"])': 'setColumnHeaderDragDrop',
         'th:not([draggable="false"]) .drag': 'setColumnHeaderDragDrop',
         'th:not([draggable="false"]) .toggle': 'setColumnHeaderDragDrop',
-        'td:not(:first-child) .draggableContainerInner': 'dropDragItem',
-        'td:not(:first-child) .cellContentDraggable': 'dropDragItem',
+        // 'td:not(:first-child) .draggableContainerInner': 'dropDragItem',
+        // 'td:not(:first-child) .cellContentDraggable': 'dropDragItem',
         '.rowDrag': 'setRowDragDrop'
       },
       touchstart: {
-        '.cellContentDraggable': 'setItemTouchStart',
+        // '.cellContentDraggable': 'setItemTouchStart',
         '.rowDrag': 'setRowTouchStart'
       },
       touchmove: {
-        '.cellContentDraggable': 'touchDragItem',
+        // '.cellContentDraggable': 'touchDragItem',
         '.rowDrag': 'touchDragRow'
       },
       touchend: {
-        '.cellContentDraggable': 'touchDropItem',
+        // '.cellContentDraggable': 'touchDropItem',
         '.rowDrag': 'touchDropRow'
       },
     };
@@ -103,6 +106,15 @@ export const TableView = function () {
   //     this.setCellIndex(row.querySelector('td:last-child'), columnsCount)
   //   })
   // };
+
+  this.zoomTable = function (e) {
+    const out = e.target.id == 'zoomout'
+    const currentZoom = this.tableEl.dataset.zoomScale ? parseFloat(this.tableEl.dataset.zoomScale) : 1
+    const newZoom = out ? currentZoom - 0.1 : currentZoom + 0.1
+    this.tableEl.setAttribute('data-zoom-scale', newZoom)
+    this.tableEl.style.transform = `scale(${newZoom})`
+    this.tableEl.style.transformOrigin = 'top left';
+  }
 
   this.swapColumns = function (fromIndex, toIndex) {
     const rows = this.tableEl.rows;
@@ -132,19 +144,30 @@ export const TableView = function () {
     this.updateStateOrder();
   };
 
-  this.resetOrder = function () {
-    this.data.orderedEntries = null;
-    this.state.order && delete this.state.order;
-    this.state.colOrder && delete this.state.colOrder;
-    this.state.hidden && delete this.state.hidden;
-    this.render();
-    Application.views.StructureView.render();
+  this.resetScale = function () {
+    this.tableEl.removeAttribute('data-zoom-scale');
+    this.tableEl.style.transform = 'unset'
+  };
+
+  this.resetTable = function () {
+    new Prompt({
+      text: 'Reset table?',
+      onConfirm: () => {
+        this.data.orderedEntries = null;
+        this.state.order && delete this.state.order;
+        this.state.colOrder && delete this.state.colOrder;
+        this.state.hidden && delete this.state.hidden;
+        this.state.revealed && delete this.state.revealed;
+        this.render();
+        Application.views.StructureView.render();
+      }
+    });
   };
 
   this.updateStateOrder = function () {
     this.state.order = [...this.tbody.querySelectorAll('tr')].map(row =>
       parseInt(row.dataset.originalIndex));
-      Application.views.StructureView.render();
+    Application.views.StructureView.render();
   };
 
   this.updateStateColOrder = function () {
@@ -204,7 +227,7 @@ export const TableView = function () {
             delete revealed[entryId];
           }
           stateChanged = true;
-        }        
+        }
 
       } else {
         // === SHOW ALL ===
@@ -248,7 +271,7 @@ export const TableView = function () {
 
     const hidden = this.state.hidden ? this.state.hidden : {};
     const list = hidden[entryId] ? hidden[entryId] : [];
-    
+
     const revealed = this.state.revealed ? this.state.revealed : {};
     const revealedList = revealed[entryId] ? revealed[entryId] : [];
 
@@ -718,13 +741,13 @@ export const TableView = function () {
   };
 
   this.hasEntriesInProgress = function (indexes) {
-    if (this.state.revealed && Object.keys(this.state.revealed).some(k => indexes.includes(parseInt(k)))
+    if(this.state.revealed && Object.keys(this.state.revealed).some(k => indexes.includes(parseInt(k)))
       || Array.isArray(this.state.order) && this.state.order.some(idx => indexes.includes(parseInt(idx)))) {
       return true
     }
 
     return false
-  };  
+  };
 
   this.reset = function (resetAll) {
     this.data = {};
@@ -774,7 +797,7 @@ export const TableView = function () {
 }
 
 TableView.prototype = Object.assign(Object.create(View.prototype), {
-  shortName : 'table',
+  shortName: 'table',
   containerSelector: '#appBody',
   templatePath: 'modules/table/table.html',
   templateSelector: '#tableView',
