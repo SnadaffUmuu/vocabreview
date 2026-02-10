@@ -84,6 +84,8 @@ View.prototype = {
         if (skipSelectorCheck || e.target.matches && e.target.matches(selector)) {
           if (method.indexOf('.') < 0) {
             this[method].bind(this).call(this, e);
+            //gpt says that below is also valid:
+            //this[method].call(this, e);
           } else {
             const parts = method.split('.');
             if (this.namespaces[parts[0]] && this.namespaces[parts[0]][parts[1]]) {
@@ -98,11 +100,15 @@ View.prototype = {
         target.forEach(el => {
           el.addEventListener(event, (e) => {
             handler.bind(this).call(this, e, event);
+            //gpt says that below is also valid:
+            //handler.call(this, e, event);
           })
         })
       } else {
         target.addEventListener(event, (e) => {
           handler.bind(this).call(this, e, event);
+          //gpt says that below is also valid:
+          //handler.call(this, e, event);
         })
       }
     }
