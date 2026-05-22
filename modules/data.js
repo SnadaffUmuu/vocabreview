@@ -9,12 +9,12 @@ export const DataFactory = {
   globalPool: 'global',
 
   vocabFilesIndex: [
-    'SR_withered-tree',
     'SR_secret',
     'SR_winter',
+    'SR-kawaranaimono',
     'SR_yuyu',
     'SR_Akiko',
-    'SR-kawaranaimono',
+    'SR_happiness',
     'SR_Nutshell',
     'goshogun1',
     'shirobanba',
@@ -32,6 +32,7 @@ export const DataFactory = {
     'murakami-sheep-1',
     'hp1',
     'goshogun0',
+    'SR_withered-tree',
     'SR-subway-attack',
     'SR_Kona2',
     'SR_Obon_Society',
