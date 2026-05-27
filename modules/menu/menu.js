@@ -14,7 +14,8 @@ export const MenuView = function () {
     'click #menuTrigger': 'toggleMenu',
     'click .switchView': 'switchView',
     'click #showCurrentSessions': 'showCurrentSessions',
-    'click #reloadCurrentSource': 'reloadCurrentSource'
+    'click #reloadCurrentSource': 'reloadCurrentSource',
+    'change #importStateFile': 'importState',
   }
 
   this.showCurrentSessions = async function (e) {
@@ -83,7 +84,86 @@ export const MenuView = function () {
         });
       }
     });
-  }
+  };
+
+  this.downloadFile = function (filename, content, mime = 'application/json') {
+    const blob = new Blob([content], {type: mime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+this.exportState = function () {
+
+  new Prompt({
+    text: 'Really export state to file?',
+    onConfirm: () => {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const timestamp =
+        now.getFullYear() + '-' +
+        pad(now.getMonth() + 1) + '-' +
+        pad(now.getDate()) + '-' +
+        pad(now.getHours()) +
+        pad(now.getMinutes()) +
+        pad(now.getSeconds());
+      const data = {
+        version: 1,
+        exportedAt: now.toISOString(),
+        localStorage: {
+          "review-data": Application.loadFromLocalStorage('review-data'),
+          "review-state": Application.loadFromLocalStorage('review-state')
+        }
+      };
+      const json = JSON.stringify(data);
+      this.downloadFile(
+        `review-app-state-${timestamp}.json`,
+        json
+      );
+    }
+  });
+};
+
+  this.importClickHandler = function () {
+    new Prompt({
+      text: 'Заменить текущее состояние?!!1',
+      onConfirm: () => {
+        this.element.querySelector('#importStateFile')?.click();
+      }
+    });
+  };
+
+  this.importState = async function (e) {
+    const file = e.target.files[0];
+    if(!file) {
+      return;
+    }
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const localStorageData = data?.localStorage;
+      if (!localStorageData) return;
+      Object.entries(localStorageData).forEach(([key, value]) => {
+        localStorage.setItem(
+          key,
+          typeof value === 'string'
+            ? value
+            : JSON.stringify(value)
+        );
+      });
+
+      console.log('Import completed');
+      location.reload();
+
+    } catch(err) {
+      console.log('Import failed', err);
+    }
+  };
 
   this.renderSelectOptions = function () {
     const options = DataFactory.vocabFilesIndex.map(s => `
@@ -153,23 +233,25 @@ export const MenuView = function () {
 
     this.globalActions = new DropdownAction({
       trigger: new BurgerButton({
-        cssClasses : ['v2']
+        cssClasses: ['v2']
       }),
       items: {
         loadAllSources: 'Load all',
         resetSpeech: 'reset speech',
-        resetApp: 'reset App'
+        resetApp: 'reset App',
+        exportState: 'export state',
+        importClickHandler: 'import state',
       },
       onSelect: (methodName) => this[methodName](),
       appendTo: this.actionsRow
     });
 
     this.sourcesList = new SelectAction({
-      trigger: new SelectTrigger({cssClasses : ['js-selectSources selectSourcesButton']}),
-      items : this.buildSourcesList(),
-      value : Application.state.currentSource,
-      dropdownCssClasses : ['sourcesList'],
-      onChange : (value) => this.changeSource(value),
+      trigger: new SelectTrigger({cssClasses: ['js-selectSources selectSourcesButton']}),
+      items: this.buildSourcesList(),
+      value: Application.state.currentSource,
+      dropdownCssClasses: ['sourcesList'],
+      onChange: (value) => this.changeSource(value),
       prependTo: this.actionsRow
     })
 

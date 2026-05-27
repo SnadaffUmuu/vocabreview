@@ -87,18 +87,7 @@ export const StructureView = function () {
         letters.add(viewName.slice(0,1));
       }
     }    
-    // for (let stateViewName in stateViews) {
-    //   const viewParams = stateViews[stateViewName];
-    //   for (let viewParam in viewParams) {
-    //     if('removedItems' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
-    //       || 'removed' == viewParam && viewParams[viewParam].some(k => ids.includes(k))
-    //       || ['itemsInBoxes','itemsInCols','lapses', 'hits'].includes(viewParam)
-    //         && Object.keys(viewParams[viewParam]).some(k => ids.includes(parseInt(k)))) {
-          
-    //       letters.add(stateViewName.slice(0,1));
-    //     }        
-    //   }
-    // }
+
     return letters.size ? `<span class="inProgress">${Array.from(letters).join('&nbsp;')}</span>` : '';
   }
 
@@ -126,14 +115,13 @@ export const StructureView = function () {
 
     this.reset();
     const currentSouceData = Application.getCurrentSourceData();
-    if (/*!currentSouceData?.currentEntries?.length
-      || */currentSouceData.global == true) {
+    if (!currentSouceData || currentSouceData?.global == true) {
       return;
     }
-    this.data.filteredEntries = structuredClone(Application.getCurrentSourceData().currentEntries);
-    this.nonChecked = this.data.filteredEntries.length 
-      == Application.getCurrentSourceData().allEntries.length;
-    const resItems = Application.getCurrentSourceData().structure.reduce((resItems, entry) => {
+    this.data.filteredEntries = structuredClone(currentSouceData?.currentEntries);
+    this.nonChecked = this.data.filteredEntries && this.data.filteredEntries.length 
+      == currentSouceData.allEntries.length;
+    const resItems = currentSouceData.structure.reduce((resItems, entry) => {
       const children = entry.children ? entry.children.map(ch => `<li data-tree-id="${ch.id}">${this.getCheckboxHtml(ch.id)}&nbsp;${ch.name}</li>`) : [];
       resItems.push(`<li data-tree-id="${entry.id}">
         ${this.getCheckboxHtml(entry.id)}&nbsp;
