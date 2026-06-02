@@ -27,6 +27,7 @@ export const DataFactory = {
     'osarai-house',
     'osarai-society',
     'osarai-keigo',
+    'osarai-lit',
     'chat',
     'boxes_packs',
     'global',
