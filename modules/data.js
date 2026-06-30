@@ -16,6 +16,7 @@ export const DataFactory = {
     'SR_Akiko',
     'SR_happiness',
     'SR_zama9',
+    'SR_john',
     'SR_Nutshell',
     'goshogun1',
     'shirobanba',
